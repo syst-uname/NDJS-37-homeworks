@@ -1,0 +1,19 @@
+{
+  "name": "01-current",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "./current.js",
+  "bin": {
+    "current": "./current.js"
+  },
+  "scripts": {
+    "current": "node ./current.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "yargs": "^17.7.2"
+  }
+}
