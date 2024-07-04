@@ -35,12 +35,12 @@
 
 #### Содержимое файла лога ./log/test.txt
 
-* {"answer":"1","right":false}
-* {"answer":"1","right":true}
-* {"answer":"1","right":true}
-* {"answer":"1","right":false}
-* {"answer":"1","right":false}
-* {"answer":"1","right":false}
-* {"answer":"2","right":true}
-* {"answer":"2","right":false}
-* {"answer":"2","right":true}
+{"answer":"1","right":false}  
+{"answer":"1","right":true}  
+{"answer":"1","right":true}  
+{"answer":"1","right":false}  
+{"answer":"1","right":false}  
+{"answer":"1","right":false}  
+{"answer":"2","right":true}  
+{"answer":"2","right":false}  
+{"answer":"2","right":true}  
