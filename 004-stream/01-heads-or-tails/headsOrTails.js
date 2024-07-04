@@ -24,7 +24,7 @@ const rl = readline.createInterface({
 });
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const ws = fs.createWriteStream(path.join(__dirname, 'log', argv.filename));
+const ws = fs.createWriteStream(path.join(__dirname, 'log', argv.filename), 'utf-8');
 
 while (await tossCoin()) {}
   
