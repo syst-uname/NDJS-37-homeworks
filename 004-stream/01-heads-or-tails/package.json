@@ -1,0 +1,21 @@
+{
+  "name": "01-heads-or-tails",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "headsOrTails.js",
+  "bin": {
+    "headsOrTails": "./headsOrTails.js"
+  },
+  "scripts": {
+    "headsOrTails": "node ./headsOrTails.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "readline": "^1.3.0",
+    "url": "^0.11.3",
+    "yargs": "^17.7.2"
+  }
+}
