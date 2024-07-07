@@ -1,0 +1,25 @@
+{
+  "name": "02-weather",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "weather.js",
+  "bin": {
+    "weather": "./weather.js"
+  },
+  "scripts": {
+    "weather": "node ./weather.js",
+    "weather Норильск": "node ./weather.js -c Норильск",
+    "weather Tokyo": "node ./weather.js -c Tokyo",
+    "weather invalid": "node ./weather.js -c invalid"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "config": "^3.3.12",
+    "dotenv": "^16.4.5",
+    "http": "^0.0.1-security",
+    "yargs": "^17.7.2"
+  }
+}
