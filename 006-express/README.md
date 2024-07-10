@@ -60,6 +60,17 @@
 
 ##### 3.1. Создать книгу
 Запрос `POST` к `http://localhost:3000/api/books`  
+Содержимое `body` запроса:
+```
+{ 
+    "title": "Туда и обратно",
+    "authors": "Джон Р. Р. Толкин",
+    "description": "Путешествие хоббита Бильбо Бэггинса",
+    "favorite": 3000,
+    "fileCover": "Hobbit.jpg",
+    "fileName": "There and Back Again.fb2"
+}
+```
 Результат:  
 ```
 {
