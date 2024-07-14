@@ -1,6 +1,6 @@
 import express from 'express'
 import config from './config/index.js'
-import store from './store.js'
+import store from './model/store.js'
 
 
 const app = express()
