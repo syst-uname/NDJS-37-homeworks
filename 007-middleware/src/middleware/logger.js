@@ -7,7 +7,7 @@ const logger = (req, res, next) => {
   const data = `${new Date().toLocaleString()} - ${req.method} - ${req.url}` + os.EOL
   const __dirname = path.dirname(fileURLToPath(import.meta.url))
   fs.appendFile(
-    path.join(__dirname, '..', 'log', 'server.log.txt'),
+    path.join(__dirname, '..', '..', 'log', 'server.log.txt'),
     data,
     (error) => {
       if (error) throw error

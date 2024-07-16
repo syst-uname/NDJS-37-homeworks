@@ -1,231 +1,52 @@
-### Тестирование API CRUD для работы с сущностью «книга»
+### Тестирование паттерна "цепочка обязанностей"
  
-##### 1. Авторизация пользователя 
-Запрос `POST` к `http://localhost:3000/api/user/login`  
-Результат:  
-```
-{
-    "id": 1,
-    "mail": "test@mail.ru"
-}
-```
-  
-##### 2.1. Получить все книги
-Запрос `GET` к `http://localhost:3000/api/books`  
-Результат:  
-```
-[
-    {
-        "id": 1,
-        "title": "Война и мир",
-        "authors": "Лев Николайевич Толстой",
-        "description": "Роман-эпопея",
-        "favorite": 1000,
-        "fileCover": "img1.jpg",
-        "fileName": "Война и мир.txt"
-    },
-    {
-        "id": 2,
-        "title": "JavaScript для чайников",
-        "authors": "Крис Минник и Ева Холланд",
-        "description": "Руководство разработчикам-новичкам",
-        "favorite": 2000,
-        "fileCover": "img2.jpg",
-        "fileName": "JavaScript для чайников.pdf"
-    }
-]
-```
-  
-##### 2.2. Получить книгу по ID (книга сущесвует) 
-Запрос `GET` к `http://localhost:3000/api/books/2`  
-Результат:  
-```
-{
-    "id": 2,
-    "title": "JavaScript для чайников",
-    "authors": "Крис Минник и Ева Холланд",
-    "description": "Руководство разработчикам-новичкам",
-    "favorite": 2000,
-    "fileCover": "img2.jpg",
-    "fileName": "JavaScript для чайников.pdf"
-}
-```  
-
-##### 2.3. Получить книгу по ID (книга не сущесвует) 
-Запрос `GET` к `http://localhost:3000/api/books/123`  
-Результат:  
-```
-"Книга 123 не найдена"
-```
-
-##### 3.1. Создать книгу
+##### Создание книги (с файлом)
 Запрос `POST` к `http://localhost:3000/api/books`  
-Содержимое `body` запроса:
-```
-{ 
-    "title": "Туда и обратно",
-    "authors": "Джон Р. Р. Толкин",
-    "description": "Путешествие хоббита Бильбо Бэггинса",
-    "favorite": 3000,
-    "fileCover": "Hobbit.jpg",
-    "fileName": "There and Back Again.fb2"
-}
-```
-Результат:  
-```
-{
-    "id": 3,
-    "title": "Туда и обратно",
-    "authors": "Джон Р. Р. Толкин",
-    "description": "Путешествие хоббита Бильбо Бэггинса",
-    "favorite": 3000,
-    "fileCover": "Hobbit.jpg",
-    "fileName": "There and Back Again.fb2"
-}
-```  
+Содержимое `body` запроса в формате `form-data`:
 
-##### 3.2. Список всех книги (после создания)
-Запрос `GET` к `http://localhost:3000/api/books`  
-Результат:  
-```
-[
-    {
-        "id": 1,
-        "title": "Война и мир",
-        "authors": "Лев Николайевич Толстой",
-        "description": "Роман-эпопея",
-        "favorite": 1000,
-        "fileCover": "img1.jpg",
-        "fileName": "Война и мир.txt"
-    },
-    {
-        "id": 2,
-        "title": "JavaScript для чайников",
-        "authors": "Крис Минник и Ева Холланд",
-        "description": "Руководство разработчикам-новичкам",
-        "favorite": 2000,
-        "fileCover": "img2.jpg",
-        "fileName": "JavaScript для чайников.pdf"
-    },
-    {
-        "id": 3,
-        "title": "Туда и обратно",
-        "authors": "Джон Р. Р. Толкин",
-        "description": "Путешествие хоббита Бильбо Бэггинса",
-        "favorite": 3000,
-        "fileCover": "Hobbit.jpg",
-        "fileName": "There and Back Again.fb2"
-    }
-]
-```
+Key           | Type | Value
+------------- | ---- | --------
+title         | Text | Война и мир
+authors       | Text | Л. Н. Толстой
+description   | Text | Роман-эпопея
+favorite      | Text | 1000
+fileCover     | Text | img1.jpg
+fileName      | Text | Война и мир.jpg
+fileBook      | File | Война и мир.jpg [прикрепленный в Postman файл в виде картинки]
   
-##### 4.1. Редактировать книгу по ID (книга сущесвует) 
-Запрос `PUT` к `http://localhost:3000/api/books/1`  
-Содержимое `body` запроса:
-```
-{  
-    "description": "Новое описание романа",
-    "favorite": 4000
-}
-```
 Результат:  
 ```
 {
     "id": 1,
     "title": "Война и мир",
-    "authors": "Лев Николайевич Толстой",
-    "description": "Новое описание романа",
-    "favorite": 4000,
+    "authors": "Л. Н. Толстой",
+    "description": "Роман-эпопея",
+    "favorite": "1000",
     "fileCover": "img1.jpg",
-    "fileName": "Война и мир.txt"
+    "fileName": "Война и мир.jpg",
+    "fileBook": "uploads\\Л. Н. Толстой - Война и мир.jpg"
 }
-``` 
+```  
+В теле `body` запроса в атрибуте `fileBook` прикрепляеся сам файл книги.  
+В ответе с сервера в поле `fileBook` возвращается путь к файлу, где он был сохранен на сервере. 
 
-##### 4.2. Редактировать книгу по ID (книга не сущесвует)
-Запрос `PUT` к `http://localhost:3000/api/books/33`  
-Содержимое `body` запроса:
-```
-{  
-    "description": "Новое описание"
-}
-```
-Результат:  
-```
-"Книга 33 не создана"
-``` 
 
-##### 4.3. Список всех книги (после изменения)
-Запрос `GET` к `http://localhost:3000/api/books`  
-Результат:  
-```
-[
-    {
-        "id": 1,
-        "title": "Война и мир",
-        "authors": "Лев Николайевич Толстой",
-        "description": "Новое описание романа",
-        "favorite": 4000,
-        "fileCover": "img1.jpg",
-        "fileName": "Война и мир.txt"
-    },
-    {
-        "id": 2,
-        "title": "JavaScript для чайников",
-        "authors": "Крис Минник и Ева Холланд",
-        "description": "Руководство разработчикам-новичкам",
-        "favorite": 2000,
-        "fileCover": "img2.jpg",
-        "fileName": "JavaScript для чайников.pdf"
-    },
-    {
-        "id": 3,
-        "title": "Туда и обратно",
-        "authors": "Джон Р. Р. Толкин",
-        "description": "Путешествие хоббита Бильбо Бэггинса",
-        "favorite": 3000,
-        "fileCover": "Hobbit.jpg",
-        "fileName": "There and Back Again.fb2"
-    }
-]
-```
+##### Скачивание файла книги 
+Запрос `GET` к `http://localhost:3000/api/books/1/download`  
+Результат: Postman в `Body` возвращает файл книги в виде картинки.  
+Состав `Headers`:  
+Key                  | Value
+-------------------- | --------
+X-Powered-By         | Express
+Content-Disposition  | attachment; filename="????? ? ???.jpg"; filename*=UTF-8''%D0%92%D0%BE%D0%B9%D0%BD%D0%B0%20%D0%B8%20%D0%BC%D0%B8%D1%80.jpg
+Accept-Ranges        | bytes
+Cache-Control        | public, max-age=0 
+Last-Modified        | Tue, 16 Jul 2024 18:20:39 GMT
+ETag                 | W/"2f190-190baa11e0b"
+Content-Type         | image/jpeg
+Content-Length       | 192912 
+Date                 | Tue, 16 Jul 2024 18:21:03 GMT
+Connection           | keep-alive
+Keep-Alive           | timeout=5
 
-##### 5.1. Удалить книгу (книга сущесвует) 
-Запрос `DELETE` к `http://localhost:3000/api/books/2`  
-Результат:  
-```
-"Книга 2 удалена"
-``` 
-
-##### 5.2. Удалить книгу (книга не сущесвует) 
-Запрос `DELETE` к `http://localhost:3000/api/books/222`  
-Результат:  
-```
-"Книга 222 не найдена"
-``` 
-
-##### 5.3. Список всех книги (после удаления)
-Запрос `GET` к `http://localhost:3000/api/books`  
-Результат:  
-```
-[
-    {
-        "id": 1,
-        "title": "Война и мир",
-        "authors": "Лев Николайевич Толстой",
-        "description": "Новое описание романа",
-        "favorite": 4000,
-        "fileCover": "img1.jpg",
-        "fileName": "Война и мир.txt"
-    },
-    {
-        "id": 3,
-        "title": "Туда и обратно",
-        "authors": "Джон Р. Р. Толкин",
-        "description": "Путешествие хоббита Бильбо Бэггинса",
-        "favorite": 3000,
-        "fileCover": "Hobbit.jpg",
-        "fileName": "There and Back Again.fb2"
-    }
-]
-```
-  
+Видно, что в `Content-Disposition` название файла возвращается в неверной кодировке как `????? ? ???.jpg`. Не уверен, что это является ошибкой, т.к. если сделать обращение на `http://localhost:3000/api/books/1/download` не через Postman, а в браузере, то открывается диалог сохранения файла с корректным именем.  
