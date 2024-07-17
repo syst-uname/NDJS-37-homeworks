@@ -5,3 +5,10 @@
 17.07.2024, 23:26:05 - POST - /api/books
 17.07.2024, 23:26:12 - GET - /api/books
 17.07.2024, 23:26:36 - GET - /api/books/1/download
+17.07.2024, 23:41:22 - GET - /api/books
+17.07.2024, 23:41:27 - POST - /api/books
+17.07.2024, 23:41:30 - POST - /api/books
+17.07.2024, 23:41:31 - POST - /api/books
+17.07.2024, 23:41:35 - GET - /api/books
+17.07.2024, 23:41:57 - GET - /api/books
+17.07.2024, 23:42:04 - GET - /api/books/1/download

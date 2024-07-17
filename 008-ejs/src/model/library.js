@@ -1,6 +1,6 @@
 import Book from './book.js'
 
-class Store {
+class Library {
   constructor() {
     this.books = []
   }
@@ -49,4 +49,4 @@ class Store {
   }
 }
 
-export default new Store()
+export default new Library()
