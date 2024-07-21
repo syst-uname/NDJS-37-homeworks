@@ -5,6 +5,7 @@ const storage = multer.diskStorage({
     cb(null, 'storage/public/')
   },
   filename: (req, file, cb) => {
+    file.originalname = Buffer.from(file.originalname, 'binary').toString('utf8');
     const fileName = `${req.body.authors} - ${file.originalname}`
     cb(null, fileName)
   }

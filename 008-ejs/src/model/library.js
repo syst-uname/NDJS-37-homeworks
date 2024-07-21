@@ -1,15 +1,24 @@
 import Book from './book.js'
+import { book1, book2, book3 } from './books.mock.js'
 
 class Library {
   constructor() {
     this.books = []
+
+    // тестовые данные
+    this.books.push(book1)
+    this.books.push(book2)
+    this.books.push(book3)
   }
 
-  add(data, file) {
+  add(data, files) {
     const book = new Book({
       id: this.nextId(),
       ...data,
-      fileBook: file.path
+      fileOriginalCover: files.fileCover[0].originalname,
+      fileNameCover: files.fileCover[0].filename,
+      fileOriginalBook: files.fileBook[0].originalname,
+      fileNameBook: files.fileBook[0].filename
     })
     if (book) {
       this.books.push(book)
@@ -25,12 +34,25 @@ class Library {
     return this.books
   }
 
-  update(id, data) {
+  update(id, data, files) {
+    const fileData = {}
+
+    if (files.fileCover) {
+      fileData.fileOriginalCover = files.fileCover[0].originalname
+      fileData.fileNameCover = files.fileCover[0].filename
+    }
+
+    if (files.fileBook) {
+      fileData.fileOriginalBook = files.fileBook[0].originalname
+      fileData.fileNameBook = files.fileBook[0].filename
+    }
+
     const index = this.books.findIndex(book => book.id === +id)
     if (index !== -1) {
       this.books[index] = {
         ...this.books[index],
-        ...data
+        ...data,
+        ...fileData
       }
       return this.books[index]
     }

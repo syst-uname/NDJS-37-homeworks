@@ -5,9 +5,10 @@ class Book {
     this.authors = data.authors
     this.description = data.description
     this.favorite = data.favorite
-    this.fileCover = data.fileCover
-    this.fileName = data.fileName
-    this.fileBook = data.fileBook
+    this.fileNameCover = data.fileNameCover
+    this.fileOriginalCover = data.fileOriginalCover
+    this.fileNameBook = data.fileNameBook
+    this.fileOriginalBook = data.fileOriginalBook
   }
 }
 

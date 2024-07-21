@@ -1,57 +1,83 @@
-import { Router } from "express"
+import express from "express"
+import path from 'path';
+import config from '../config/index.js'
 import library from "../model/library.js"
 import multer from "../config/multer.js"
 
+const router = express.Router()
 
-const router = Router()
+router.use(express.static(path.join(config.server.dirname, 'storage', 'public')));
 
-// все книги 
+// все книги  
 router.get('/', (req, res) => {
-  res.json(library.getAll())
+  res.render('book/index', {
+    title: 'Список книг',
+    books: library.getAll()
+  })
 })
+
+// создание книги
+router.get('/create', (req, res) => {
+  res.render('book/create', {
+    title: 'Добавление книги',
+    books: library.getAll(),
+    book: {}
+  })
+})
+
+router.post('/create',
+  multer.fields([{ name: 'fileCover' }, { name: 'fileBook' }]),
+  (req, res) => {
+    library.add(req.body, req.files)
+    res.redirect('/books')
+  }
+)
 
 // конкретная книга
 router.get('/:id', (req, res) => {
   const book = library.get(req.params.id)
   if (book) {
-    res.json(book)
+    res.render('book/view', {
+      title: 'Просмотр книги',
+      books: library.getAll(),
+      book: book
+    })
   } else {
-    res.status(404)
-    res.json(`Книга ${req.params.id} не найдена`)
+    res.redirect('/404')
   }
 })
 
-// добавление книги
-router.post('/',
-  multer.single('fileBook'),
-  (req, res) => {
-    const book = library.add(req.body, req.file)
-    if (book) {
-      res.json(book)
-    } else {
-      res.status(404)
-      res.json(`Книга не создана`)
-    }
-  })
-
-// редактирование книги
-router.put('/:id', (req, res) => {
-  const book = library.update(req.params.id, req.body)
+// изменение книги
+router.get('/update/:id', (req, res) => {
+  const book = library.get(req.params.id)
   if (book) {
-    res.json(book)
+    res.render('book/update', {
+      title: 'Редактирование книги',
+      books: library.getAll(),
+      book: book
+    })
   } else {
-    res.status(404)
-    res.json(`Книга ${req.params.id} не найдена`)
+    res.redirect('/404')
   }
 })
 
-// удаление книги
-router.delete('/:id', (req, res) => {
+router.post('/update/:id',
+  multer.fields([{ name: 'fileCover' }, { name: 'fileBook' }]),
+  (req, res) => {
+    library.update(req.params.id, req.body, req.files)
+    res.redirect('/books/' + req.params.id)
+  }
+)
+
+// удаление книги (приходится делать через GET)
+router.get('/delete/:id', (req, res) => {
   if (library.delete(req.params.id)) {
-    res.json(`Книга ${req.params.id} удалена`)
+    res.redirect('/books')
   } else {
-    res.status(404)
-    res.json(`Книга ${req.params.id} не найдена`)
+    res.render('errors/not-found-book', {
+      title: 'Книга не найдена',
+      books: library.getAll()
+    })
   }
 })
 
@@ -59,15 +85,22 @@ router.delete('/:id', (req, res) => {
 router.get('/:id/download', (req, res) => {
   const book = library.get(req.params.id)
   if (book) {
-    res.download(book.fileBook, book.fileName, (err) => {
-      if (err) {
-        res.status(404)
-        res.json(`Файл ${book.fileName} не найден`)
-      }
-    })
+    res.download(
+      path.join('storage', 'public', book.fileNameBook),
+      book.fileOriginalBook,
+      (err) => {
+        if (err) {
+          res.render('errors/not-found-book', {
+            title: 'Книга не найдена',
+            books: library.getAll()
+          })
+        }
+      })
   } else {
-    res.status(404)
-    res.json(`Книга ${req.params.id} не найдена`)
+    res.render('errors/not-found-book', {
+      title: 'Книга не найдена',
+      books: library.getAll()
+    })
   }
 })
 

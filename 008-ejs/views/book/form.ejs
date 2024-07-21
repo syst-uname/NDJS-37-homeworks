@@ -1,0 +1,63 @@
+<div class="row">
+  <form method="POST" action="/books/<%= action %>" enctype="multipart/form-data" class="col s12">
+
+    <div class="input-field">
+      <i class="material-icons prefix">import_contacts</i>
+      <input id="title" name="title" type="text" value="<%= book.title %>" class="validate" required>
+      <label for="title">Название</label>
+    </div>
+
+    <div class="input-field">
+      <i class="material-icons prefix">face</i>
+      <input id="authors" name="authors" type="text" value="<%= book.authors %>" class="validate" required>
+      <label for="authors">Автор</label>
+    </div>
+
+    <div class="row">
+      <div class="input-field col s9">
+        <i class="material-icons prefix">info_outline</i>
+        <textarea id="description" name="description" value="<%= book.description %>" class="materialize-textarea"
+          required><%= book.description %></textarea>
+        <label for="description">Описание</label>
+      </div>
+
+      <div class="input-field col s3">
+        <i class="material-icons prefix">favorite_border</i>
+        <input id="favorite" name="favorite" type="number" value="<%= book.favorite %>" class="validate" required>
+        <label for="favorite">Понравилось</label>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="file-field input-field col s6">
+        <input id="fileCover" name="fileCover" type="file" class="validate">
+        <div class="file-path-wrapper">
+          <i class="material-icons prefix">image</i>
+          <input class="file-path validate" type="text" value="<%= book.fileOriginalCover %>" placeholder="Обложка"
+            required>
+        </div>
+      </div>
+
+      <div class="file-field input-field file-path-wrapper col s6">
+        <input id="fileBook" name="fileBook" type="file" class="validate">
+        <div class="file-path-wrapper">
+          <i class="material-icons prefix">attach_file</i>
+          <input class="file-path validate" type="text" value="<%= book.fileOriginalBook %>" placeholder="Книга"
+            required>
+        </div>
+      </div>
+    </div>
+
+    <div class="col s12 center">
+      <button class="btn waves-effect waves-light btn-large" type="submit">
+        <% if (action=='create' ) { %>
+          Добавить
+          <% } else { %>
+            Сохранить
+            <% } %>
+              <i class="material-icons right">save</i>
+      </button>
+    </div>
+
+  </form>
+</div>
