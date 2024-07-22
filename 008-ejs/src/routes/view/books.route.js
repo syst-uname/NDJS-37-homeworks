@@ -1,8 +1,8 @@
 import express from "express"
 import path from 'path';
-import config from '../config/index.js'
-import library from "../model/library.js"
-import multer from "../config/multer.js"
+import config from '../../config/index.js'
+import library from "../../model/library.js"
+import multer from "../../config/multer.js"
 
 const router = express.Router()
 
@@ -29,7 +29,7 @@ router.post('/create',
   multer.fields([{ name: 'fileCover' }, { name: 'fileBook' }]),
   (req, res) => {
     library.add(req.body, req.files)
-    res.redirect('/books')
+    res.redirect('/view/books')
   }
 )
 
@@ -43,7 +43,7 @@ router.get('/:id', (req, res) => {
       book: book
     })
   } else {
-    res.redirect('/404')
+    res.redirect('/view/404')
   }
 })
 
@@ -57,7 +57,7 @@ router.get('/update/:id', (req, res) => {
       book: book
     })
   } else {
-    res.redirect('/404')
+    res.redirect('/view/404')
   }
 })
 
@@ -65,14 +65,14 @@ router.post('/update/:id',
   multer.fields([{ name: 'fileCover' }, { name: 'fileBook' }]),
   (req, res) => {
     library.update(req.params.id, req.body, req.files)
-    res.redirect('/books/' + req.params.id)
+    res.redirect('/view/books/' + req.params.id)
   }
 )
 
 // удаление книги (приходится делать через GET)
 router.get('/delete/:id', (req, res) => {
   if (library.delete(req.params.id)) {
-    res.redirect('/books')
+    res.redirect('/view/books')
   } else {
     res.render('errors/not-found-book', {
       title: 'Книга не найдена',
