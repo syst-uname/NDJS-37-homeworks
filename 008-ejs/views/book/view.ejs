@@ -19,7 +19,8 @@
             </div>
           </span>
 
-          <a href="/books/<%= book.id %>/download" class="btn-floating halfway-fab waves-effect btn-large waves-light">
+          <a href="/view/books/<%= book.id %>/download"
+            class="btn-floating halfway-fab waves-effect btn-large waves-light">
             <i class="material-icons">download</i>
           </a>
         </div>
@@ -38,8 +39,8 @@
         </div>
 
         <div class="card-action">
-          <a href="/books/update/<%= book.id %>" class="teal-text text-lighten-1">Изменить</a>
-          <a href="/books/delete/<%= book.id %>" class="red-text text-lighten-1">Удалить</a>
+          <a href="/view/books/update/<%= book.id %>" class="teal-text text-lighten-1">Изменить</a>
+          <a href="/view/books/delete/<%= book.id %>" class="red-text text-lighten-1">Удалить</a>
         </div>
       </div>
     </div>
