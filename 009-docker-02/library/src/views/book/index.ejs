@@ -1,0 +1,49 @@
+<%- include('../port/layout-start', { title: title, books: books }) %>
+
+  <div class="row grey-text text-darken-2">
+    <h3>
+      <%= title %>
+
+        <div class="right">
+          <a href="/view/books/create">
+            <button class="btn waves-effect waves-light">Добавить<i class="material-icons right">add</i></button>
+          </a>
+        </div>
+    </h3>
+  </div>
+
+  <% if (books.length===0) { %>
+
+    <h6 class="grey-text">Книг пока нет</h6>
+
+    <% } else { %>
+
+      <% books.forEach((book)=> { %>
+        <ul class="collection">
+          <li class="collection-item avatar">
+            <a class="title black-text" href="/view/books/<%= book.id %>">
+              <img src="<%= book.fileNameCover %>" alt="" class="circle" />
+              <p class="title">
+                <%= book.title %>
+              </p>
+              <p class="title grey-text">
+                <%= book.authors %>
+              </p>
+            </a>
+            <blockquote class="grey-text">
+              <%= book.description %>
+            </blockquote>
+            <div class="secondary-content">
+              <a href="/view/books/<%= book.id %>"><i class="material-icons teal-text text-lighten-1">visibility</i></a>
+              <a href="/view/books/update/<%= book.id %>"><i
+                  class="material-icons teal-text text-lighten-1">edit</i></a>
+              <a href="/view/books/delete/<%= book.id %>"><i
+                  class="material-icons red-text text-lighten-1">delete</i></a>
+            </div>
+          </li>
+        </ul>
+
+        <% }) %>
+          <% } %>
+
+            <%- include('../port/layout-end') %>
