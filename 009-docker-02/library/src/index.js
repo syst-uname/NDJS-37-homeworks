@@ -16,4 +16,4 @@ app.use(logger)
 app.use(router)
 app.use(error404)
 
-app.listen(config.server.port, () => console.log(`Приложение запущено на порту ${config.server.port}`))
+app.listen(config.server.port, () => console.log(`Приложение library запущено на порту ${config.server.port}`))

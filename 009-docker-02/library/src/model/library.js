@@ -1,5 +1,6 @@
 import Book from './book.js'
 import { book1, book2, book3 } from './books.mock.js'
+import counter from '../service/counter.service.js'
 
 class Library {
   constructor() {
@@ -26,8 +27,12 @@ class Library {
     }
   }
 
-  get(id) {
-    return this.books.find(book => book.id === +id)
+  async get(id) {
+    const book = {
+      ...this.books.find(book => book.id === +id),
+      views: await counter.get(+id)       // получение количества просмотров
+    }
+    return book
   }
 
   getAll() {

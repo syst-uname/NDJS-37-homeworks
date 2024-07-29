@@ -1,7 +1,6 @@
 {
-  "name": "009-docker-02-library",
+  "name": "009-docker-02-counter",
   "version": "1.0.0",
-  "description": "",
   "type": "module",
   "main": "src/index.js",
   "scripts": {
@@ -11,12 +10,10 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "description": "",
   "dependencies": {
-    "axios": "^1.7.2",
-    "dotenv": "^16.4.5",
-    "ejs": "^3.1.10",
     "express": "^4.19.2",
-    "multer": "^1.4.5-lts.1"
+    "redis": "^4.6.15"
   },
   "devDependencies": {
     "nodemon": "^3.1.4"

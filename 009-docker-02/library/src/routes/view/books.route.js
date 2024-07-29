@@ -1,8 +1,10 @@
 import express from "express"
 import path from 'path';
+
 import config from '../../config/index.js'
 import library from "../../model/library.js"
 import multer from "../../config/multer.js"
+import counter from '../../service/counter.service.js'
 
 const router = express.Router()
 
@@ -34,9 +36,11 @@ router.post('/create',
 )
 
 // конкретная книга
-router.get('/:id', (req, res) => {
-  const book = library.get(req.params.id)
+router.get('/:id', async (req, res) => {
+  const { id } = req.params
+  const book = await library.get(id)
   if (book) {
+    counter.incr(id)       // увеличиние счетчика просмотров
     res.render('book/view', {
       title: 'Просмотр книги',
       books: library.getAll(),
@@ -48,8 +52,8 @@ router.get('/:id', (req, res) => {
 })
 
 // изменение книги
-router.get('/update/:id', (req, res) => {
-  const book = library.get(req.params.id)
+router.get('/update/:id', async (req, res) => {
+  const book = await library.get(req.params.id)
   if (book) {
     res.render('book/update', {
       title: 'Редактирование книги',
@@ -82,8 +86,8 @@ router.get('/delete/:id', (req, res) => {
 })
 
 // скачивание файла книги
-router.get('/:id/download', (req, res) => {
-  const book = library.get(req.params.id)
+router.get('/:id/download', async (req, res) => {
+  const book = await library.get(req.params.id)
   if (book) {
     res.download(
       path.join('src', 'storage', 'public', book.fileNameBook),
