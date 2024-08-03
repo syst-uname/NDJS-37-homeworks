@@ -1,5 +1,5 @@
 import { Router } from "express"
-import library from "../../../model/library.js"
+import library from "../../../models/library.js"
 import multer from "../../../config/multer.js"
 
 const router = Router()

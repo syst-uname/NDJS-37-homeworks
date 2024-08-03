@@ -1,4 +1,4 @@
-import library from "../model/library.js"
+import library from "../models/library.js"
 
 const error404 = (req, res) => {
   res.render('errors/404', {

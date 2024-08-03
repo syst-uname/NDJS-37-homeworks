@@ -2,7 +2,7 @@ import express from "express"
 import path from 'path';
 
 import config from '../../config/index.js'
-import library from "../../model/library.js"
+import library from "../../models/library.js"
 import multer from "../../config/multer.js"
 import counter from '../../service/counter.service.js'
 
