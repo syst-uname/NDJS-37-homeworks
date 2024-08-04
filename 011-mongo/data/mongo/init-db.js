@@ -1,3 +1,6 @@
+// Скрипт для начальной инициализации базы данных
+// запускает один раз при старте контейнера 
+
 const book1 = {
   id: 1,
   title: 'Война и мир',
@@ -53,4 +56,5 @@ const book4 = {
   favorite: 20,
 }
 
-export { book1, book2, book3, book4 }
+db.createCollection("books");
+db.books.insertMany([book1, book2, book3]);

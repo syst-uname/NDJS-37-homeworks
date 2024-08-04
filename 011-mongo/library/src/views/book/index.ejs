@@ -1,4 +1,4 @@
-<%- include('../port/layout-start', { title: title, books: books }) %>
+<%- include('../port/layout-start', { title: title, count: count }) %>
 
   <div class="row grey-text text-darken-2">
     <h3>
@@ -12,7 +12,7 @@
     </h3>
   </div>
 
-  <% if (books.length===0) { %>
+  <% if (!count) { %>
 
     <h6 class="grey-text">Книг пока нет</h6>
 

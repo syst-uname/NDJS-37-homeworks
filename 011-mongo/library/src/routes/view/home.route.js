@@ -1,14 +1,14 @@
 import { Router } from "express";
-import library from "../../models/library.js"
+import library from "../../services/library.js"
 
 const router = Router();
 
 // главная страница
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
   res.render('index',
     {
       title: 'Главная страница',
-      books: library.getAll()
+      count: await library.count()
     }
   )
 })

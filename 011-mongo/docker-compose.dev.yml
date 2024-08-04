@@ -1,31 +1,45 @@
 services:
-  storage:
+
+  storage_redis:
     image: redis
     volumes:
-      - ./data:/data
+      - ./data/redis:/data
+
   counter:
     image: node:22.5
     working_dir: /app
+    ports:
+      - 3001:3001
     volumes:
       - ./counter:/app
     environment:
-      - PORT=3005
-      - REDIS_URL=redis://storage
-    ports:
-      - 8080:3005
+      - PORT=3001
+      - REDIS_URL=redis://storage_redis
     command: npm run dev  
     depends_on:
-      - storage
+      - storage_redis
+
+  storage_mongo:
+    image: mongo 
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_DATABASE: library
+    volumes:
+      - ./data/mongo/init-db.js:/docker-entrypoint-initdb.d/init-db.js:ro 
+
   library:
     image: node:22.5
     working_dir: /app
     volumes:
       - ./library:/app
     environment:
-      - PORT=3006
-      - COUNTER_URL=http://counter:3005
+      - PORT=3002
+      - COUNTER_URL=http://counter:3001
+      - MONGO_URL=mongodb://storage_mongo:27017/library
     ports:
-      - 80:3006
+      - 80:3002
     command: npm run dev
-    depends_on: 
+    depends_on:
       - counter
+      - storage_mongo 

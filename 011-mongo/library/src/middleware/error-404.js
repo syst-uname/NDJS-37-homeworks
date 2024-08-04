@@ -1,10 +1,5 @@
-import library from "../models/library.js"
-
-const error404 = (req, res) => {
-  res.render('errors/404', {
-    title: 'Ошибка 404. Страница не найдена',
-    books: library.getAll()
-  })
+const error = async (req, res) => {
+  res.redirect('/view/error/404')
 }
 
-export default error404
+export default error

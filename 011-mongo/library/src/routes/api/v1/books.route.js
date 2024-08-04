@@ -1,72 +1,72 @@
 import { Router } from "express"
-import library from "../../../models/library.js"
+import library from "../../../services/library.js"
 import multer from "../../../config/multer.js"
 
 const router = Router()
 
 // все книги 
-router.get('/', (req, res) => {
-  res.json(library.getAll())
+router.get('/', async (req, res) => {
+  try {
+    const books = await library.getAll()
+    res.json(books)
+  } catch (error) {
+    res.status(404).json({ error: `Ошибка при получении книг: ${error}` })
+  }
 })
 
 // конкретная книга
-router.get('/:id', (req, res) => {
-  const book = library.get(req.params.id)
-  if (book) {
+router.get('/:id', async (req, res) => {
+  try {
+    const book = await library.get(req.params.id)
     res.json(book)
-  } else {
-    res.status(404)
-    res.json(`Книга ${req.params.id} не найдена`)
+  } catch (error) {
+    res.status(404).json({ error: `Ошибка при получении книги ${req.params.id}: ${error}` })
   }
 })
 
 // добавление книги
 router.post('/',
   multer.single('fileBook'),
-  (req, res) => {
-    const book = library.add(req.body, req.file)
-    if (book) {
+  async (req, res) => {
+    try {
+      const book = await library.add(req.body, req.file)
       res.json(book)
-    } else {
-      res.status(404)
-      res.json(`Книга не создана`)
+    } catch (error) {
+      res.status(404).json({ error: `Ошибка при добавлении книги: ${error}` })
     }
   })
 
 // редактирование книги
-router.put('/:id', (req, res) => {
-  const book = library.update(req.params.id, req.body)
-  if (book) {
-    res.json(book)
-  } else {
-    res.status(404)
-    res.json(`Книга ${req.params.id} не найдена`)
+router.put('/:id', async (req, res) => {
+  try {
+    const result = await library.update(req.params.id, req.body)
+    res.json(result)
+  } catch (error) {
+    res.status(404).json({ error: `Ошибка при редактировании книги ${req.params.id}: ${error}` })
   }
 })
 
 // удаление книги
-router.delete('/:id', (req, res) => {
-  if (library.delete(req.params.id)) {
+router.delete('/:id', async (req, res) => {
+  try {
+    await library.delete(req.params.id)
     res.json(`Книга ${req.params.id} удалена`)
-  } else {
-    res.status(404)
-    res.json(`Книга ${req.params.id} не найдена`)
+  } catch (error) {
+    res.status(404).json({ error: `Ошибка при удалении книги ${req.params.id}: ${error}` })
   }
 })
 
 // скачивание файла книги
-router.get('/:id/download', (req, res) => {
-  const book = library.get(req.params.id)
-  if (book) {
+router.get('/:id/download', async (req, res) => {
+  try {
+    const book = await library.get(req.params.id)
     res.download(book.fileBook, book.fileName, (err) => {
       if (err) {
-        res.status(404)
-        res.json(`Файл ${book.fileName} не найден`)
+        res.status(404).json({ error: `Файл ${book.fileName} не найден` })
       }
     })
-  } else {
-    res.status(404)
-    res.json(`Книга ${req.params.id} не найдена`)
+  } catch (error) {
+    res.status(404).json({ error: `Ошибка при скачивании книги ${req.params.id}: ${error}` })
   }
 })
 

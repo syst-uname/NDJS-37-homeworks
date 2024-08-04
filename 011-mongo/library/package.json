@@ -5,6 +5,7 @@
   "type": "module",
   "main": "src/index.js",
   "scripts": {
+    "local": "nodemon ./src/index.js",
     "dev": "nodemon -L",
     "server": "node src/index.js"
   },
@@ -16,6 +17,7 @@
     "dotenv": "^16.4.5",
     "ejs": "^3.1.10",
     "express": "^4.19.2",
+    "mongoose": "^8.5.2",
     "multer": "^1.4.5-lts.1"
   },
   "devDependencies": {

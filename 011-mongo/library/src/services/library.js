@@ -1,45 +1,37 @@
-import Book from './book.js'
-import { book1, book2, book3 } from './books.mock.js'
-import counter from '../service/counter.service.js'
+import Book from '../models/book.js'
+import counter from './counter.js'
 
 class Library {
-  constructor() {
-    this.books = []
 
-    // тестовые данные
-    this.books.push(book1)
-    this.books.push(book2)
-    this.books.push(book3)
-  }
-
-  add(data, files) {
+  async add(data, files) {
     const book = new Book({
-      id: this.nextId(),
+      id: await this.nextId(),
       ...data,
       fileOriginalCover: files.fileCover[0].originalname,
       fileNameCover: files.fileCover[0].filename,
       fileOriginalBook: files.fileBook[0].originalname,
       fileNameBook: files.fileBook[0].filename
     })
-    if (book) {
-      this.books.push(book)
-      return book
-    }
+    const newBook = await book.save()
+    return newBook
   }
 
   async get(id) {
-    const book = {
-      ...this.books.find(book => book.id === +id),
-      views: await counter.get(+id)       // получение количества просмотров
+    const book = await Book.findOne({ id }).lean()
+    if (book) {
+      book.views = await counter.get(+id)       // получение количества просмотров
+      return book
+    } else {
+      throw new Error('Книга не найдена')
     }
-    return book
   }
 
-  getAll() {
-    return this.books
+  async getAll() {
+    const books = await Book.find()
+    return books
   }
 
-  update(id, data, files) {
+  async update(id, data, files) {
     const fileData = {}
 
     if (files.fileCover) {
@@ -52,27 +44,34 @@ class Library {
       fileData.fileNameBook = files.fileBook[0].filename
     }
 
-    const index = this.books.findIndex(book => book.id === +id)
-    if (index !== -1) {
-      this.books[index] = {
-        ...this.books[index],
+    const result = await Book.updateOne(
+      { id },
+      {
         ...data,
         ...fileData
       }
-      return this.books[index]
-    }
+    )
+    return result.modifiedCount === 1
   }
 
-  delete(id) {
-    const index = this.books.findIndex(book => book.id === +id)
-    if (index !== -1) {
-      this.books.splice(index, 1)
-      return true
-    }
+  async delete(id) {
+    const result = await Book.deleteOne({ id })
+    return result.deletedCount === 1
   }
 
-  nextId() {
-    return this.books.length === 0 ? 1 : this.books[this.books.length - 1].id + 1
+  // следующий id книги
+  async nextId() {
+    const lastBook = await Book.findOne().sort({ id: -1 }).limit(1)
+    return lastBook ? lastBook.id + 1 : 1
+  }
+
+  // всего книг 
+  async count() {
+    try {
+      return await Book.countDocuments()
+    } catch (error) {
+      return 0
+    }
   }
 }
 
