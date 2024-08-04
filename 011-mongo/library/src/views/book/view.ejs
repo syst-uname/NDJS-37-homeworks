@@ -1,0 +1,53 @@
+<%- include('../port/layout-start', { title: title, count: count }) %>
+
+  <div class="row grey-text text-darken-2">
+    <h3>
+      <%= title %>
+    </h3>
+  </div>
+
+  <div class="row">
+    <div class="container">
+      <div class="card">
+        <div class="card-image">
+          <img src="<%= book.fileNameCover %>">
+
+          <span class="card-title border-left">
+            <div class="chip">
+              <%= book.favorite %>
+                <i style="font-size: 13px" class="material-icons teal-text">favorite</i>
+            </div>
+            <div class="chip">
+              <%= book.views %>
+                <i style="font-size: 13px" class="material-icons teal-text">visibility</i>
+            </div>
+          </span>
+
+          <a href="/view/book/<%= book.id %>/download"
+            class="btn-floating halfway-fab waves-effect btn-large waves-light">
+            <i class="material-icons">download</i>
+          </a>
+        </div>
+
+        <div class="card-content">
+          <span class="card-title border-left">
+            <%= book.title %>
+          </span>
+          <span class="card-title grey-text">
+            <%= book.authors %>
+          </span>
+
+          <p class="grey-text">
+            <%= book.description %>
+          </p>
+        </div>
+
+        <div class="card-action">
+          <a href="/view/book/update/<%= book.id %>" class="teal-text text-lighten-1">Изменить</a>
+          <a href="/view/book/delete/<%= book.id %>" class="red-text text-lighten-1">Удалить</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%- include('../port/layout-end') %>
