@@ -1,23 +1,37 @@
 services:
-  storage:
+
+  storage_redis:
     image: redis
     volumes:
-      - ./data:/data
+      - ./data/redis:/data
+
   counter:
-    image: u0name/009-docker-02:counter-v1.0.0
-    environment:
-      - PORT=3010
-      - REDIS_URL=redis://storage
+    image: u0name/011-mongo:counter-v1.0.0
     ports:
-      - 8080:3010
+      - 3001:3001
+    environment:
+      - PORT=3001
+      - REDIS_URL=redis://storage_redis
     depends_on:
-      - storage
-  library:
-    image: u0name/009-docker-02:library-v1.0.0
-    environment:
-      - PORT=3011
-      - COUNTER_URL=http://counter:3010
+      - storage_redis
+
+  storage_mongo:
+    image: mongo 
     ports:
-      - 80:3011
+      - 27017:27017
+    environment:
+      MONGO_INITDB_DATABASE: library
+    volumes:
+      - ./data/mongo/init-db.js:/docker-entrypoint-initdb.d/init-db.js:ro 
+
+  library:
+    image: u0name/011-mongo:library-v1.0.0
+    ports:
+      - 80:3002
+    environment:
+      - PORT=3002
+      - COUNTER_URL=http://counter:3001
+      - MONGO_URL=mongodb://storage_mongo:27017/library
     depends_on:
       - counter
+      - storage_mongo 
