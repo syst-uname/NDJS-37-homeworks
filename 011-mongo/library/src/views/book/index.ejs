@@ -5,7 +5,7 @@
       <%= title %>
 
         <div class="right">
-          <a href="/view/books/create">
+          <a href="/view/book/create">
             <button class="btn waves-effect waves-light">Добавить<i class="material-icons right">add</i></button>
           </a>
         </div>
@@ -21,7 +21,7 @@
       <% books.forEach((book)=> { %>
         <ul class="collection">
           <li class="collection-item avatar">
-            <a class="title black-text" href="/view/books/<%= book.id %>">
+            <a class="title black-text" href="/view/book/<%= book.id %>">
               <img src="<%= book.fileNameCover %>" alt="" class="circle" />
               <p class="title">
                 <%= book.title %>
@@ -34,10 +34,9 @@
               <%= book.description %>
             </blockquote>
             <div class="secondary-content">
-              <a href="/view/books/<%= book.id %>"><i class="material-icons teal-text text-lighten-1">visibility</i></a>
-              <a href="/view/books/update/<%= book.id %>"><i
-                  class="material-icons teal-text text-lighten-1">edit</i></a>
-              <a href="/view/books/delete/<%= book.id %>"><i
+              <a href="/view/book/<%= book.id %>"><i class="material-icons teal-text text-lighten-1">visibility</i></a>
+              <a href="/view/book/update/<%= book.id %>"><i class="material-icons teal-text text-lighten-1">edit</i></a>
+              <a href="/view/book/delete/<%= book.id %>"><i
                   class="material-icons red-text text-lighten-1">delete</i></a>
             </div>
           </li>

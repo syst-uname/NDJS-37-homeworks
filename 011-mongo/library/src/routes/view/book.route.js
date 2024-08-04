@@ -41,7 +41,7 @@ router.post('/create',
   async (req, res) => {
     try {
       await library.add(req.body, req.files)
-      res.redirect('/view/books')
+      res.redirect('/view/book')
     } catch (error) {
       res.status(404).json({ error: `Ошибка при добавлении книги: ${error}` })
     }
@@ -82,7 +82,7 @@ router.post('/update/:id',
   async (req, res) => {
     try {
       await library.update(req.params.id, req.body, req.files)
-      res.redirect('/view/books/' + req.params.id)
+      res.redirect('/view/book/' + req.params.id)
     } catch (error) {
       res.redirect('/view/error')
     }
@@ -93,7 +93,7 @@ router.post('/update/:id',
 router.get('/delete/:id', async (req, res) => {
   try {
     await library.delete(req.params.id)
-    res.redirect('/view/books')
+    res.redirect('/view/book')
   } catch (error) {
     res.redirect('/view/error')
   }
@@ -106,7 +106,11 @@ router.get('/:id/download', async (req, res) => {
     res.download(
       path.join('src', 'storage', 'public', book.fileNameBook),
       book.fileOriginalBook,
-      async (error) => res.redirect('/view/error/not_found_book')
+      async (error) => {
+        if (error) {
+          res.redirect('/view/error/not_found_book')
+        }
+      }
     )
   } catch (error) {
     res.redirect('/view/error/not_found_book')
