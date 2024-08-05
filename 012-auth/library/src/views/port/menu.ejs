@@ -1,0 +1,28 @@
+<div class="navbar-fixed">
+  <nav class="grey lighten-2">
+    <div class="container">
+      <div class="nav-wrapper">
+
+        <a href="/view/book" class="brand-logo grey-text text-darken-3 right">
+          <i class="material-icons grey-text text-darken-3">import_contacts</i>
+          Библиотека
+        </a>
+
+        <ul id="nav-mobile" class="left hide-on-med-and-down">
+          <li><a href="/view" class="grey-text text-darken-3">Главная</a></li>
+          <li>
+            <a href="/view/book" class="grey-text text-darken-3">
+              Книги
+              <% if (count) { %>
+                <span class="new badge" data-badge-caption="">
+                  <%= count %>
+                </span>
+                <% } %>
+            </a>
+          </li>
+        </ul>
+
+      </div>
+    </div>
+  </nav>
+</div>
