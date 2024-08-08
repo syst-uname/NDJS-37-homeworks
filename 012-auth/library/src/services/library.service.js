@@ -1,4 +1,4 @@
-import Book from '../models/book.js'
+import Book from '../models/book.model.js'
 import counter from './counter.js'
 
 class Library {
