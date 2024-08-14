@@ -1,72 +1,84 @@
 import { Router } from "express"
-import library from "../../../services/library.js"
+
+import LibraryService from "../../../services/library.service.js"
+import config from '../../../config/index.js'
 import multer from "../../../config/multer.js"
+import authenticateUser from "../../../middleware/authenticate.js"
 
 const router = Router()
+
+router.use(authenticateUser)
 
 // все книги 
 router.get('/', async (req, res) => {
   try {
-    const books = await library.getAll()
-    res.json(books)
+    const books = await LibraryService.getAll()
+    res.status(200).json(books)
   } catch (error) {
-    res.status(404).json({ error: `Ошибка при получении книг: ${error}` })
+    res.status(error.status).json({ error: error.message })
   }
 })
 
 // конкретная книга
 router.get('/:id', async (req, res) => {
   try {
-    const book = await library.get(req.params.id)
-    res.json(book)
+    const book = await LibraryService.get(req.params.id)
+    res.status(200).json(book)
   } catch (error) {
-    res.status(404).json({ error: `Ошибка при получении книги ${req.params.id}: ${error}` })
+    res.status(error.status).json({ error: error.message })
   }
 })
 
 // добавление книги
 router.post('/',
-  multer.single('fileBook'),
+  multer.fields([{ name: 'fileCover' }, { name: 'fileBook' }]),
   async (req, res) => {
     try {
-      const book = await library.add(req.body, req.file)
-      res.json(book)
+      const book = await LibraryService.add(req.body, req.file)
+      res.status(201).json(book)
     } catch (error) {
-      res.status(404).json({ error: `Ошибка при добавлении книги: ${error}` })
+      res.status(error.status).json({ error: error.message })
     }
-  })
+  }
+)
 
 // редактирование книги
-router.put('/:id', async (req, res) => {
-  try {
-    const result = await library.update(req.params.id, req.body)
-    res.json(result)
-  } catch (error) {
-    res.status(404).json({ error: `Ошибка при редактировании книги ${req.params.id}: ${error}` })
+router.put('/:id',
+  multer.fields([{ name: 'fileCover' }, { name: 'fileBook' }]),
+  async (req, res) => {
+    try {
+      const result = await LibraryService.update(req.params.id, req.body)
+      res.status(200).json(result)
+    } catch (error) {
+      res.status(error.status).json({ error: error.message })
+    }
   }
-})
+)
 
 // удаление книги
 router.delete('/:id', async (req, res) => {
   try {
-    await library.delete(req.params.id)
-    res.json(`Книга ${req.params.id} удалена`)
+    await LibraryService.delete(req.params.id)
+    res.status(200).json(`Книга ${req.params.id} удалена`)
   } catch (error) {
-    res.status(404).json({ error: `Ошибка при удалении книги ${req.params.id}: ${error}` })
+    res.status(error.status).json({ error: error.message })
   }
 })
 
 // скачивание файла книги
 router.get('/:id/download', async (req, res) => {
   try {
-    const book = await library.get(req.params.id)
-    res.download(book.fileBook, book.fileName, (err) => {
-      if (err) {
-        res.status(404).json({ error: `Файл ${book.fileName} не найден` })
-      }
-    })
+    const book = await LibraryService.get(req.params.id)
+    res.download(
+      path.join(config.server.publicDir, book.fileNameBook),
+      book.fileOriginalBook,
+      (err) => {
+        if (err) {
+          res.status(404).json({ error: `Файл ${book.fileName} не найден` })
+        }
+      })
   } catch (error) {
-    res.status(404).json({ error: `Ошибка при скачивании книги ${req.params.id}: ${error}` })
+    res.status(500).json({ error: error.message })
   }
 })
 

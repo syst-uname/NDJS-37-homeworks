@@ -1,78 +1,121 @@
-import Book from '../models/book.model.js'
-import counter from './counter.js'
+import CustomError from '../errors/costom.error.js'
+import BookModel from '../models/book.model.js'
+import CounterService from './counter.service.js'
 
-class Library {
+class LibraryService {
 
   async add(data, files) {
-    const book = new Book({
-      id: await this.nextId(),
-      ...data,
-      fileOriginalCover: files.fileCover[0].originalname,
-      fileNameCover: files.fileCover[0].filename,
-      fileOriginalBook: files.fileBook[0].originalname,
-      fileNameBook: files.fileBook[0].filename
-    })
-    const newBook = await book.save()
-    return newBook
+    try {
+      const book = new BookModel({
+        id: await this.nextId(),
+        ...data,
+        fileOriginalCover: files.fileCover[0].originalname,
+        fileNameCover: files.fileCover[0].filename,
+        fileOriginalBook: files.fileBook[0].originalname,
+        fileNameBook: files.fileBook[0].filename
+      })
+      const newBook = await book.save()
+      return newBook
+    } catch (error) {
+      throw new CustomError(`Ошибка при добавлении книги: ${error.message}`, 500)
+    }
   }
 
   async get(id) {
-    const book = await Book.findOne({ id }).lean()
-    if (book) {
-      book.views = await counter.get(+id)       // получение количества просмотров
-      return book
-    } else {
-      throw new Error('Книга не найдена')
+    try {
+      const book = await BookModel.findOne({ id }).lean()
+      if (book) {
+        book.views = await CounterService.get(+id)       // получение количества просмотров
+        return book
+      } else {
+        throw new Error(`Книга ${id} не найдена`)
+      }
+    } catch (error) {
+      throw new CustomError(`Ошибка при получении книги ${id}: ${error.message}`, 404)
     }
   }
 
   async getAll() {
-    const books = await Book.find()
-    return books
+    try {
+      const books = await BookModel.find()
+      return books
+    } catch (error) {
+      throw new CustomError(`Ошибка при получении книг: ${error.message}`, 500)
+    }
   }
 
   async update(id, data, files) {
-    const fileData = {}
-
-    if (files.fileCover) {
-      fileData.fileOriginalCover = files.fileCover[0].originalname
-      fileData.fileNameCover = files.fileCover[0].filename
-    }
-
-    if (files.fileBook) {
-      fileData.fileOriginalBook = files.fileBook[0].originalname
-      fileData.fileNameBook = files.fileBook[0].filename
-    }
-
-    const result = await Book.updateOne(
-      { id },
-      {
-        ...data,
-        ...fileData
+    try {
+      const fileData = {}
+      if (files.fileCover) {
+        fileData.fileOriginalCover = files.fileCover[0].originalname
+        fileData.fileNameCover = files.fileCover[0].filename
       }
-    )
-    return result.modifiedCount === 1
+      if (files.fileBook) {
+        fileData.fileOriginalBook = files.fileBook[0].originalname
+        fileData.fileNameBook = files.fileBook[0].filename
+      }
+
+      const result = await BookModel.updateOne(
+        { id },
+        {
+          ...data,
+          ...fileData
+        }
+      )
+      return result.modifiedCount === 1
+    } catch (error) {
+      throw new CustomError(`Ошибка при обновлении книги ${id}: ${error.message}`, 500)
+    }
   }
 
   async delete(id) {
-    const result = await Book.deleteOne({ id })
-    return result.deletedCount === 1
+    try {
+      const result = await BookModel.deleteOne({ id })
+      return result.deletedCount === 1
+    } catch (error) {
+      throw new CustomError(`Ошибка при удалении книги ${id}: ${error.message}`, 500)
+    }
   }
 
   // следующий id книги
   async nextId() {
-    const lastBook = await Book.findOne().sort({ id: -1 }).limit(1)
+    const lastBook = await BookModel.findOne().sort({ id: -1 }).limit(1)
     return lastBook ? lastBook.id + 1 : 1
   }
 
   // всего книг 
   async count() {
     try {
-      return await Book.countDocuments()
+      return await BookModel.countDocuments()
     } catch (error) {
       return 0
     }
   }
+
+  // контент для главной страницы
+  async titleContent() {
+    return {
+      new: await this.randomBooks(2),
+      popular: await this.randomBooks(2),
+      specially: await this.randomBooks(1),
+    }
+  }
+
+  // произвольный набор книг для главного экрана 
+  async randomBooks(count) {
+    const books = await this.getAll()
+    if (books.length < count)
+      return books
+
+    let result = []
+    while (result.length < count) {
+      const index = Math.floor(Math.random() * books.length)
+      const [book] = books.splice(index, 1)
+      result.push(book)
+    }
+    return result
+  }
 }
 
-export default new Library()
+export default new LibraryService()

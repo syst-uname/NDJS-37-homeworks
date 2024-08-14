@@ -6,7 +6,7 @@ services:
       - ./data/redis:/data
 
   counter:
-    image: u0name/011-mongo:counter-v1.0.0
+    image: u0name/012-auth:counter-v1.0.0
     ports:
       - 3001:3001
     environment:
@@ -25,13 +25,15 @@ services:
       - ./data/mongo/init-db.js:/docker-entrypoint-initdb.d/init-db.js:ro 
 
   library:
-    image: u0name/011-mongo:library-v1.0.0
+    image: u0name/012-auth:library-v1.0.0
     ports:
       - 80:3002
     environment:
       - PORT=3002
       - COUNTER_URL=http://counter:3001
       - MONGO_URL=mongodb://storage_mongo:27017/library
+    env_file:
+      - ./library/.env      
     depends_on:
       - counter
       - storage_mongo 

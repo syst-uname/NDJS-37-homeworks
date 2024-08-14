@@ -1,25 +1,34 @@
 import express from "express"
 import path from 'path';
 
-import library from "../../services/library.js"
-import counter from '../../services/counter.js'
+import authenticateUser from "../../middleware/authenticate.js";
+import LibraryService from "../../services/library.service.js"
+import CounterService from '../../services/counter.service.js'
 import config from '../../config/index.js'
 import multer from "../../config/multer.js"
 
 const router = express.Router()
 
-router.use(express.static(path.join(config.server.dirname, 'src', 'storage', 'public')));
+router.use(authenticateUser)
 
 // все книги  
 router.get('/', async (req, res) => {
   try {
+    const toast = req.session.messageBook
+    req.session.messageBook = ''
+
     res.render('book/index', {
-      title: 'Список книг',
-      count: await library.count(),
-      books: await library.getAll()
+      title: 'Все книги',
+      user: req.user,
+      count: await LibraryService.count(),
+      books: await LibraryService.getAll(),
+      toast: toast
     })
   } catch (error) {
-    res.redirect('/view/error')
+    res.render('errors/error', {
+      user: req.user,
+      error: error.message,
+    })
   }
 })
 
@@ -28,11 +37,16 @@ router.get('/create', async (req, res) => {
   try {
     res.render('book/create', {
       title: 'Добавление книги',
-      count: await library.count(),
-      book: {}
+      user: req.user,
+      count: await LibraryService.count(),
+      book: {},
+      toast: ''
     })
   } catch (error) {
-    res.redirect('/view/error')
+    res.render('errors/error', {
+      user: req.user,
+      error: error.message,
+    })
   }
 })
 
@@ -40,10 +54,14 @@ router.post('/create',
   multer.fields([{ name: 'fileCover' }, { name: 'fileBook' }]),
   async (req, res) => {
     try {
-      await library.add(req.body, req.files)
+      await LibraryService.add(req.body, req.files)
+      req.session.messageBook = `Книга "${req.body.title}" добавлена`
       res.redirect('/view/book')
     } catch (error) {
-      res.status(404).json({ error: `Ошибка при добавлении книги: ${error}` })
+      res.render('errors/error', {
+        user: req.user,
+        error: error.message,
+      })
     }
   }
 )
@@ -51,29 +69,40 @@ router.post('/create',
 // конкретная книга
 router.get('/:id', async (req, res) => {
   try {
-    const book = await library.get(req.params.id)
-    counter.incr(req.params.id)       // увеличение счетчика просмотров
+    const book = await LibraryService.get(req.params.id)
+    CounterService.incr(req.params.id)      // счетчик просмотров книги
+
     res.render('book/view', {
       title: 'Просмотр книги',
-      count: await library.count(),
-      book: book
+      user: req.user,
+      count: await LibraryService.count(),
+      book: book,
+      toast: ''
     })
   } catch (error) {
-    res.redirect('/view/error/not_found_book')
+    res.render('errors/error', {
+      user: req.user,
+      error: error.message,
+    })
   }
 })
 
 // изменение книги
 router.get('/update/:id', async (req, res) => {
   try {
-    const book = await library.get(req.params.id)
+    const book = await LibraryService.get(req.params.id)
     res.render('book/update', {
       title: 'Редактирование книги',
-      count: await library.count(),
-      book: book
+      user: req.user,
+      count: await LibraryService.count(),
+      book: book,
+      toast: ''
     })
   } catch (error) {
-    res.redirect('/view/error')
+    res.render('errors/error', {
+      user: req.user,
+      error: error.message
+    })
   }
 })
 
@@ -81,10 +110,13 @@ router.post('/update/:id',
   multer.fields([{ name: 'fileCover' }, { name: 'fileBook' }]),
   async (req, res) => {
     try {
-      await library.update(req.params.id, req.body, req.files)
+      await LibraryService.update(req.params.id, req.body, req.files)
       res.redirect('/view/book/' + req.params.id)
     } catch (error) {
-      res.redirect('/view/error')
+      res.render('errors/error', {
+        user: req.user,
+        error: error.message
+      })
     }
   }
 )
@@ -92,28 +124,38 @@ router.post('/update/:id',
 // удаление книги (приходится делать через GET)
 router.get('/delete/:id', async (req, res) => {
   try {
-    await library.delete(req.params.id)
+    await LibraryService.delete(req.params.id)
+    req.session.messageBook = `Книга удалена`     // отобразится на новой странице
     res.redirect('/view/book')
   } catch (error) {
-    res.redirect('/view/error')
+    res.render('errors/error', {
+      user: req.user,
+      error: error.message
+    })
   }
 })
 
 // скачивание файла книги
 router.get('/:id/download', async (req, res) => {
   try {
-    const book = await library.get(req.params.id)
+    const book = await LibraryService.get(req.params.id)
     res.download(
-      path.join('src', 'storage', 'public', book.fileNameBook),
+      path.join(config.server.publicDir, book.fileNameBook),
       book.fileOriginalBook,
-      async (error) => {
+      (error) => {
         if (error) {
-          res.redirect('/view/error/not_found_book')
+          res.render('errors/error', {
+            user: req.user,
+            error: error.message
+          })
         }
       }
     )
   } catch (error) {
-    res.redirect('/view/error/not_found_book')
+    res.render('errors/error', {
+      user: req.user,
+      error: error.message
+    })
   }
 })
 

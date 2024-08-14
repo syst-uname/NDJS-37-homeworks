@@ -1,6 +1,6 @@
 import { Router } from 'express'
-import { default as userRoute } from './user.route.js'
-import { default as bookRoute } from './book.route.js'
+import userRoute from './user.route.js'
+import bookRoute from './book.route.js'
 
 const router = Router()
 

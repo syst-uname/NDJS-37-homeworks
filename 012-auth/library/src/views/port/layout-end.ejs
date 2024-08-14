@@ -8,11 +8,37 @@
     </div>
   </div>
   <div class="footer-copyright">
-    <div class="container grey-text text-darken-2">© 2024 012-auth</div>
+    <div class="container grey-text text-darken-2">© 2024 auth</div>
   </div>
 </footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+<script>
+  $(function() {
+    $('.sidenav').sidenav();
+  });
+
+  $(document).ready(function() {
+    $('.tooltipped').tooltip();
+  });
+
+  $(document).ready(function() {
+    $('.collapsible').collapsible();
+  });
+</script>
+
+<% if (toast) { %>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    let toastHTML = '<h5 class="grey-text text-darken-2"><%= toast %></h5>';
+    M.toast({
+      html: toastHTML
+    });
+  });
+</script>
+<% } %>
+
 </body>
 
 </html>

@@ -24,12 +24,24 @@
     blockquote {
       border-left: 4px solid #26A69A;
     }
+
+    .toast {
+      background-color: rgba(189, 189, 189, 0.8) !important;
+    }
+
+    #toast-container {
+      min-width: 10%;
+      top: 50%;
+      right: 50%;
+      transform: translateX(50%) translateY(50%);
+    }
   </style>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
 </head>
 
 <body>
 
-  <%- include('menu.ejs', { count: count }) %>
+  <%- include('header', { user: user, count: count }) %>
 
-    <main class="grey lighten-3">
-      <div class="container">
+  <main class="grey lighten-3">
+    <div class="container">

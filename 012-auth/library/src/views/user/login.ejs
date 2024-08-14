@@ -1,0 +1,37 @@
+<%- include('../port/layout-start', { title: title, user: user, count: count }) %>
+
+<!-- форма с полями для входа -->
+<form method="POST" action="/view/user/login" class="col s12">
+
+  <%- include('./user-fields-start') %>
+
+  <div class="card-content">
+
+    <span class="card-title"><%= title %></span>
+    <br>
+
+    <!-- место для возможных сообщений -->
+    <% if (message) { %>
+    <div class="row center red-text"><%= message %></div>
+    <% } %>
+
+    <!-- поля -->
+    <%- include('./user-field-username', { value: defaults.username, disabled: '' }) %>
+    <%- include('./user-field-password', { value: defaults.password, disabled: '' }) %>
+
+  </div>
+
+  <div class="card-action">
+    <button class="btn grey lighten-5 teal-text btn-flat" type="submit">
+      Войти
+    </button>
+    <button class="btn grey lighten-5 teal-text btn-flat">
+      <a href="/view/user/signup" class="grey-text">Регистрации</a>
+    </button>
+  </div>
+
+  <%- include('./user-fields-end') %>
+
+</form>
+
+<%- include('../port/layout-end', { toast: toast }, { toast: toast }) %>

@@ -1,6 +1,5 @@
 // Скрипт для начальной инициализации базы данных
 // запускает один раз при старте контейнера 
-
 const book1 = {
   id: 1,
   title: 'Война и мир',
@@ -46,6 +45,7 @@ const book3 = {
 
 // при создании новой книги 
 const book4 = {
+  id: 4,
   title: 'Государство',
   authors: 'Платон',
   description:
@@ -53,8 +53,41 @@ const book4 = {
     'Написан в 360 г. до н. э. С точки зрения Платона, государство ' +
     'является выражением идеи справедливости. В диалоге впервые отчётливо ' +
     'определяются философы как люди, способные постичь то, что вечно тождественно самому себе (идея).',
-  favorite: 20,
+  favorite: 10,
+  fileNameCover: 'Платон - Государство.jpg',
+  fileOriginalCover: 'Государство.jpg',
+  fileNameBook: 'Платон - Государство.txt',
+  fileOriginalBook: 'Государство.txt'
 }
 
 db.createCollection("books");
-db.books.insertMany([book1, book2, book3]);
+db.books.insertMany([book1, book2, book3, book4]);
+
+
+// Пользователи 
+const user1 = {
+  username: 'JD',
+  fullname: 'John Doe',
+  email: 'JohnDoe@gmail.com',
+  password: '$2b$10$jQleZK2mzlhCxJE2076dZOQtB9OCDo8j3.MsajDRN5W5eXFNqpv0e',   // JD
+  created: new Date(),
+}
+
+const user2 = {
+  username: 'BadComedian',
+  fullname: 'Евгений Баженов',
+  email: 'BadComedian@mail.ru',
+  password: '$2b$10$ZXht5NGvXJhPb6Ae7YUgfO559tE2kEnUimEVSYjvaOf7zkIlYa.wS',   // BadComedian
+  created: new Date(),
+}
+
+const user3 = {
+  username: 'Admin',
+  fullname: 'Администратор',
+  email: 'admin@library.ru',
+  password: '$2b$10$1K6MrVhv1Ivn/aNLk3s2tepCL2Z14xQHuLFwbcntl.PomQa626IIa',   // Admin
+  created: new Date(),
+}
+
+db.createCollection("users");
+db.users.insertMany([user1, user2, user3]);

@@ -32,6 +32,8 @@ services:
       - PORT=3002
       - COUNTER_URL=http://counter:3001
       - MONGO_URL=mongodb://storage_mongo:27017/library
+    env_file:
+      - ./library/.env
     depends_on:
       - counter
       - storage_mongo 

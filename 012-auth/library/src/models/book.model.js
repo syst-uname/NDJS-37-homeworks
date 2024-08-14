@@ -12,6 +12,6 @@ const bookSchema = new Schema({
   fileOriginalBook: { type: String, required: true },
 })
 
-const Book = model('Book', bookSchema)
+const BookModel = model('Book', bookSchema)
 
-export default Book
+export default BookModel

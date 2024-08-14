@@ -1,7 +1,8 @@
 import axios from 'axios'
 import config from '../config/index.js';
 
-class Counter {
+class CounterService {
+
   async incr(bookId) {
     try {
       await axios.post(`${config.counter.url}/counter/${bookId}/incr`);
@@ -22,4 +23,4 @@ class Counter {
   }
 }
 
-export default new Counter()
+export default new CounterService()
