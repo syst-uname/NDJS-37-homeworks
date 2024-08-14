@@ -1,0 +1,19 @@
+<!-- Превью пользователя в боковом меню -->
+<li>
+  <div class="user-view background grey lighten-2">
+
+    <%- include('./avatar', { user: user }) %>
+
+    <a href="/view/user/me"><span class="name grey-text text-darken-3"><%= user.fullname %></span></a>
+
+    <span class="email">
+      <a href="/view/user/me" class="grey-text text-darken-3"><%= user.email %></a>
+
+      <!-- Кнопка выхода -->
+      <a href="/view/user/logout" class="grey-text text-darken">
+        <i class="material-icons right tooltipped" data-tooltip="Выход">exit_to_app</i>
+      </a>
+    </span>
+
+  </div>
+</li>

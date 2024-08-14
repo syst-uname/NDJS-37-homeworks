@@ -1,0 +1,19 @@
+<ul class="collection z-depth-1">
+  <li class="collection-item avatar">
+
+    <a class="title black-text" href="/view/book/<%= book.id %>">
+      <img src="/<%= book.fileNameCover %>" class="circle" />
+      <p class="title"><%= book.title %></p>
+      <p class="title grey-text"><%= book.authors %></p>
+    </a>
+    <blockquote class="grey-text"><%= book.description %></blockquote>
+
+    <!-- Меню для киниги -->
+    <div class="secondary-content">
+      <a href="/view/book/<%= book.id %>"><i class="material-icons teal-text text-lighten-1">visibility</i></a>
+      <a href="/view/book/update/<%= book.id %>"><i class="material-icons teal-text text-lighten-1">edit</i></a>
+      <a href="/view/book/delete/<%= book.id %>"><i class="material-icons red-text text-lighten-1">delete</i></a>
+    </div>
+
+  </li>
+</ul>

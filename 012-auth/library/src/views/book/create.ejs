@@ -1,0 +1,9 @@
+<%- include('../port/layout-start', { title: title, user: user, count: count }) %>
+
+<%- include('./form', { 
+  title: title, 
+  book: book, 
+  action: 'create' 
+}) %>
+
+<%- include('../port/layout-end', { toast: toast }) %>

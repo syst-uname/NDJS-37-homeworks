@@ -1,0 +1,28 @@
+<%- include('../port/layout-start', { title: title, user: user, count: count }) %>
+
+<div class="row grey-text text-darken-2">
+  <h5>
+    <%= title %>
+
+    <div class="right">
+      <a href="/view/book/create">
+        <button class="btn waves-effect waves-light">Добавить<i class="material-icons right">add</i></button>
+      </a>
+    </div>
+  </h5>
+</div>
+
+<% if (!count) { %>
+
+<h6 class="grey-text">Книг пока нет</h6>
+
+<% } else { %>
+
+<% books.forEach((book)=> { %>
+
+<%- include('./book', { book: book }) %>
+
+<% }) %>
+<% } %>
+
+<%- include('../port/layout-end', { toast: toast }) %>

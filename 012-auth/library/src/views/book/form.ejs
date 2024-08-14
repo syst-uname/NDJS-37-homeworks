@@ -1,0 +1,59 @@
+<form id="bookForm" method="POST" action="/view/book/<%= action %>" enctype="multipart/form-data" class="col s12">
+  <div class="card grey lighten-5">
+    <div class="card-content">
+
+      <span class="card-title"><%= title %></span>
+      <br>
+
+      <div class="input-field">
+        <i class="material-icons prefix grey-text text-darken-1">import_contacts</i>
+        <input id="title" name="title" type="text" value="<%= book.title %>" class="validate" required>
+        <label for="title">Название</label>
+      </div>
+
+      <div class="input-field">
+        <i class="material-icons prefix grey-text text-darken-1">perm_identity</i>
+        <input id="authors" name="authors" type="text" value="<%= book.authors %>" class="validate" required>
+        <label for="authors">Автор</label>
+      </div>
+
+      <div class="row">
+        <div class="input-field col s9">
+          <i class="material-icons prefix grey-text text-darken-1">info_outline</i>
+          <textarea id="description" name="description" value="<%= book.description %>" class="materialize-textarea" required><%= book.description %></textarea>
+          <label for="description">Описание</label>
+        </div>
+
+        <div class="input-field col s3">
+          <i class="material-icons prefix grey-text text-darken-1">favorite_border</i>
+          <input id="favorite" name="favorite" type="number" value="<%= book.favorite %>" class="validate" required>
+          <label for="favorite">Понравилось</label>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="file-field input-field col s6">
+          <input id="fileCover" name="fileCover" type="file" class="validate">
+          <div class="file-path-wrapper">
+            <i class="material-icons prefix grey-text text-darken-1">image</i>
+            <input class="file-path validate" type="text" value="<%= book.fileOriginalCover %>" placeholder="Обложка" required>
+          </div>
+        </div>
+
+        <div class="file-field input-field file-path-wrapper col s6">
+          <input id="fileBook" name="fileBook" type="file" class="validate">
+          <div class="file-path-wrapper">
+            <i class="material-icons prefix grey-text text-darken-1">attach_file</i>
+            <input class="file-path validate" type="text" value="<%= book.fileOriginalBook %>" placeholder="Книга" required>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="card-action">
+      <button class="btn grey lighten-5 teal-text btn-flat" type="submit">Сохранить</button>
+    </div>
+
+  </div>
+</form>
