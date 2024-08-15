@@ -1,0 +1,49 @@
+<%- include('./port/layout-start', { title: title, user: user, count: count }) %>
+
+<% if (user) { %>
+
+<ul class="collapsible">
+  <li>
+    <div class="collapsible-header"><i class="material-icons">fiber_new</i>Новинки</div>
+    <div class="collapsible-body">
+      <% content.new.forEach((book)=> { %>
+      <%- include('./book/book', { book: book }) %>
+      <% }) %>
+    </div>
+  </li>
+
+  <li>
+    <div class="collapsible-header"><i class="material-icons">people_outline</i>Популярное</div>
+    <div class="collapsible-body">
+      <% content.popular.forEach((book)=> { %>
+      <%- include('./book/book', { book: book }) %>
+      <% }) %>
+    </div>
+  </li>
+
+  <li>
+    <div class="collapsible-header">
+      <i class="material-icons">star_border</i>
+      <span>Специально для <%- include('./user/avatar', { user: user }) %></span>
+    </div>
+    <div class="collapsible-body">
+      <% content.specially.forEach((book)=> { %>
+      <%- include('./book/book', { book: book }) %>
+      <% }) %>
+    </div>
+  </li>
+</ul>
+
+<% } else { %>
+
+<div class="row center">
+  <h5 class="grey-text text-darken-2">Библиотека доступна только авторизованным пользователям</h5>
+  <div class="section">
+    <a href="/view/user/login">
+      <button class="btn waves-effect waves-light">Авторизоваться<i class="material-icons right">perm_identity</i></button>
+    </a>
+  </div>
+</div>
+<% } %>
+
+<%- include('./port/layout-end') %>

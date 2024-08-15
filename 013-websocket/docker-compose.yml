@@ -6,16 +6,12 @@ services:
       - ./data/redis:/data
 
   counter:
-    image: node:22.5
-    working_dir: /app
+    image: u0name/012-auth:counter-v1.0.0
     ports:
       - 3001:3001
-    volumes:
-      - ./counter:/app
     environment:
       - PORT=3001
       - REDIS_URL=redis://storage_redis
-    command: npm run dev  
     depends_on:
       - storage_redis
 
@@ -29,19 +25,15 @@ services:
       - ./data/mongo/init-db.js:/docker-entrypoint-initdb.d/init-db.js:ro 
 
   library:
-    image: node:22.5
-    working_dir: /app
-    volumes:
-      - ./library:/app
+    image: u0name/012-auth:library-v1.0.0
+    ports:
+      - 80:3002
     environment:
       - PORT=3002
       - COUNTER_URL=http://counter:3001
       - MONGO_URL=mongodb://storage_mongo:27017/library
     env_file:
-      - ./library/.env        
-    ports:
-      - 80:3002
-    command: npm run dev
+      - ./library/.env      
     depends_on:
       - counter
       - storage_mongo 
