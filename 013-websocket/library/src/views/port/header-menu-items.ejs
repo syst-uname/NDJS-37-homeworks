@@ -6,9 +6,7 @@
   <a href="/view/book" class="grey-text text-darken-3">
     Книги
     <% if (count) { %>
-    <span class="new badge" data-badge-caption="">
-      <%= count %>
-    </span>
+    <%- include('../components/badge', { value: count }) %>
     <% } %>
   </a>
 </li>
