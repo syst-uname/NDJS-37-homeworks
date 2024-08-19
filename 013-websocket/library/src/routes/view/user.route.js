@@ -32,12 +32,33 @@ router.post('/login',
 router.get('/me',
   authenticateUser,
   async (req, res) => {
-    res.render('user/me', {
+    res.render('user/profile', {
       title: 'Профиль',
       user: req.user,
       count: await LibraryService.count(),
+      profile: req.user,
       toast: ''
     })
+  }
+)
+
+router.get('/profile/:username',
+  authenticateUser,
+  async (req, res) => {
+    try {
+      res.render('user/profile', {
+        title: 'Профиль',
+        user: req.user,
+        count: await LibraryService.count(),
+        profile: await UserService.find(req.params.username),
+        toast: ''
+      })
+    } catch (error) {
+      res.render('errors/error', {
+        user: req.user,
+        error: error.message
+      })
+    }
   }
 )
 

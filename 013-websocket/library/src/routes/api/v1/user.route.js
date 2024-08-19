@@ -35,4 +35,17 @@ router.post('/signup',
   }
 )
 
+// профиль пользователя
+router.get('/profile/:username',
+  authenticateUser,
+  async (req, res) => {
+    try {
+      const user = await UserService.find(req.params.username)
+      res.status(200).json({ user })
+    } catch (error) {
+      res.status(error.status).json({ error: error.message })
+    }
+  }
+)
+
 export default router

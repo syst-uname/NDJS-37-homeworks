@@ -2,7 +2,7 @@
 <li>
   <div class="user-view background grey lighten-2">
 
-    <%- include('./avatar', { user: user }) %>
+    <%- include('../components/avatar', { user, ref: 'me' }) %>
 
     <a href="/view/user/me"><span class="name grey-text text-darken-3"><%= user.fullname %></span></a>
 

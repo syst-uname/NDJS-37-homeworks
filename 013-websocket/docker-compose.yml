@@ -6,7 +6,7 @@ services:
       - ./data/redis:/data
 
   counter:
-    image: u0name/012-auth:counter-v1.0.0
+    image: u0name/013-websocket:counter-v1.0.0
     ports:
       - 3001:3001
     environment:
@@ -25,7 +25,7 @@ services:
       - ./data/mongo/init-db.js:/docker-entrypoint-initdb.d/init-db.js:ro 
 
   library:
-    image: u0name/012-auth:library-v1.0.0
+    image: u0name/013-websocket:library-v1.0.0
     ports:
       - 80:3002
     environment:

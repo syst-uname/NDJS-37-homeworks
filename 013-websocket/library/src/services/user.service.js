@@ -4,8 +4,15 @@ import { hashPassword, verifyPassword } from '../config/bcrypt.js'
 
 class UserService {
   async find(username) {
-    const user = await UserModel.findOne({ username }, { _id: 0, username: 1, email: 1, fullname: 1, created: 1 }).lean()
-    return user
+    try {
+      const user = await UserModel.findOne({ username }, { _id: 0, username: 1, email: 1, fullname: 1, created: 1 }).lean()
+      if (!user) {
+        throw new Error('Пользователь не найден')
+      }
+      return user
+    } catch (error) {
+      throw new CustomError(`Ошибка при получении данных пользователя ${username}: ${error.message}`, 404)
+    }
   }
 
   async verifyPassword(username, password) {

@@ -2,5 +2,5 @@
 <% if (!user) { %>
 <li><a href="/view/user/login" class="grey-text text-darken-3">Войти</a></li>
 <% } else { %>
-<%- include('../user/avatar', { user: user }) %>
+<%- include('../components/avatar', { user, ref: 'me' }) %>
 <% } %>

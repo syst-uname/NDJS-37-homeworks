@@ -91,3 +91,19 @@ const user3 = {
 
 db.createCollection("users");
 db.users.insertMany([user1, user2, user3]);
+
+// Комментарии 
+db.createCollection("comments");
+db.comments.insertMany([
+  // комментарии к самой библиотеке
+  { parent: 'index', username: 'JD', text: 'Первый!', created: new Date() },
+  { parent: 'index', username: 'Admin', text: 'Рады приветствовать всех читаталей в нашей библиотеке', created: new Date() },
+  { parent: 'index', username: 'BadComedian', text: 'Хороший выбор', created: new Date() },
+  { parent: 'index', username: 'BadComedian', text: 'Всем спасибо!', created: new Date() },
+  // комментарии к книгам 
+  { parent: '1', username: 'Admin', text: 'Предоставлен свободный доступ к книге', created: new Date() },
+  { parent: '1', username: 'BadComedian', text: 'Книга имеет огромное культурное и социальное влияние, отражая ключевые моменты истории России и мировой политики.', created: new Date() },
+  { parent: '1', username: 'JD', text: 'Не смог дочитать', created: new Date() },
+  { parent: '1', username: 'JD', text: 'Но очень интересно', created: new Date() },
+]);
+

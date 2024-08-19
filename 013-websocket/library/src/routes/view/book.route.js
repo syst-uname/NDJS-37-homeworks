@@ -4,6 +4,7 @@ import path from 'path';
 import authenticateUser from "../../middleware/authenticate.js";
 import LibraryService from "../../services/library.service.js"
 import CounterService from '../../services/counter.service.js'
+import CommentService from "../../services/comment.service.js"
 import config from '../../config/index.js'
 import multer from "../../config/multer.js"
 
@@ -77,6 +78,7 @@ router.get('/:id', async (req, res) => {
       user: req.user,
       count: await LibraryService.count(),
       book: book,
+      comments: await CommentService.get(req.params.id),
       toast: ''
     })
   } catch (error) {
