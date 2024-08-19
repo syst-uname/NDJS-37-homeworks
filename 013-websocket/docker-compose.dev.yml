@@ -38,7 +38,7 @@ services:
       - COUNTER_URL=http://counter:3001
       - MONGO_URL=mongodb://storage_mongo:27017/library
     env_file:
-      - ./library/.env        
+      - ./library/.env  
     ports:
       - 80:3002
     command: npm run dev
