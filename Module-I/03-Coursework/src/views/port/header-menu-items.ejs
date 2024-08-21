@@ -1,0 +1,13 @@
+<!-- Список пунктов меню. Появляется в заголовке или боковом меню -->
+<li><a href="/view" class="grey-text text-darken-3">Главная</a></li>
+
+<% if (user) { %>
+<li>
+  <a href="/view/book" class="grey-text text-darken-3">
+    Книги
+    <% if (count) { %>
+    <%- include('../components/badge', { value: count }) %>
+    <% } %>
+  </a>
+</li>
+<% } %>

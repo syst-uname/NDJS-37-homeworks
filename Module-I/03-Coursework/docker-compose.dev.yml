@@ -1,0 +1,26 @@
+services:
+
+  storage_mongo:
+    image: mongo 
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_DATABASE: avito
+    volumes:
+      - ./src/db/init-db.js:/docker-entrypoint-initdb.d/init-db.js:ro 
+
+  avito:
+    image: node:22.5
+    working_dir: /app
+    volumes:
+      - ./library:/app
+    environment:
+      - PORT=3002 
+      - MONGO_URL=mongodb://storage_mongo:27017/avito
+    env_file:
+      - .env  
+    ports:
+      - 80:3002
+    command: npm run dev
+    depends_on: 
+      - storage_mongo 

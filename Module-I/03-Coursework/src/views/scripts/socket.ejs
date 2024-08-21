@@ -1,0 +1,42 @@
+<script>
+  // по вызывающей странице определяем родителя: это или страница index или конекретная книга
+  const parent = '<%= commentsParent %>'
+
+  if (parent) { // выводятся ли комментарии на страцине 
+
+    const socket = io.connect('/', {
+      query: {
+        parent
+      }
+    })
+
+    // отправка комментария по кнопке
+    const sendComment = document.querySelector('#sendComment')
+    if (sendComment) {
+      sendComment.addEventListener('click', () => {
+        const comment = document.querySelector('#comment')
+        socket.emit('comment', {
+          text: comment.value
+        })
+        comment.value = ''
+      })
+    }
+
+    socket.on('comment', (data) => {
+      const list = document.querySelector('#commentsList')
+      list.insertAdjacentHTML('beforeend', data.content)
+      // пометка "комментариев ещё нет" больше не нужна
+      const emptyCommentsList = document.getElementById('emptyCommentsList')
+      if (emptyCommentsList)
+        emptyCommentsList.remove()
+      scrollToBottom(list)
+    })
+
+    function scrollToBottom(element) {
+      if (!element)
+        return;
+      const newScrollPosition = element.scrollHeight - element.offsetHeight
+      element.scrollTop = newScrollPosition
+    }
+  }
+</script>
