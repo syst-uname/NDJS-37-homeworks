@@ -1,8 +1,8 @@
 import { Router } from "express";
 
-import passport from '../../../config/passport.js';
-import UserService from "../../../services/user.service.js";
-import authenticateUser from "../../../middleware/authenticate.js";
+import passport from '../../config/passport.js';
+import UserService from "../../services/user.service.js";
+import authenticateUser from "../../middleware/authenticate.js";
 
 const router = Router();
 
@@ -27,7 +27,7 @@ router.post('/logout',
 router.post('/signup',
   async (req, res) => {
     try {
-      const result = await UserService.registration(req.body)
+      const result = await UserService.create(req.body)
       res.status(201).json({ message: result.message })
     } catch (error) {
       res.status(error.status).json({ error: error.message })

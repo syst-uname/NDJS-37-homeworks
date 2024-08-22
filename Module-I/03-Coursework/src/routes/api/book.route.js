@@ -1,9 +1,9 @@
 import { Router } from "express"
 
-import LibraryService from "../../../services/library.service.js"
-import config from '../../../config/index.js'
-import multer from "../../../config/multer.js"
-import authenticateUser from "../../../middleware/authenticate.js"
+import LibraryService from "../../services/library.service.js"
+import config from '../../config/index.js'
+import multer from "../../config/multer.js"
+import authenticateUser from "../../middleware/authenticate.js"
 
 const router = Router()
 
