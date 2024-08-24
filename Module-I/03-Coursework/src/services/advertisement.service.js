@@ -1,4 +1,4 @@
-import CustomError from '../errors/costom.error.js'
+import CustomError from '../errors/custom.error.js'
 import BookModel from '../models/book.model.js'
 
 class LibraryService {
