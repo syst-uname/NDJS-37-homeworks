@@ -1,85 +1,80 @@
-import { Router } from "express"
+import { Router } from 'express'
 
-import LibraryService from "../../services/library.service.js"
-import config from '../../config/index.js'
-import multer from "../../config/multer.js"
-import authenticateUser from "../../middleware/authenticate.js"
+import multer from '../../config/multer.js'
+import { authenticateUser } from '../../middleware/index.js'
+import { AdvertisementService } from '../../services/index.js'
 
 const router = Router()
 
-router.use(authenticateUser)
-
-// все книги 
+// все объявления 
 router.get('/', async (req, res) => {
   try {
-    const books = await LibraryService.getAll()
-    res.status(200).json(books)
+    const ads = await AdvertisementService.find(req.query)
+    res.status(200).json({
+      data: ads,
+      status: 'ok',
+    })
   } catch (error) {
-    res.status(error.status).json({ error: error.message })
+    res.status(error.status).json({
+      error: error.message,
+      status: 'error',
+    })
   }
 })
 
-// конкретная книга
+// конкретное объявление
 router.get('/:id', async (req, res) => {
   try {
-    const book = await LibraryService.get(req.params.id)
-    res.status(200).json(book)
+    const ad = await AdvertisementService.get(req.params.id)
+    res.status(200).json({
+      data: ad,
+      status: 'ok',
+    })
   } catch (error) {
-    res.status(error.status).json({ error: error.message })
+    res.status(error.status).json({
+      error: error.message,
+      status: 'error',
+    })
   }
 })
 
-// добавление книги
+// добавление объявления
 router.post('/',
-  multer.fields([{ name: 'fileCover' }, { name: 'fileBook' }]),
+  authenticateUser,
+  multer.array('images'),
   async (req, res) => {
     try {
-      const book = await LibraryService.add(req.body, req.file)
-      res.status(201).json(book)
-    } catch (error) {
-      res.status(error.status).json({ error: error.message })
-    }
-  }
-)
-
-// редактирование книги
-router.put('/:id',
-  multer.fields([{ name: 'fileCover' }, { name: 'fileBook' }]),
-  async (req, res) => {
-    try {
-      const result = await LibraryService.update(req.params.id, req.body)
-      res.status(200).json(result)
-    } catch (error) {
-      res.status(error.status).json({ error: error.message })
-    }
-  }
-)
-
-// удаление книги
-router.delete('/:id', async (req, res) => {
-  try {
-    await LibraryService.delete(req.params.id)
-    res.status(200).json(`Книга ${req.params.id} удалена`)
-  } catch (error) {
-    res.status(error.status).json({ error: error.message })
-  }
-})
-
-// скачивание файла книги
-router.get('/:id/download', async (req, res) => {
-  try {
-    const book = await LibraryService.get(req.params.id)
-    res.download(
-      path.join(config.server.publicDir, book.fileNameBook),
-      book.fileOriginalBook,
-      (err) => {
-        if (err) {
-          res.status(404).json({ error: `Файл ${book.fileName} не найден` })
-        }
+      const ad = await AdvertisementService.create(req)
+      res.status(201).json({
+        data: ad,
+        status: 'ok',
       })
-  } catch (error) {
-    res.status(500).json({ error: error.message })
+    } catch (error) {
+      res.status(error.status).json({
+        error: error.message,
+        status: 'error',
+      })
+    }
   }
-})
+)
+
+// удаление 
+router.delete('/:id',
+  authenticateUser,
+  async (req, res) => {
+    try {
+      await AdvertisementService.delete(req.params.id, req.user)
+      res.status(200).json({
+        message: `Объявление ${req.params.id} удалено`,
+        status: 'ok',
+      })
+    } catch (error) {
+      res.status(error.status).json({
+        error: error.message,
+        status: 'error',
+      })
+    }
+  }
+)
 
 export default router

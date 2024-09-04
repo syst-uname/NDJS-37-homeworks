@@ -1,6 +1,6 @@
-import { model, Schema } from "mongoose"
+import { model, Schema } from 'mongoose'
 
-const AdvertisementSchema = new Schema({
+const schema = new Schema({
   shortText: { type: String, required: true },
   description: { type: String },
   images: { type: [String] },
@@ -11,6 +11,6 @@ const AdvertisementSchema = new Schema({
   isDeleted: { type: Boolean, default: false },
 })
 
-const AdvertisementModel = model('Advertisement', AdvertisementSchema)
+const AdvertisementModel = model('Advertisement', schema)
 
 export default AdvertisementModel

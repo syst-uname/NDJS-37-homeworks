@@ -13,14 +13,13 @@ services:
     image: node:22.5
     working_dir: /app
     volumes:
-      - ./library:/app
-    environment:
-      - PORT=3002 
+      - .:/app
+    environment: 
       - MONGO_URL=mongodb://storage_mongo:27017/avito
     env_file:
       - .env  
-    ports:
-      - 80:3002
+    ports: 
+      - 80:${PORT}
     command: npm run dev
     depends_on: 
       - storage_mongo 

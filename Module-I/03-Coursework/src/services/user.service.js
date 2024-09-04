@@ -1,53 +1,50 @@
-import UserModel from '../models/user.model.js'
-import CustomError from '../errors/costom.error.js'
+import { UserModel } from '../models/index.js'
+import { HttpException } from '../exceptions/index.js'
 import { hashPassword, verifyPassword } from '../config/bcrypt.js'
 
 class UserService {
-  async find(username) {
+  async findByEmail(email) {
     try {
-      const user = await UserModel.findOne({ username }, { _id: 0, username: 1, email: 1, fullname: 1, created: 1 }).lean()
-      if (!user) {
-        throw new Error('пользователь не найден')
-      }
+      const user = await UserModel.findOne({ email }, { passwordHash: 0, __v: 0 }).lean()
       return user
     } catch (error) {
-      throw new CustomError(`Ошибка при получении данных пользователя ${username}: ${error.message}`, 404)
+      return null
     }
   }
 
-  async verifyPassword(username, password) {
-    const user = await UserModel.findOne({ username }).lean()
-    return await verifyPassword(password, user.password)
+  async verifyPassword(email, password) {
+    try {
+      const user = await UserModel.findOne({ email }).lean()   // тут нужен с паролем 
+      if (user) {
+        return await verifyPassword(password, user.passwordHash)
+      } else {
+        return false
+      }
+    } catch (error) {
+      return false
+    }
   }
 
-  async registration(body) {
-    if (!body.username || !body.email || !body.fullname || !body.password || !body.password_confirm) {
-      throw new CustomError('Необходимо заполнить все обязательные поля', 400)
-    }
-    const existUser = await this.find(body.username)
+  async create(body) {
+    const existUser = await this.findByEmail(body.email)
     if (existUser) {
-      throw new CustomError('Пользователь с таким именем уже зарегистрирован', 400)
+      throw new HttpException(400, 'Пользователь с таким email уже зарегистрирован')
     }
     if (body.password.length < 2) {
-      throw new CustomError('Пароль слишком короткий', 400)
-    }
-    if (body.password !== body.password_confirm) {
-      throw new CustomError('Пароли не совпадают', 400)
+      throw new HttpException(400, 'Пароль слишком короткий')
     }
 
     try {
       const user = new UserModel({
-        username: body.username,
         email: body.email,
-        fullname: body.fullname,
-        password: await hashPassword(body.password)
+        passwordHash: await hashPassword(body.password),
+        name: body.name,
+        contactPhone: body.contactPhone,
       })
-      const newUser = user.save()
-      return {
-        message: `Пользователь ${body.username} успешно зарегистрирован`
-      }
+      await user.save()
+      return this.findByEmail(body.email)
     } catch (error) {
-      throw new CustomError(`Ошибка при регистрации пользователя ${body.username}: ${error.message}`, 500)
+      throw new HttpException(500, `Ошибка при регистрации ${body.email}: ${error.message}`)
     }
   }
 }

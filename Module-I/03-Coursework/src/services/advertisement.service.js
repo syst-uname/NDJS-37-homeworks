@@ -1,119 +1,127 @@
-import CustomError from '../errors/custom.error.js'
-import BookModel from '../models/book.model.js'
+import path from 'path'
+import fs from 'fs'
 
-class LibraryService {
+import config from '../config/index.js'
+import { AdvertisementModel } from '../models/index.js'
+import { HttpException } from '../exceptions/index.js'
 
-  async add(data, files) {
+class AdvertisementService {
+
+  async create(req) {
     try {
-      const book = new BookModel({
-        id: await this.nextId(),
-        ...data,
-        fileOriginalCover: files.fileCover[0].originalname,
-        fileNameCover: files.fileCover[0].filename,
-        fileOriginalBook: files.fileBook[0].originalname,
-        fileNameBook: files.fileBook[0].filename
+      const ad = new AdvertisementModel({
+        shortText: req.body.shortText,
+        description: req.body.description,
+        userId: req.user._id,
+        tags: req.body.tags ?
+          Array.isArray(req.body.tags) ? req.body.tags : req.body.tags.split(',').map(t => t.trim())
+          : [],
       })
-      const newBook = await book.save()
-      return newBook
+
+      // папка с id объявления, если есть файлы 
+      if (req.files.length) {
+        const adDir = path.join(config.server.uploadsDir, ad._id.toString())
+        fs.mkdirSync(adDir, { recursive: true });
+
+        // перемещение загруженных файлов из /uploads в папку с id объявления
+        req.files.forEach(file => {
+          fs.renameSync(
+            path.join(config.server.uploadsDir, file.originalname),
+            path.join(adDir, file.originalname)
+          )
+        })
+
+        // имена загруженных файлов
+        ad.images = req.files.map(file => path.join(adDir, file.originalname))
+      }
+
+      await ad.save()
+      return this.get(ad._id)
     } catch (error) {
-      throw new CustomError(`Ошибка при добавлении книги: ${error.message}`, 500)
+      throw new HttpException(500, `Ошибка при создании объявления: ${error.message}`)
     }
   }
 
   async get(id) {
     try {
-      const book = await BookModel.findOne({ id }).lean()
-      if (book) {
-        return book
-      } else {
-        throw new Error(`Книга ${id} не найдена`)
+      const ad = await AdvertisementModel
+        .findById(id)
+        .populate('userId', { name: 1 })
+        .lean()
+      if (!ad) {
+        throw new HttpException(404, `объявление не найдено`)
       }
-    } catch (error) {
-      throw new CustomError(`Ошибка при получении книги ${id}: ${error.message}`, 404)
-    }
-  }
-
-  async getAll() {
-    try {
-      const books = await BookModel.find()
-      return books
-    } catch (error) {
-      throw new CustomError(`Ошибка при получении книг: ${error.message}`, 500)
-    }
-  }
-
-  async update(id, data, files) {
-    try {
-      const fileData = {}
-      if (files.fileCover) {
-        fileData.fileOriginalCover = files.fileCover[0].originalname
-        fileData.fileNameCover = files.fileCover[0].filename
+      if (ad.isDeleted) {
+        throw new HttpException(410, `объявление удалено`)
       }
-      if (files.fileBook) {
-        fileData.fileOriginalBook = files.fileBook[0].originalname
-        fileData.fileNameBook = files.fileBook[0].filename
+      return this.mapFields(ad)
+    } catch (error) {
+      throw new HttpException(error.status || 500, `Ошибка при получении объявления ${id}: ${error.message}`)
+    }
+  }
+
+  async find(params) {
+    try {
+      const conditions = {}
+
+      if (params.userId) {
+        conditions.userId = params.userId
+      }
+      if (params.shortText) {
+        conditions.shortText = new RegExp(params.shortText, 'i')
+      }
+      if (params.description) {
+        conditions.description = new RegExp(params.description, 'i')
+      }
+      if (params.tags) {
+        const tagsArray = Array.isArray(params.tags) ? params.tags : params.tags.split(',')
+        conditions.tags = { $all: tagsArray }
       }
 
-      const result = await BookModel.updateOne(
-        { id },
-        {
-          ...data,
-          ...fileData
-        }
-      )
-      return result.modifiedCount === 1
+      const ads = await AdvertisementModel
+        .find(conditions)
+        .populate('userId', { name: 1 })
+      const data = ads
+        .filter(ad => !ad.isDeleted)
+        .map(ad => this.mapFields(ad))
+      return data
     } catch (error) {
-      throw new CustomError(`Ошибка при обновлении книги ${id}: ${error.message}`, 500)
+      throw new HttpException(500, `Ошибка при поиске объявлений: ${error.message}`)
     }
   }
 
-  async delete(id) {
+  // поля объявления к выходному виду 
+  mapFields = (ad) => ({
+    _id: ad._id,
+    shortText: ad.shortText,
+    description: ad.description,
+    images: ad.images,
+    user: ad.userId,
+    createdAt: ad.createdAt,
+    updatedAt: ad.updatedAt,
+    tags: ad.tags,
+  })
+
+  async delete(id, user) {
     try {
-      const result = await BookModel.deleteOne({ id })
-      return result.deletedCount === 1
+      const ad = await AdvertisementModel
+        .findById(id)
+        .populate('userId', { email: 1 })
+      if (!ad) {
+        throw new HttpException(404, `объявление не найдено`)
+      }
+      if (ad.isDeleted) {
+        throw new HttpException(410, `объявление уже удалено`)
+      }
+      if (ad.userId.email !== user.email) {
+        throw new HttpException(403, `недостаточно прав`)
+      }
+      ad.isDeleted = true
+      await ad.save()
     } catch (error) {
-      throw new CustomError(`Ошибка при удалении книги ${id}: ${error.message}`, 500)
+      throw new HttpException(error.status || 500, `Ошибка при удалении объявления ${id}: ${error.message}`)
     }
-  }
-
-  // следующий id книги
-  async nextId() {
-    const lastBook = await BookModel.findOne().sort({ id: -1 }).limit(1)
-    return lastBook ? lastBook.id + 1 : 1
-  }
-
-  // всего книг 
-  async count() {
-    try {
-      return await BookModel.countDocuments()
-    } catch (error) {
-      return 0
-    }
-  }
-
-  // контент для главной страницы
-  async titleContent() {
-    return {
-      new: await this.randomBooks(2),
-      popular: await this.randomBooks(2),
-      specially: await this.randomBooks(1),
-    }
-  }
-
-  // произвольный набор книг для главного экрана 
-  async randomBooks(count) {
-    const books = await this.getAll()
-    if (books.length < count)
-      return books
-
-    let result = []
-    while (result.length < count) {
-      const index = Math.floor(Math.random() * books.length)
-      const [book] = books.splice(index, 1)
-      result.push(book)
-    }
-    return result
   }
 }
 
-export default new LibraryService()
+export default new AdvertisementService()

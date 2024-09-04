@@ -1,9 +1,6 @@
 import { Server } from 'socket.io'
-import ejs from 'ejs'
-import path from 'path'
 
-import CommentService from '../services/comment.service.js'
-import config from './index.js'
+import { ChatService } from '../services/index.js'
 import sessionMiddleware from './session.js'
 
 const useSocket = (httpServer) => {
@@ -13,24 +10,51 @@ const useSocket = (httpServer) => {
     sessionMiddleware(socket.request, {}, next)
   })
 
+
+  // подключение клиента
   io.on('connection', (socket) => {
+    if (!socket.request.session.passport) {
+      return
+    }
 
-    const { parent } = socket.handshake.query   // комментарии для книги или главной страницы? 
-    socket.join(parent)
+    const userId = socket.request.session.passport.user._id
+    console.log(`Подключен клиент: ${socket.id}, user: ${userId}`)
 
-    socket.on('comment', async (data) => {
+    socket.join(userId)
+
+    // подписка на чат
+    ChatService.subscribe(async (chatId, message) => {
+      console.log(`[subscribe] оповещение о новом сообщении в чате ${chatId}: ${message}`)
+    })
+
+    // новое сообщение от клиента
+    socket.on('sendMessage', async ({ receiver, text }) => {
       try {
-        const user = socket.request.session.passport.user
-        const comment = await CommentService.add(parent, user.username, data.text)
+        const author = socket.request.session.passport.user._id
+        const message = await ChatService.sendMessage({
+          author,
+          receiver,
+          text
+        })
 
-        // приходится передавать готовый код html страницы чтобы не писать его на клиенте вручную
-        // причем разделяются стили сообщения для себя и остальных пользователей
-        const htmlMe = await ejs.renderFile(path.join(config.server.dirname, 'src/views/comment/message-floating-right.ejs'), { comment })
-        const htmlOther = await ejs.renderFile(path.join(config.server.dirname, 'src/views/comment/message-floating-left.ejs'), { comment })
-        socket.emit('comment', { content: htmlMe })
-        socket.to(parent).emit('comment', { content: htmlOther })
+        socket.to(receiver).emit('newMessage', message)   // получателю 
+        socket.emit('newMessage', message)
       } catch (error) {
         console.log(error)
+        socket.emit('error', { message: `Ошибка при отправке сообщения: ${error.message}` })
+      }
+    })
+
+    // запрос истории чата
+    socket.on('getHistory', async ({ interlocutor }) => {
+      try {
+        const userId = socket.request.session.passport.user._id
+        const chat = await ChatService.find([userId, interlocutor])
+        const messages = await ChatService.getHistory(chat._id)
+        socket.emit('chatHistory', messages)
+      } catch (error) {
+        console.log(error)
+        socket.emit('error', { message: `Ошибка при отправке истории сообщений: ${error.message}` })
       }
     })
   })

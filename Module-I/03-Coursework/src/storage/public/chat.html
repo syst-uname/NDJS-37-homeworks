@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat Client</title>
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+
+</head>
+
+<body>
+
+  <div>
+    <h3>Чат</h3>
+    <div>
+      <input id="receiver" placeholder="ID получателя" size="50" />
+      <label for='receiver'>Получатель</label>
+    </div>
+    <div>
+      <input id="text" placeholder="Текст" size="50" />
+      <label for='text'>Текст</label>
+    </div>
+    <button id="sendButton">Отправить</button>
+  </div>
+  <div>
+    <button id="getHistory">Получить историю чата</button>
+  </div>
+
+  <ul id="messages"></ul>
+
+  <script>
+    const socket = io('/')
+
+    // кнопка "Отправить"
+    document.getElementById('sendButton').onclick = () => {
+      const receiver = document.getElementById('receiver').value
+      const text = document.getElementById('text').value
+      socket.emit('sendMessage', {
+        receiver,
+        text
+      })
+    }
+
+    // новое сообщения от сервера
+    socket.on('newMessage', (message) => {
+      const messagesList = document.getElementById('messages')
+      const newMessageItem = document.createElement('li')
+      newMessageItem.textContent = `автор: ${message.author}, время: ${message.sentAt}, текст: ${message.text}`
+      messagesList.appendChild(newMessageItem)
+    });
+
+    // кнопка "получить историю чата"
+    document.getElementById('getHistory').onclick = () => {
+      const interlocutor = document.getElementById('receiver').value
+      socket.emit('getHistory', {
+        interlocutor
+      })
+    }
+
+    // история чата от сервера
+    socket.on('chatHistory', (messages) => {
+      const messagesList = document.getElementById('messages')
+      const title = document.createElement('li')
+      title.textContent = 'История чата:'
+      messagesList.appendChild(title)
+      messages.forEach(message => {
+        const newMessageItem = document.createElement('li')
+        newMessageItem.textContent = `автор: ${message.author}, время: ${message.sentAt}, текст: ${message.text}`
+        messagesList.appendChild(newMessageItem)
+      })
+    });
+  </script>
+</body>
+
+</html>

@@ -1,16 +1,18 @@
 import passport from 'passport'
 import { Strategy } from 'passport-local'
 
-import UserService from '../services/user.service.js'
+import { UserService } from '../services/index.js'
 
 passport.use('local', new Strategy(
-  async (username, password, done) => {
-    const user = await UserService.find(username)
-    if (!user) {
-      return done(null, false, { message: `Пользователь ${username} не зарегистрирован` })
-    }
-    if (!(await UserService.verifyPassword(username, password))) {
-      return done(null, false, { message: 'Неверный пароль' })
+  {
+    usernameField: 'email',
+    passwordField: 'password'
+  },
+  async (email, password, done) => {
+    const user = await UserService.findByEmail(email)
+    const validatePassword = await UserService.verifyPassword(email, password)
+    if (!user || !validatePassword) {
+      return done(null, false, { message: 'Неверный логин или пароль' })
     }
     return done(null, user)
   }))
@@ -20,10 +22,10 @@ passport.serializeUser((user, done) => {
 })
 
 passport.deserializeUser(async (user, done) => {
-  if (await UserService.find(user.username)) {
+  if (await UserService.findByEmail(user.email)) {
     return done(null, user)
   } else {
-    return done(new Error(`Пользователь ${user.username} не найден`))
+    return done(new Error(`Пользователь ${user.email} не найден`))
   }
 })
 
