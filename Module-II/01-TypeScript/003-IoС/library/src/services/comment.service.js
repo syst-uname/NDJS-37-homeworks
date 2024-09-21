@@ -1,5 +1,5 @@
 import CommentModel from '../models/comment.model.js';
-import CustomError from '../errors/costom.error.js';
+import CustomError from '../errors/custom.error.js';
 import UserService from './user.service.js';
 
 class CommentService {

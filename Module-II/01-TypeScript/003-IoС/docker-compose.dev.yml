@@ -8,8 +8,6 @@ services:
   counter:
     image: node:22.5
     working_dir: /app
-    ports:
-      - 3001:3001
     volumes:
       - ./counter:/app
     environment:
@@ -33,14 +31,13 @@ services:
     working_dir: /app
     volumes:
       - ./library:/app
-    environment:
-      - PORT=3002
+    environment: 
       - COUNTER_URL=http://counter:3001
       - MONGO_URL=mongodb://storage_mongo:27017/library
     env_file:
-      - ./library/.env  
+      - .env  
     ports:
-      - 80:3002
+      - 80:${PORT}
     command: npm run dev
     depends_on:
       - counter

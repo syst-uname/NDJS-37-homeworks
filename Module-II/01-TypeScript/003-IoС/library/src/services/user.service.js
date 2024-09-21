@@ -1,5 +1,5 @@
 import UserModel from '../models/user.model.js'
-import CustomError from '../errors/costom.error.js'
+import CustomError from '../errors/custom.error.js'
 import { hashPassword, verifyPassword } from '../config/bcrypt.js'
 
 class UserService {

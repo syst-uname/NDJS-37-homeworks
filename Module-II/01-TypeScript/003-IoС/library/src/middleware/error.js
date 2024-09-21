@@ -15,10 +15,9 @@ const error = async (err, req, res, next) => {
         count: 0,
         message,
         toast: ''
-      }
-      )
+      })
     } else {
-      res.status(401).json({ message })
+      res.status(400).json({ message })
     }
   } else {
     const message = err.message + ' ' + err.stack

@@ -1,5 +1,5 @@
 {
-  "name": "003-websocket-counter",
+  "name": "003-ioc-counter",
   "version": "1.0.0",
   "type": "module",
   "main": "src/index.js",
