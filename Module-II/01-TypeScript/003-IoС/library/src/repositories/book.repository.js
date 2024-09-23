@@ -1,8 +1,8 @@
 import CustomError from '../errors/custom.error.js'
 import BookModel from '../models/book.model.js'
-import CounterService from './counter.service.js'
+import { CounterRepository } from './index.js'
 
-class LibraryService {
+class BookRepository {
 
   async add(data, files) {
     try {
@@ -25,7 +25,7 @@ class LibraryService {
     try {
       const book = await BookModel.findOne({ id }).lean()
       if (book) {
-        book.views = await CounterService.get(+id)       // получение количества просмотров
+        book.views = await CounterRepository.get(+id)       // получение количества просмотров
         return book
       } else {
         throw new Error(`Книга ${id} не найдена`)
@@ -118,4 +118,4 @@ class LibraryService {
   }
 }
 
-export default new LibraryService()
+export default new BookRepository()

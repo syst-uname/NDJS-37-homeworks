@@ -2,7 +2,7 @@ import UserModel from '../models/user.model.js'
 import CustomError from '../errors/custom.error.js'
 import { hashPassword, verifyPassword } from '../config/bcrypt.js'
 
-class UserService {
+class UserRepository {
   async find(username) {
     try {
       const user = await UserModel.findOne({ username }, { _id: 0, username: 1, email: 1, fullname: 1, created: 1 }).lean()
@@ -24,10 +24,16 @@ class UserService {
     if (!body.username || !body.email || !body.fullname || !body.password || !body.password_confirm) {
       throw new CustomError('Необходимо заполнить все обязательные поля', 400)
     }
-    const existUser = await this.find(body.username)
+
+    let existUser
+    try {
+      existUser = await this.find(body.username)
+    } catch (error) { }
+
     if (existUser) {
       throw new CustomError('Пользователь с таким именем уже зарегистрирован', 400)
     }
+
     if (body.password.length < 2) {
       throw new CustomError('Пароль слишком короткий', 400)
     }
@@ -52,4 +58,4 @@ class UserService {
   }
 }
 
-export default new UserService()
+export default new UserRepository()

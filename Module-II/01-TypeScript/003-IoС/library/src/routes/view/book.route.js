@@ -2,9 +2,7 @@ import express from "express"
 import path from 'path';
 
 import authenticateUser from "../../middleware/authenticate.js";
-import LibraryService from "../../services/library.service.js"
-import CounterService from '../../services/counter.service.js'
-import CommentService from "../../services/comment.service.js"
+import { BookRepository, CommentRepository, CounterRepository } from "../../repositories/index.js"
 import config from '../../config/index.js'
 import multer from "../../config/multer.js"
 
@@ -21,8 +19,8 @@ router.get('/', async (req, res) => {
     res.render('book/index', {
       title: 'Все книги',
       user: req.user,
-      count: await LibraryService.count(),
-      books: await LibraryService.getAll(),
+      count: await BookRepository.count(),
+      books: await BookRepository.getAll(),
       toast: toast
     })
   } catch (error) {
@@ -39,7 +37,7 @@ router.get('/create', async (req, res) => {
     res.render('book/create', {
       title: 'Добавление книги',
       user: req.user,
-      count: await LibraryService.count(),
+      count: await BookRepository.count(),
       book: {},
       toast: ''
     })
@@ -55,7 +53,7 @@ router.post('/create',
   multer.fields([{ name: 'fileCover' }, { name: 'fileBook' }]),
   async (req, res) => {
     try {
-      await LibraryService.add(req.body, req.files)
+      await BookRepository.add(req.body, req.files)
       req.session.messageBook = `Книга "${req.body.title}" добавлена`
       res.redirect('/view/book')
     } catch (error) {
@@ -70,15 +68,15 @@ router.post('/create',
 // конкретная книга
 router.get('/:id', async (req, res) => {
   try {
-    const book = await LibraryService.get(req.params.id)
-    CounterService.incr(req.params.id)      // счетчик просмотров книги
+    const book = await BookRepository.get(req.params.id)
+    CounterRepository.incr(req.params.id)      // счетчик просмотров книги
 
     res.render('book/view', {
       title: 'Просмотр книги',
       user: req.user,
-      count: await LibraryService.count(),
+      count: await BookRepository.count(),
       book: book,
-      comments: await CommentService.get(req.params.id),
+      comments: await CommentRepository.get(req.params.id),
       toast: ''
     })
   } catch (error) {
@@ -92,11 +90,11 @@ router.get('/:id', async (req, res) => {
 // изменение книги
 router.get('/update/:id', async (req, res) => {
   try {
-    const book = await LibraryService.get(req.params.id)
+    const book = await BookRepository.get(req.params.id)
     res.render('book/update', {
       title: 'Редактирование книги',
       user: req.user,
-      count: await LibraryService.count(),
+      count: await BookRepository.count(),
       book: book,
       toast: ''
     })
@@ -112,7 +110,7 @@ router.post('/update/:id',
   multer.fields([{ name: 'fileCover' }, { name: 'fileBook' }]),
   async (req, res) => {
     try {
-      await LibraryService.update(req.params.id, req.body, req.files)
+      await BookRepository.update(req.params.id, req.body, req.files)
       res.redirect('/view/book/' + req.params.id)
     } catch (error) {
       res.render('errors/error', {
@@ -126,7 +124,7 @@ router.post('/update/:id',
 // удаление книги (приходится делать через GET)
 router.get('/delete/:id', async (req, res) => {
   try {
-    await LibraryService.delete(req.params.id)
+    await BookRepository.delete(req.params.id)
     req.session.messageBook = `Книга удалена`     // отобразится на новой странице
     res.redirect('/view/book')
   } catch (error) {
@@ -140,7 +138,7 @@ router.get('/delete/:id', async (req, res) => {
 // скачивание файла книги
 router.get('/:id/download', async (req, res) => {
   try {
-    const book = await LibraryService.get(req.params.id)
+    const book = await BookRepository.get(req.params.id)
     res.download(
       path.join(config.server.publicDir, book.fileNameBook),
       book.fileOriginalBook,

@@ -1,8 +1,7 @@
 import { Router } from "express";
 
 import passport from '../../config/passport.js';
-import LibraryService from "../../services/library.service.js";
-import UserService from "../../services/user.service.js";
+import { BookRepository, UserRepository } from "../../repositories/index.js";
 import authenticateUser from "../../middleware/authenticate.js";
 
 const router = Router();
@@ -35,7 +34,7 @@ router.get('/me',
     res.render('user/profile', {
       title: 'Профиль',
       user: req.user,
-      count: await LibraryService.count(),
+      count: await BookRepository.count(),
       profile: req.user,
       toast: ''
     })
@@ -49,8 +48,8 @@ router.get('/profile/:username',
       res.render('user/profile', {
         title: 'Профиль',
         user: req.user,
-        count: await LibraryService.count(),
-        profile: await UserService.find(req.params.username),
+        count: await BookRepository.count(),
+        profile: await UserRepository.find(req.params.username),
         toast: ''
       })
     } catch (error) {
@@ -75,7 +74,7 @@ router.get('/signup', async (req, res) => {
 
 router.post('/signup', async (req, res) => {
   try {
-    const result = await UserService.registration(req.body)
+    const result = await UserRepository.registration(req.body)
     req.session.messageUserSignup = result.message           // отобразится на новой странице
     res.redirect('/view/user/login')
   } catch (error) {
@@ -84,7 +83,7 @@ router.post('/signup', async (req, res) => {
       title: 'Регистрация',
       user: req.user,
       defaults: req.body,
-      count: await LibraryService.count(),
+      count: await BookRepository.count(),
       message: error.message,
       toast: ''
     })

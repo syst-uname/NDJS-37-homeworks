@@ -1,8 +1,8 @@
 import CommentModel from '../models/comment.model.js';
 import CustomError from '../errors/custom.error.js';
-import UserService from './user.service.js';
+import { UserRepository } from './index.js';
 
-class CommentService {
+class CommentRepository {
 
   async get(parent) {
     try {
@@ -34,13 +34,13 @@ class CommentService {
     try {
       return {
         ...comment,
-        user: await UserService.find(comment.username)
+        user: await UserRepository.find(comment.username)
       }
     } catch (error) {
-      throw new CustomError(`Ошибка при получении комментариев данных пользователя ${comment.username}: ${error.message}`, 500)
+      throw new CustomError(`Ошибка при получении комментариев пользователя ${comment.username}: ${error.message}`, 500)
     }
   }
 
 }
 
-export default new CommentService()
+export default new CommentRepository()

@@ -1,6 +1,6 @@
 import { Router } from "express"
 
-import LibraryService from "../../../services/library.service.js"
+import { BookRepository } from "../../../repositories/index.js"
 import config from '../../../config/index.js'
 import multer from "../../../config/multer.js"
 import authenticateUser from "../../../middleware/authenticate.js"
@@ -12,7 +12,7 @@ router.use(authenticateUser)
 // все книги 
 router.get('/', async (req, res) => {
   try {
-    const books = await LibraryService.getAll()
+    const books = await BookRepository.getAll()
     res.status(200).json(books)
   } catch (error) {
     res.status(error.status).json({ error: error.message })
@@ -22,7 +22,7 @@ router.get('/', async (req, res) => {
 // конкретная книга
 router.get('/:id', async (req, res) => {
   try {
-    const book = await LibraryService.get(req.params.id)
+    const book = await BookRepository.get(req.params.id)
     res.status(200).json(book)
   } catch (error) {
     res.status(error.status).json({ error: error.message })
@@ -34,7 +34,7 @@ router.post('/',
   multer.fields([{ name: 'fileCover' }, { name: 'fileBook' }]),
   async (req, res) => {
     try {
-      const book = await LibraryService.add(req.body, req.file)
+      const book = await BookRepository.add(req.body, req.file)
       res.status(201).json(book)
     } catch (error) {
       res.status(error.status).json({ error: error.message })
@@ -47,7 +47,7 @@ router.put('/:id',
   multer.fields([{ name: 'fileCover' }, { name: 'fileBook' }]),
   async (req, res) => {
     try {
-      const result = await LibraryService.update(req.params.id, req.body)
+      const result = await BookRepository.update(req.params.id, req.body)
       res.status(200).json(result)
     } catch (error) {
       res.status(error.status).json({ error: error.message })
@@ -58,7 +58,7 @@ router.put('/:id',
 // удаление книги
 router.delete('/:id', async (req, res) => {
   try {
-    await LibraryService.delete(req.params.id)
+    await BookRepository.delete(req.params.id)
     res.status(200).json(`Книга ${req.params.id} удалена`)
   } catch (error) {
     res.status(error.status).json({ error: error.message })
@@ -68,7 +68,7 @@ router.delete('/:id', async (req, res) => {
 // скачивание файла книги
 router.get('/:id/download', async (req, res) => {
   try {
-    const book = await LibraryService.get(req.params.id)
+    const book = await BookRepository.get(req.params.id)
     res.download(
       path.join(config.server.publicDir, book.fileNameBook),
       book.fileOriginalBook,
