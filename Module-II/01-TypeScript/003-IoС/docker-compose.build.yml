@@ -7,8 +7,6 @@ services:
 
   counter:
     build: ./counter
-    ports:
-      - 3001:3001
     environment:
       - PORT=3001
       - REDIS_URL=redis://storage_redis
@@ -27,13 +25,12 @@ services:
   library:
     build: ./library
     ports:
-      - 80:3002
-    environment:
-      - PORT=3002
+      - 80:${PORT}
+    environment: 
       - COUNTER_URL=http://counter:3001
       - MONGO_URL=mongodb://storage_mongo:27017/library
     env_file:
-      - ./library/.env
+      - .env
     depends_on:
       - counter
       - storage_mongo 

@@ -2,7 +2,10 @@ import { Router } from "express";
 
 import passport from '../../../config/passport.js';
 import authenticateUser from "../../../middleware/authenticate.js";
+import container from "../../../config/container.js";
 import { UserRepository } from "../../../repositories/index.js";
+
+const userRepository = container.get(UserRepository)
 
 const router = Router();
 
@@ -27,7 +30,7 @@ router.post('/logout',
 router.post('/signup',
   async (req, res) => {
     try {
-      const result = await UserRepository.registration(req.body)
+      const result = await userRepository.registration(req.body)
       res.status(201).json({ message: result.message })
     } catch (error) {
       res.status(error.status).json({ error: error.message })
@@ -40,7 +43,7 @@ router.get('/profile/:username',
   authenticateUser,
   async (req, res) => {
     try {
-      const user = await UserRepository.find(req.params.username)
+      const user = await userRepository.find(req.params.username)
       res.status(200).json({ user })
     } catch (error) {
       res.status(error.status).json({ error: error.message })

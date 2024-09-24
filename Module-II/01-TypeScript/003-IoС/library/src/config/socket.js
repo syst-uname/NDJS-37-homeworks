@@ -3,8 +3,11 @@ import ejs from 'ejs'
 import path from 'path'
 
 import config from './index.js'
+import container from './container.js'
 import sessionMiddleware from './session.js'
 import { CommentRepository } from '../repositories/index.js'
+
+const commentRepository = container.get(CommentRepository)
 
 const useSocket = (httpServer) => {
   const io = new Server(httpServer)
@@ -21,7 +24,7 @@ const useSocket = (httpServer) => {
     socket.on('comment', async (data) => {
       try {
         const user = socket.request.session.passport.user
-        const comment = await CommentRepository.add(parent, user.username, data.text)
+        const comment = await commentRepository.add(parent, user.username, data.text)
 
         // приходится передавать готовый код html страницы чтобы не писать его на клиенте вручную
         // причем разделяются стили сообщения для себя и остальных пользователей

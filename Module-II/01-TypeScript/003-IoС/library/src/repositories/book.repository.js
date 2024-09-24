@@ -1,3 +1,4 @@
+import container from '../config/container.js'
 import CustomError from '../errors/custom.error.js'
 import BookModel from '../models/book.model.js'
 import { CounterRepository } from './index.js'
@@ -25,7 +26,8 @@ class BookRepository {
     try {
       const book = await BookModel.findOne({ id }).lean()
       if (book) {
-        book.views = await CounterRepository.get(+id)       // получение количества просмотров
+        const counterRepository = container.get(CounterRepository)
+        book.views = await counterRepository.get(+id)       // получение количества просмотров
         return book
       } else {
         throw new Error(`Книга ${id} не найдена`)
@@ -118,4 +120,4 @@ class BookRepository {
   }
 }
 
-export default new BookRepository()
+export default BookRepository

@@ -1,5 +1,6 @@
 import CommentModel from '../models/comment.model.js';
 import CustomError from '../errors/custom.error.js';
+import container from '../config/container.js';
 import { UserRepository } from './index.js';
 
 class CommentRepository {
@@ -32,9 +33,10 @@ class CommentRepository {
 
   async addUser(comment) {
     try {
+      const userRepository = container.get(UserRepository)
       return {
         ...comment,
-        user: await UserRepository.find(comment.username)
+        user: await userRepository.find(comment.username)
       }
     } catch (error) {
       throw new CustomError(`Ошибка при получении комментариев пользователя ${comment.username}: ${error.message}`, 500)
@@ -43,4 +45,4 @@ class CommentRepository {
 
 }
 
-export default new CommentRepository()
+export default CommentRepository

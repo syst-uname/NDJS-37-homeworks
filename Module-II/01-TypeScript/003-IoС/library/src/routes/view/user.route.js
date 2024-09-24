@@ -1,8 +1,11 @@
 import { Router } from "express";
 
 import passport from '../../config/passport.js';
+import container from "../../config/container.js";
 import { BookRepository, UserRepository } from "../../repositories/index.js";
 import authenticateUser from "../../middleware/authenticate.js";
+
+const bookRepository = container.get(BookRepository)
 
 const router = Router();
 
@@ -34,7 +37,7 @@ router.get('/me',
     res.render('user/profile', {
       title: 'Профиль',
       user: req.user,
-      count: await BookRepository.count(),
+      count: await bookRepository.count(),
       profile: req.user,
       toast: ''
     })
@@ -48,7 +51,7 @@ router.get('/profile/:username',
       res.render('user/profile', {
         title: 'Профиль',
         user: req.user,
-        count: await BookRepository.count(),
+        count: await bookRepository.count(),
         profile: await UserRepository.find(req.params.username),
         toast: ''
       })
@@ -83,7 +86,7 @@ router.post('/signup', async (req, res) => {
       title: 'Регистрация',
       user: req.user,
       defaults: req.body,
-      count: await BookRepository.count(),
+      count: await bookRepository.count(),
       message: error.message,
       toast: ''
     })

@@ -23,4 +23,4 @@ class CounterRepository {
   }
 }
 
-export default new CounterRepository()
+export default CounterRepository
