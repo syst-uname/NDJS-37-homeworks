@@ -1,0 +1,37 @@
+<div class="card grey lighten-5">
+  <div class="card-content">
+    <span class="card-title"><%= title %></span>
+
+    <!-- Вывод комментариев -->
+    <div id="commentsList" class="scrollable-block-comments">
+      <% if (comments.length === 0) { %>
+      <span id="emptyCommentsList" class="grey-text text-darken-2">Комментариев ещё нет</span>
+      <% } else { %>
+      <% comments.forEach((comment)=> { %>
+      <%- include('./message-floating', { user, comment }) %>
+      <% }) %>
+      <% } %>
+    </div>
+
+  </div>
+</div>
+
+<!-- Поле ввода комментария -->
+<div class="card grey lighten-5">
+  <div class="card-content">
+    <span class="card-title">Поделитесь своими мыслями</span>
+
+    <div class="row">
+      <div class="input-field col s11">
+        <i class="material-icons prefix grey-text text-darken-1">comment</i>
+        <textarea id="comment" name="comment" class="materialize-textarea" placeholder="Комментарий"></textarea>
+      </div>
+
+      <div class="input-field col s1">
+        <a id="sendComment" class="btn-floating waves-effect waves-light">
+          <i class="material-icons">send</i>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
