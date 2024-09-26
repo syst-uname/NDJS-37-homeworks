@@ -1,11 +1,10 @@
 {
-  "name": "003-ioc-counter",
+  "name": "004-migration-counter",
   "version": "1.0.0",
-  "type": "module",
-  "main": "src/index.js",
+  "main": "dist/index.js",
   "scripts": {
-    "dev": "nodemon -L",
-    "server": "node src/index.js"
+    "dev": "nodemon -L --ext \"ts\" --exec \"tsc && node dist/index.js\"",
+    "server": "node dist/index.js"
   },
   "keywords": [],
   "author": "",
@@ -16,6 +15,11 @@
     "redis": "^4.6.15"
   },
   "devDependencies": {
-    "nodemon": "^3.1.4"
+    "@types/express": "^4.17.21",
+    "@typescript-eslint/eslint-plugin": "^8.7.0",
+    "@typescript-eslint/parser": "^8.7.0",
+    "eslint": "^9.11.1",
+    "nodemon": "^3.1.4",
+    "typescript": "^5.6.2"
   }
 }

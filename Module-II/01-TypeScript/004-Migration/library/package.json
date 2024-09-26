@@ -1,12 +1,12 @@
 {
-  "name": "003-ioc-library",
+  "name": "004-migration-library",
   "version": "1.0.0",
   "description": "",
   "type": "module",
-  "main": "src/index.js",
+  "main": "dist/index.js",
   "scripts": {
-    "local": "nodemon -r dotenv/config ./src/index.js",
-    "dev": "nodemon -L",
+    "local": "nodemon -L -r dotenv/config --ext \"ts\" --exec \"tsc && node dist/index.js\"",
+    "dev": "nodemon -L --ext \"ts\" --exec \"tsc && node dist/index.js\"",
     "server": "node src/index.js"
   },
   "keywords": [],
@@ -29,6 +29,10 @@
   },
   "devDependencies": {
     "@types/ejs": "^3.1.5",
-    "nodemon": "^3.1.4"
+    "@typescript-eslint/eslint-plugin": "^8.7.0",
+    "@typescript-eslint/parser": "^8.7.0",
+    "eslint": "^9.11.1",
+    "nodemon": "^3.1.4",
+    "typescript": "^5.6.2"
   }
 }
