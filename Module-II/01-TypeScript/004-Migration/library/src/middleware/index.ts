@@ -5,9 +5,9 @@ import logger from './logger'
 import session from './session'
 
 export {
-    authenticateUser, 
+    authenticateUser,
     error404,
     error,
-    logger, 
+    logger,
     session,
 }

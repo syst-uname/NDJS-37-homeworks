@@ -1,6 +1,6 @@
 import { Router } from 'express'
 
-import config from '../../../config' 
+import config from '../../../config'
 import { BookRepository } from '../../../repositories'
 import { authenticateUser } from '../../../middleware'
 import { container, multer } from '../../../infrastructure'

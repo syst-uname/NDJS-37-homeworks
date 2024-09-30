@@ -33,8 +33,9 @@ export default [{
     },
 
     rules: {
-        indent: ["error", 4],
-        quotes: ['error', 'single'],
-        semi: ['warn', 'never']
+        'indent': ["error", 4],
+        'quotes': ['error', 'single'],
+        'semi': ['warn', 'never'],
+        'no-trailing-spaces': ['error', { ignoreComments: true }]
     },
 }];

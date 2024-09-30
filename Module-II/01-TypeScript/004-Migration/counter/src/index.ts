@@ -1,8 +1,8 @@
 import express from 'express'
 import * as redis from 'redis'
- 
+
 const app = express()
- 
+
 const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379'
 const client = redis.createClient({ url: REDIS_URL });
 (async () => await client.connect())()
@@ -10,7 +10,7 @@ const client = redis.createClient({ url: REDIS_URL });
 // увеличение счетчика
 app.post('/counter/:bookId/incr', async (req, res) => {
     try {
-        const count = await client.incr(req.params.bookId) 
+        const count = await client.incr(req.params.bookId)
         res.json({ count })
     } catch (error) {
         res.json({ code: 500, message: `redis error: ${error}` })

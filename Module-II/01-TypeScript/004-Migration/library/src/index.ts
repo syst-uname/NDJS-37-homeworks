@@ -3,9 +3,9 @@ import http from 'http'
 import path from 'path'
 
 import config from './config'
-import router from './routes' 
-import { error, logger, session } from './middleware' 
-import { connectToDatabase, passport, socket } from './infrastructure' 
+import router from './routes'
+import { error, logger, session } from './middleware'
+import { connectToDatabase, passport, socket } from './infrastructure'
 
 console.log(`Директория проекта: ${__dirname}`)   // TODO что с папкой проекта?
 

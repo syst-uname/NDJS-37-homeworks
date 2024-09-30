@@ -4,6 +4,6 @@ const auth = {
 }
 
 console.log(`Секретное слово: ${auth.session_secret}`)
-console.log(`Количество шагов: ${auth.salt_rounds}`)     
+console.log(`Количество шагов: ${auth.salt_rounds}`)
 
 export default auth
