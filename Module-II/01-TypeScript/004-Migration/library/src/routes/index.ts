@@ -3,7 +3,7 @@ import express from 'express'
 import config from '../config'
 import apiRoute from './api/v1'
 import viewRoute from './view'
-import error404 from '../middleware/error-404'
+import { error404 } from '../middleware'
 
 const router = express.Router()
 

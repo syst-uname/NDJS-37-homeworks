@@ -1,4 +1,4 @@
-import { Router } from 'express'    
+import { Router } from 'express'
 
 import { BookRepository, UserRepository } from '../../repositories'
 import { authenticateUser } from '../../middleware'

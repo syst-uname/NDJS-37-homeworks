@@ -5,7 +5,7 @@ import os from 'os'
 
 import config from '../config'
 
-const logger = (req: Request, res: Response, next: NextFunction) => {
+export const logger = (req: Request, res: Response, next: NextFunction) => {
     const data = `${new Date().toLocaleString()} - ${req.method} - ${req.url}` + os.EOL
     fs.appendFile(
         path.join(config.server.dirname, 'src', 'storage', 'log', 'server.log.txt'),
@@ -16,5 +16,3 @@ const logger = (req: Request, res: Response, next: NextFunction) => {
     )
     next()
 }
-
-export default logger

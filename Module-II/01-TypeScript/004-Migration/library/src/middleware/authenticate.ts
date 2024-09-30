@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import { isReqView } from '../utils'
 
-const authenticateUser = (req: Request, res: Response, next: NextFunction) => {
+export const authenticateUser = (req: Request, res: Response, next: NextFunction) => {
     if (req.isAuthenticated()) {
         next()
     } else {
@@ -12,5 +12,3 @@ const authenticateUser = (req: Request, res: Response, next: NextFunction) => {
         }
     }
 }
-
-export default authenticateUser

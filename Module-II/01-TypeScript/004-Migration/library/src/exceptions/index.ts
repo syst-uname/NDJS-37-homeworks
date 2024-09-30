@@ -1,5 +1,1 @@
-import { HttpException } from './http.exception'
-
-export {
-    HttpException
-}
+export * from './http.exception'

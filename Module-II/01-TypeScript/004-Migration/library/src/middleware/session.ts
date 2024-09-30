@@ -7,4 +7,4 @@ const sessionMiddleware = session({
     saveUninitialized: true
 })
 
-export default sessionMiddleware
+export { sessionMiddleware as session }
