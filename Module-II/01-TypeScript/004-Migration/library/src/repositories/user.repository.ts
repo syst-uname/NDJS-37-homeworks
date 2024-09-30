@@ -1,6 +1,6 @@
 import UserModel from '../models/user.model'
 import { HttpException } from '../exceptions'
-import { hashPassword, verifyPassword } from '../infrastructure/bcrypt'
+import { hashPassword, verifyPassword } from '../utils'
 
 class UserRepository {
     async find(username) {
