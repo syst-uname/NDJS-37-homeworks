@@ -1,9 +1,9 @@
 import express from 'express'
 
-import config from '../config/index.js'
-import error404 from '../middleware/error-404.js'
-import apiRoute from './api/v1/index.js'
-import viewRoute from './view/index.js'
+import config from '../config'
+import apiRoute from './api/v1'
+import viewRoute from './view'
+import error404 from '../middleware/error-404'
 
 const router = express.Router()
 

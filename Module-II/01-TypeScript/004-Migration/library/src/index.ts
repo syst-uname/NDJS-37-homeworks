@@ -2,23 +2,24 @@ import express from 'express'
 import http from 'http'
 import path from 'path'
 
-import session from './config/session.js'
-import passport from './config/passport.js'
-import useSocket from './config/socket.js'
-import config from './config/index.js'
-import logger from './middleware/logger.js'
-import error from './middleware/error.js'
-import router from './routes/index.js'
-import connectToDatabase from './db/connection.js'
+import config from './config'
+import router from './routes'
+import { sessionMiddleware } from './infrastructure/session'
+import passport from './infrastructure/passport'
+import { useSocket } from './infrastructure/socket'
+import { error, logger } from './middleware' 
+import { connectToDatabase } from './infrastructure/db'
+
+console.log(`Директория проекта: ${__dirname}`)   // TODO что с папкой проекта?
 
 const app = express()
-const server = http.Server(app)
+const server = new http.Server(app)
 useSocket(server)
 
 app.set('views', path.join(config.server.dirname, 'src', 'views'))
 app.set('view engine', 'ejs')
 
-app.use(session)
+app.use(sessionMiddleware)
 app.use(passport.initialize())
 app.use(passport.session())
 

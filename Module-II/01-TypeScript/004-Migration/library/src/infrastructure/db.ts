@@ -1,12 +1,10 @@
 import mongoose from 'mongoose'
-import config from '../config/index.js'
+import config from '../config'
 
-const connectToDatabase = async function connectToDatabase() {
+export const connectToDatabase = async function connectToDatabase() {
     try {
         await mongoose.connect(config.mongo.url)
     } catch (error) {
         console.error(error)
     }
 }
-
-export default connectToDatabase

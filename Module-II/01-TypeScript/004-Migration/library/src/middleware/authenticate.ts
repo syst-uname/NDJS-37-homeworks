@@ -1,6 +1,7 @@
-import { isReqView } from '../utils/util.js'
+import { NextFunction, Request, Response } from 'express'
+import { isReqView } from '../utils/util'
 
-const authenticateUser = (req, res, next) => {
+const authenticateUser = (req: Request, res: Response, next: NextFunction) => {
     if (req.isAuthenticated()) {
         next()
     } else {

@@ -1,11 +1,11 @@
 import express from 'express'
 import path from 'path'
 
-import container from '../../config/container.js'
-import authenticateUser from '../../middleware/authenticate.js'
-import { BookRepository, CommentRepository, CounterRepository } from '../../repositories/index.js'
-import config from '../../config/index.js'
-import multer from '../../config/multer.js'
+import { container } from '../../infrastructure/container'
+import { authenticateUser } from '../../middleware'
+import { BookRepository, CommentRepository, CounterRepository } from '../../repositories'
+import config from '../../config'
+import multer from '../../infrastructure/multer'
 
 const bookRepository = container.get(BookRepository)
 const commentRepository = container.get(CommentRepository)

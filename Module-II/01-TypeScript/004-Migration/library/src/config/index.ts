@@ -1,13 +1,13 @@
-import server from './server.js'
-import auth from './auth.js'
-import counter from './counter.js'
-import mongo from './mongo.js'
+import auth from './auth'
+import counter from './counter'
+import mongo from './mongo'
+import server from './server'
 
 const config = {
-    server,
     auth,
     counter,
-    mongo
+    mongo,
+    server,
 }
 
 export default config

@@ -2,6 +2,7 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 
 const server = {
+    // TODO dirname можно переделать? 
     dirname: path.join(path.dirname(fileURLToPath(import.meta.url)), '..', '..',),      // путь к корневой папке проекта
     publicDir: path.join('src', 'storage', 'public'),
     port: process.env.PORT || 3000,

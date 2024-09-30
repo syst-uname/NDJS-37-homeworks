@@ -1,9 +1,9 @@
 import { Router } from 'express'
 
-import passport from '../../../config/passport.js'
-import authenticateUser from '../../../middleware/authenticate.js'
-import container from '../../../config/container.js'
-import { UserRepository } from '../../../repositories/index.js'
+import passport from '../../../infrastructure/passport'
+import { authenticateUser } from '../../../middleware'
+import { UserRepository } from '../../../repositories'
+import { container } from '../../../infrastructure/container'
 
 const userRepository = container.get(UserRepository)
 

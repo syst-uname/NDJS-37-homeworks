@@ -1,5 +1,5 @@
 import express from 'express'
-import redis from 'redis'
+import * as redis from 'redis'
  
 const app = express()
  

@@ -1,7 +1,7 @@
-import container from '../config/container.js'
-import CustomError from '../errors/custom.error.js'
-import BookModel from '../models/book.model.js'
-import { CounterRepository } from './index.js'
+import { container } from '../infrastructure/container'
+import { HttpException } from '../exceptions'
+import BookModel from '../models/book.model'
+import { CounterRepository } from './'
 
 class BookRepository {
 
@@ -18,7 +18,7 @@ class BookRepository {
             const newBook = await book.save()
             return newBook
         } catch (error) {
-            throw new CustomError(`Ошибка при добавлении книги: ${error.message}`, 500)
+            throw new HttpException(`Ошибка при добавлении книги: ${error.message}`, 500)
         }
     }
 
@@ -33,7 +33,7 @@ class BookRepository {
                 throw new Error(`Книга ${id} не найдена`)
             }
         } catch (error) {
-            throw new CustomError(`Ошибка при получении книги ${id}: ${error.message}`, 404)
+            throw new HttpException(`Ошибка при получении книги ${id}: ${error.message}`, 404)
         }
     }
 
@@ -42,7 +42,7 @@ class BookRepository {
             const books = await BookModel.find()
             return books
         } catch (error) {
-            throw new CustomError(`Ошибка при получении книг: ${error.message}`, 500)
+            throw new HttpException(`Ошибка при получении книг: ${error.message}`, 500)
         }
     }
 
@@ -67,7 +67,7 @@ class BookRepository {
             )
             return result.modifiedCount === 1
         } catch (error) {
-            throw new CustomError(`Ошибка при обновлении книги ${id}: ${error.message}`, 500)
+            throw new HttpException(`Ошибка при обновлении книги ${id}: ${error.message}`, 500)
         }
     }
 
@@ -76,7 +76,7 @@ class BookRepository {
             const result = await BookModel.deleteOne({ id })
             return result.deletedCount === 1
         } catch (error) {
-            throw new CustomError(`Ошибка при удалении книги ${id}: ${error.message}`, 500)
+            throw new HttpException(`Ошибка при удалении книги ${id}: ${error.message}`, 500)
         }
     }
 

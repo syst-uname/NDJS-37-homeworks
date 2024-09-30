@@ -1,6 +1,7 @@
-import { isReqView } from '../utils/util.js'
+import { Request, Response } from 'express'
+import { isReqView } from '../utils/util'
 
-const error = async (err, req, res, next) => {
+const error = async (err: Error, req: Request, res: Response) => {
     const view = isReqView(req)
 
     // ошибки аутентификации из пасорта 

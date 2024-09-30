@@ -1,7 +1,7 @@
 import { Router } from 'express'
 
-import container from '../../config/container.js'
-import { BookRepository, CommentRepository } from '../../repositories/index.js'
+import { container } from '../../infrastructure/container'
+import { BookRepository, CommentRepository } from '../../repositories'
 
 const bookRepository = container.get(BookRepository)
 const commentRepository = container.get(CommentRepository)

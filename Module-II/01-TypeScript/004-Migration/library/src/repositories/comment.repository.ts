@@ -1,7 +1,7 @@
-import CommentModel from '../models/comment.model.js'
-import CustomError from '../errors/custom.error.js'
-import container from '../config/container.js'
-import { UserRepository } from './index.js'
+import CommentModel from '../models/comment.model'
+import { HttpException } from '../exceptions'
+import { container } from '../infrastructure/container'
+import { UserRepository } from './'
 
 class CommentRepository {
 
@@ -13,7 +13,7 @@ class CommentRepository {
             )
             return commentsWithUser
         } catch (error) {
-            throw new CustomError(`Ошибка при получении комментариев для ${parent}: ${error.message}`, 500)
+            throw new HttpException(`Ошибка при получении комментариев для ${parent}: ${error.message}`, 500)
         }
     }
 
@@ -27,7 +27,7 @@ class CommentRepository {
             const newComment = await comment.save()
             return this.addUser(newComment._doc)
         } catch (error) {
-            throw new CustomError(`Ошибка при добавлении комментария для ${parent}: ${error.message}`, 500)
+            throw new HttpException(`Ошибка при добавлении комментария для ${parent}: ${error.message}`, 500)
         }
     }
 
@@ -39,7 +39,7 @@ class CommentRepository {
                 user: await userRepository.find(comment.username)
             }
         } catch (error) {
-            throw new CustomError(`Ошибка при получении комментариев пользователя ${comment.username}: ${error.message}`, 500)
+            throw new HttpException(`Ошибка при получении комментариев пользователя ${comment.username}: ${error.message}`, 500)
         }
     }
 
