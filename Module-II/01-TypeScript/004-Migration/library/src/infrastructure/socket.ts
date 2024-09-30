@@ -6,9 +6,9 @@ import { Server as HttpServer } from 'http'
 import config from '../config'
 import { container } from './container'
 import { session } from '../middleware'
-import { CommentRepository } from '../repositories'
+import { CommentService } from '../services'
 
-const commentRepository = container.get(CommentRepository)
+const commentService = container.get(CommentService)
 
 export const socket = (httpServer: HttpServer) => {
     const io = new Server(httpServer)
@@ -25,7 +25,7 @@ export const socket = (httpServer: HttpServer) => {
         socket.on('comment', async (data) => {
             try {
                 const user = socket.request.session.passport.user
-                const comment = await commentRepository.add(parent, user.username, data.text)
+                const comment = await commentService.add(parent, user.username, data.text)
 
                 // приходится передавать готовый код html страницы чтобы не писать его на клиенте вручную
                 // причем разделяются стили сообщения для себя и остальных пользователей

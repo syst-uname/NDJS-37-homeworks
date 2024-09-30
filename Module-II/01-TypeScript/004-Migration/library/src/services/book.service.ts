@@ -1,9 +1,9 @@
 import { HttpException } from '../exceptions'
 import { container } from '../infrastructure'
 import BookModel from '../models/book.model'
-import { CounterRepository } from './index'
+import { CounterService } from './index'
 
-class BookRepository {
+export class BookService {
 
     async add(data, files) {
         try {
@@ -26,8 +26,8 @@ class BookRepository {
         try {
             const book = await BookModel.findOne({ id }).lean()
             if (book) {
-                const counterRepository = container.get(CounterRepository)
-                book.views = await counterRepository.get(+id)       // получение количества просмотров
+                const counterService = container.get(CounterService)
+                book.views = await counterService.get(+id)       // получение количества просмотров
                 return book
             } else {
                 throw new Error(`Книга ${id} не найдена`)
@@ -119,5 +119,3 @@ class BookRepository {
         return result
     }
 }
-
-export default BookRepository

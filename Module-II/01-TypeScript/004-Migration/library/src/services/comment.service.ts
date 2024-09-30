@@ -1,9 +1,9 @@
 import CommentModel from '../models/comment.model'
 import { HttpException } from '../exceptions'
 import { container } from '../infrastructure'
-import { UserRepository } from './index'
+import { UserService } from './index'
 
-class CommentRepository {
+export class CommentService {
 
     async get(parent) {
         try {
@@ -33,10 +33,10 @@ class CommentRepository {
 
     async addUser(comment) {
         try {
-            const userRepository = container.get(UserRepository)
+            const userService = container.get(UserService)
             return {
                 ...comment,
-                user: await userRepository.find(comment.username)
+                user: await userService.find(comment.username)
             }
         } catch (error) {
             throw new HttpException(`Ошибка при получении комментариев пользователя ${comment.username}: ${error.message}`, 500)
@@ -44,5 +44,3 @@ class CommentRepository {
     }
 
 }
-
-export default CommentRepository

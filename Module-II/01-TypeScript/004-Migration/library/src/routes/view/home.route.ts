@@ -1,10 +1,10 @@
 import { Router } from 'express'
 
 import { container } from '../../infrastructure'
-import { BookRepository, CommentRepository } from '../../repositories'
+import { BookService, CommentService } from '../../services'
 
-const bookRepository = container.get(BookRepository)
-const commentRepository = container.get(CommentRepository)
+const bookService = container.get(BookService)
+const commentService = container.get(CommentService)
 
 const router = Router()
 
@@ -14,9 +14,9 @@ router.get('/', async (req, res) => {
         res.render('index', {
             title: 'Главная страница',
             user: req.user,
-            count: await bookRepository.count(),
-            content: await bookRepository.titleContent(),
-            comments: await commentRepository.get('index'),
+            count: await bookService.count(),
+            content: await bookService.titleContent(),
+            comments: await commentService.get('index'),
             toast: ''
         })
     } catch (error) {

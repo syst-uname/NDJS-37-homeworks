@@ -1,10 +1,11 @@
 import { Router } from 'express'
 
-import { BookRepository, UserRepository } from '../../repositories'
+import { BookService, UserService } from '../../services'
 import { authenticateUser } from '../../middleware'
 import { container, passport } from '../../infrastructure'
 
-const bookRepository = container.get(BookRepository)
+const bookService = container.get(BookService)
+const userService = container.get(UserService)
 
 const router = Router()
 
@@ -36,7 +37,7 @@ router.get('/me',
         res.render('user/profile', {
             title: 'Профиль',
             user: req.user,
-            count: await bookRepository.count(),
+            count: await bookService.count(),
             profile: req.user,
             toast: ''
         })
@@ -50,8 +51,8 @@ router.get('/profile/:username',
             res.render('user/profile', {
                 title: 'Профиль',
                 user: req.user,
-                count: await bookRepository.count(),
-                profile: await UserRepository.find(req.params.username),
+                count: await bookService.count(),
+                profile: await userService.find(req.params.username),
                 toast: ''
             })
         } catch (error) {
@@ -76,7 +77,7 @@ router.get('/signup', async (req, res) => {
 
 router.post('/signup', async (req, res) => {
     try {
-        const result = await UserRepository.registration(req.body)
+        const result = await userService.registration(req.body)
         req.session.messageUserSignup = result.message           // отобразится на новой странице
         res.redirect('/view/user/login')
     } catch (error) {
@@ -85,7 +86,7 @@ router.post('/signup', async (req, res) => {
             title: 'Регистрация',
             user: req.user,
             defaults: req.body,
-            count: await bookRepository.count(),
+            count: await bookService.count(),
             message: error.message,
             toast: ''
         })

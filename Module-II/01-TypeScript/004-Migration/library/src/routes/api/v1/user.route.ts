@@ -2,9 +2,9 @@ import { Router } from 'express'
 
 import { container, passport } from '../../../infrastructure'
 import { authenticateUser } from '../../../middleware'
-import { UserRepository } from '../../../repositories'
+import { UserService } from '../../../services'
 
-const userRepository = container.get(UserRepository)
+const userService = container.get(UserService)
 
 const router = Router()
 
@@ -29,7 +29,7 @@ router.post('/logout',
 router.post('/signup',
     async (req, res) => {
         try {
-            const result = await userRepository.registration(req.body)
+            const result = await userService.registration(req.body)
             res.status(201).json({ message: result.message })
         } catch (error) {
             res.status(error.status).json({ error: error.message })
@@ -42,7 +42,7 @@ router.get('/profile/:username',
     authenticateUser,
     async (req, res) => {
         try {
-            const user = await userRepository.find(req.params.username)
+            const user = await userService.find(req.params.username)
             res.status(200).json({ user })
         } catch (error) {
             res.status(error.status).json({ error: error.message })

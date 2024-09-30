@@ -1,7 +1,7 @@
 import axios from 'axios'
 import config from '../config'
 
-class CounterRepository {
+export class CounterService {
 
     async incr(bookId) {
         try {
@@ -22,5 +22,3 @@ class CounterRepository {
         }
     }
 }
-
-export default CounterRepository

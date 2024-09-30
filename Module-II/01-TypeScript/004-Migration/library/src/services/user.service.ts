@@ -2,7 +2,7 @@ import UserModel from '../models/user.model'
 import { HttpException } from '../exceptions'
 import { hashPassword, verifyPassword } from '../utils'
 
-class UserRepository {
+export class UserService {
     async find(username) {
         try {
             const user = await UserModel.findOne({ username }, { _id: 0, username: 1, email: 1, fullname: 1, created: 1 }).lean()
@@ -57,5 +57,3 @@ class UserRepository {
         }
     }
 }
-
-export default UserRepository
