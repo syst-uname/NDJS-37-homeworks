@@ -3,11 +3,10 @@ import http from 'http'
 import path from 'path'
 
 import config from './config'
-import router from './routes'
-import { sessionMiddleware } from './infrastructure/session'
+import router from './routes' 
 import passport from './infrastructure/passport'
 import { useSocket } from './infrastructure/socket'
-import { error, logger } from './middleware' 
+import { error, logger, session } from './middleware' 
 import { connectToDatabase } from './infrastructure/db'
 
 console.log(`Директория проекта: ${__dirname}`)   // TODO что с папкой проекта?
@@ -19,7 +18,7 @@ useSocket(server)
 app.set('views', path.join(config.server.dirname, 'src', 'views'))
 app.set('view engine', 'ejs')
 
-app.use(sessionMiddleware)
+app.use(session)
 app.use(passport.initialize())
 app.use(passport.session())
 

@@ -5,7 +5,7 @@ import { Server as HttpServer } from 'http'
 
 import config from '../config'
 import { container } from './container'
-import { sessionMiddleware } from './session'
+import { session } from '../middleware'
 import { CommentRepository } from '../repositories'
 
 const commentRepository = container.get(CommentRepository)
@@ -14,7 +14,7 @@ export const useSocket = (httpServer: HttpServer) => {
     const io = new Server(httpServer)
 
     io.use((socket, next) => {
-        sessionMiddleware(socket.request, {}, next)
+        session(socket.request, {}, next)
     })
 
     io.on('connection', (socket) => {
