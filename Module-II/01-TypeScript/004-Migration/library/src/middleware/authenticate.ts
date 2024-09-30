@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
-import { isReqView } from '../utils/util'
+import { isReqView } from '../utils'
 
 const authenticateUser = (req: Request, res: Response, next: NextFunction) => {
     if (req.isAuthenticated()) {

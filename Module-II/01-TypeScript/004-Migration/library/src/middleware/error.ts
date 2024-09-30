@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { isReqView } from '../utils/util'
+import { isReqView } from '../utils'
 
 const error = async (err: Error, req: Request, res: Response) => {
     const view = isReqView(req)

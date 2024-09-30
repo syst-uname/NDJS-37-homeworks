@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { isReqView } from '../utils/util'
+import { isReqView } from '../utils'
 
 const error404 = async (req: Request, res: Response) => {
     if (isReqView(req)) {
