@@ -11,4 +11,6 @@ const storage = multer.diskStorage({
     }
 })
 
-export default multer({ storage })
+const multerConfig = multer({ storage })
+
+export { multerConfig as multer }

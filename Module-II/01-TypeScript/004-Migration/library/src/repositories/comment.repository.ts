@@ -1,7 +1,7 @@
 import CommentModel from '../models/comment.model'
 import { HttpException } from '../exceptions'
-import { container } from '../infrastructure/container'
-import { UserRepository } from './'
+import { container } from '../infrastructure'
+import { UserRepository } from './index'
 
 class CommentRepository {
 

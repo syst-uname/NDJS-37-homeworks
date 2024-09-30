@@ -1,7 +1,7 @@
-import { container } from '../infrastructure/container'
 import { HttpException } from '../exceptions'
+import { container } from '../infrastructure'
 import BookModel from '../models/book.model'
-import { CounterRepository } from './'
+import { CounterRepository } from './index'
 
 class BookRepository {
 

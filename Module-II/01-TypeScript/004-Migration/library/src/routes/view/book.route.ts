@@ -1,11 +1,10 @@
 import express from 'express'
 import path from 'path'
 
-import { container } from '../../infrastructure/container'
+import config from '../../config'
 import { authenticateUser } from '../../middleware'
 import { BookRepository, CommentRepository, CounterRepository } from '../../repositories'
-import config from '../../config'
-import multer from '../../infrastructure/multer'
+import { container, multer } from '../../infrastructure'
 
 const bookRepository = container.get(BookRepository)
 const commentRepository = container.get(CommentRepository)

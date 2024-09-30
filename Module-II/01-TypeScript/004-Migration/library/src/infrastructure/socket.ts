@@ -10,7 +10,7 @@ import { CommentRepository } from '../repositories'
 
 const commentRepository = container.get(CommentRepository)
 
-export const useSocket = (httpServer: HttpServer) => {
+export const socket = (httpServer: HttpServer) => {
     const io = new Server(httpServer)
 
     io.use((socket, next) => {

@@ -32,4 +32,4 @@ passport.deserializeUser(async (user, done) => {
     }
 })
 
-export default passport
+export { passport }

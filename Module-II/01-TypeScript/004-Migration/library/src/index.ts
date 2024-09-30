@@ -4,16 +4,14 @@ import path from 'path'
 
 import config from './config'
 import router from './routes' 
-import passport from './infrastructure/passport'
-import { useSocket } from './infrastructure/socket'
 import { error, logger, session } from './middleware' 
-import { connectToDatabase } from './infrastructure/db'
+import { connectToDatabase, passport, socket } from './infrastructure' 
 
 console.log(`Директория проекта: ${__dirname}`)   // TODO что с папкой проекта?
 
 const app = express()
 const server = new http.Server(app)
-useSocket(server)
+socket(server)
 
 app.set('views', path.join(config.server.dirname, 'src', 'views'))
 app.set('view engine', 'ejs')
