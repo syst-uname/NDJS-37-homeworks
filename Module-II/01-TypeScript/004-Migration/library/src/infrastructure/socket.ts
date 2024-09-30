@@ -1,15 +1,16 @@
 import { Server } from 'socket.io'
 import ejs from 'ejs'
 import path from 'path'
+import { Server as HttpServer } from 'http'
 
-import config from './index.js'
-import container from './container.js'
-import sessionMiddleware from './session.js'
-import { CommentRepository } from '../repositories/index.js'
+import config from '../config'
+import { container } from './container'
+import { sessionMiddleware } from './session'
+import { CommentRepository } from '../repositories'
 
 const commentRepository = container.get(CommentRepository)
 
-const useSocket = (httpServer) => {
+export const useSocket = (httpServer: HttpServer) => {
     const io = new Server(httpServer)
 
     io.use((socket, next) => {
@@ -38,5 +39,3 @@ const useSocket = (httpServer) => {
         })
     })
 }
-
-export default useSocket

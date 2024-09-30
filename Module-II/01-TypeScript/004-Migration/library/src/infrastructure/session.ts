@@ -1,10 +1,8 @@
 import session from 'express-session'
-import config from './index.js'
+import config from '../config'
 
-const sessionMiddleware = session({
+export const sessionMiddleware = session({
     secret: config.auth.session_secret,
     resave: false,
     saveUninitialized: true
 })
-
-export default sessionMiddleware

@@ -1,8 +1,8 @@
 import passport from 'passport'
 import { Strategy } from 'passport-local'
 
-import container from './container.js'
-import { UserRepository } from '../repositories/index.js'
+import { container } from './container'
+import { UserRepository } from '../repositories'
 
 const userRepository = container.get(UserRepository)
 
@@ -14,7 +14,7 @@ passport.use('local', new Strategy(
                 return done(null, false, { message: 'Неверный пароль' })
             }
             return done(null, user)
-        } catch (error) {
+        } catch {           //  TODO проверить 
             return done(null, false, { message: `Пользователь ${username} не зарегистрирован` })
         }
     }))
@@ -25,9 +25,9 @@ passport.serializeUser((user, done) => {
 
 passport.deserializeUser(async (user, done) => {
     try {
-        await userRepository.find(user.username)
+        await userRepository.find(user.username)        //  TODO  конкретный тип 
         return done(null, user)
-    } catch (error) {
+    } catch {
         return done(new Error(`Пользователь ${user.username} не найден`))
     }
 })
