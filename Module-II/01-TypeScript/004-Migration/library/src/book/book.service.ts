@@ -1,7 +1,7 @@
 import { HttpException } from '../exceptions'
 import { container } from '../infrastructure'
-import BookModel from '../models/book.model'
-import { CounterService } from './index'
+import BookModel from './book.model'
+import { CounterService } from '../counter/counter.service'
 
 export class BookService {
 
