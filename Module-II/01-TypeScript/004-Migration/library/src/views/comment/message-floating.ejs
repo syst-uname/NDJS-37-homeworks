@@ -1,0 +1,7 @@
+<% if (comment.user.username === user.username) { %>
+<!-- по правому краю для своих сообщений -->
+<%- include('./message-floating-right', { comment }) %>
+<% } else { %>
+<!-- по левому краю остальные сообщения -->
+<%- include('./message-floating-left', { comment }) %>
+<% } %>

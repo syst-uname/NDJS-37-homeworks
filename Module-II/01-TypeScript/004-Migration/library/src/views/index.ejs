@@ -1,0 +1,76 @@
+<%- include('./port/layout-start', { title, user, count }) %>
+
+<% if (user) { %>
+
+<div class="card grey lighten-5">
+  <div class="card-content">
+    <span class="card-title">Подборки нашей библиотеки</span>
+
+    <ul class="collapsible">
+      <li>
+        <div class="collapsible-header grey lighten-4">
+          <i class="material-icons">fiber_new</i>
+          Новинки
+          <%- include('./components/badge', { value: content.new.length }) %>
+        </div>
+        <div class="collapsible-body">
+          <% content.new.forEach((book)=> { %>
+          <%- include('./book/book', { book }) %>
+          <% }) %>
+        </div>
+      </li>
+
+      <li>
+        <div class="collapsible-header grey lighten-4">
+          <i class="material-icons">people_outline</i>
+          Популярное
+          <%- include('./components/badge', { value: content.popular.length }) %>
+        </div>
+        <div class="collapsible-body">
+          <% content.popular.forEach((book)=> { %>
+          <%- include('./book/book', { book }) %>
+          <% }) %>
+        </div>
+      </li>
+
+      <li>
+        <div class="collapsible-header grey lighten-4">
+          <i class="material-icons">star_border</i>
+          <span>Специально для <%- include('./components/avatar', { user, ref: '' }) %></span>
+          <%- include('./components/badge', { value: content.specially.length }) %>
+        </div>
+        <div class="collapsible-body">
+          <% content.specially.forEach((book)=> { %>
+          <%- include('./book/book', { book }) %>
+          <% }) %>
+        </div>
+      </li>
+    </ul>
+
+  </div>
+</div>
+
+<%- include('./comment/comment', { title: 'Обсуждение библиотеки', user, comments }) %>
+
+<% } else { %>
+
+
+<div class="card grey lighten-5">
+  <div class="card-content">
+    <span class="card-title">Ограниченный доступ</span>
+    <span class="grey-text text-darken-2">Библиотека доступна только авторизованным пользователям</span>
+  </div>
+
+  <div class="card-action">
+    <button class="btn grey lighten-5 teal-text btn-flat">
+      <a href="/view/user/login" class="teal-text">Войти</a>
+    </button>
+    <button class="btn grey lighten-5 teal-text btn-flat">
+      <a href="/view/user/signup" class="grey-text">Регистрации</a>
+    </button>
+  </div>
+</div>
+
+<% } %>
+
+<%- include('./port/layout-end', { toast, commentsParent: 'index' }) %>

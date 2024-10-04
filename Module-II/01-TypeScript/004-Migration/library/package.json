@@ -1,0 +1,43 @@
+{
+  "name": "004-migration-library",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "local": "nodemon -L -r dotenv/config --ext \"ts\" --exec \"tsc && node dist/index.js\"",
+    "dev": "nodemon -L --ext \"ts\" --exec \"tsc && node dist/index.js\"",
+    "server": "node src/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.7.2",
+    "bcrypt": "^5.1.1",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.19.2",
+    "express-session": "^1.18.0",
+    "inversify": "^6.0.2",
+    "mongoose": "^8.5.2",
+    "multer": "^1.4.5-lts.1",
+    "passport": "^0.7.0",
+    "passport-local": "^1.0.0",
+    "reflect-metadata": "^0.2.2",
+    "socket.io": "^4.7.5"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/ejs": "^3.1.5",
+    "@types/express-session": "^1.18.0",
+    "@types/multer": "^1.4.12",
+    "@types/node": "^22.7.4",
+    "@types/passport": "^1.0.16",
+    "@types/passport-local": "^1.0.38",
+    "@typescript-eslint/eslint-plugin": "^8.7.0",
+    "@typescript-eslint/parser": "^8.7.0",
+    "eslint": "^9.11.1",
+    "nodemon": "^3.1.4",
+    "typescript": "^5.6.2"
+  }
+}
