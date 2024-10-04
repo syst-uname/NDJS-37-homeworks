@@ -1,8 +1,8 @@
 import { Request, Response } from 'express'
-import { isReqView } from '../utils'
+import { isRequestView } from '../utils'
 
 export const error404 = async (req: Request, res: Response) => {
-    if (isReqView(req)) {
+    if (isRequestView(req)) {
         res.render('errors/error', {
             user: req.user,
             error: 'Страница не найдена',

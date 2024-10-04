@@ -3,8 +3,11 @@ import path from 'path'
 
 import config from '../../config'
 import { authenticateUser } from '../../middleware'
-import { BookService, CommentService, CounterService } from '../../services'
 import { container, multer } from '../../infrastructure'
+import { CommentService } from '../../comment/comment.service'
+import { CounterService } from '../../counter/counter.service'
+import { BookService } from '../../book/book.service'
+import { CreateBookFilesDto } from '../../book/book.dto'
 
 const bookService = container.get(BookService)
 const commentService = container.get(CommentService)
@@ -57,7 +60,7 @@ router.post('/create',
     multer.fields([{ name: 'fileCover' }, { name: 'fileBook' }]),
     async (req, res) => {
         try {
-            await bookService.add(req.body, req.files)
+            await bookService.create(req.body, req.files as CreateBookFilesDto)
             req.session.messageBook = `Книга "${req.body.title}" добавлена`
             res.redirect('/view/book')
         } catch (error) {
@@ -72,8 +75,8 @@ router.post('/create',
 // конкретная книга
 router.get('/:id', async (req, res) => {
     try {
-        const book = await bookService.get(req.params.id)
-        counterService.incr(req.params.id)      // счетчик просмотров книги
+        const book = await bookService.get(+req.params.id)
+        counterService.incr(+req.params.id)      // счетчик просмотров книги
 
         res.render('book/view', {
             title: 'Просмотр книги',
@@ -94,7 +97,7 @@ router.get('/:id', async (req, res) => {
 // изменение книги
 router.get('/update/:id', async (req, res) => {
     try {
-        const book = await bookService.get(req.params.id)
+        const book = await bookService.get(+req.params.id)
         res.render('book/update', {
             title: 'Редактирование книги',
             user: req.user,
@@ -114,7 +117,7 @@ router.post('/update/:id',
     multer.fields([{ name: 'fileCover' }, { name: 'fileBook' }]),
     async (req, res) => {
         try {
-            await bookService.update(req.params.id, req.body, req.files)
+            await bookService.update(+req.params.id, req.body, req.files as CreateBookFilesDto)
             res.redirect('/view/book/' + req.params.id)
         } catch (error) {
             res.render('errors/error', {
@@ -128,7 +131,7 @@ router.post('/update/:id',
 // удаление книги (приходится делать через GET)
 router.get('/delete/:id', async (req, res) => {
     try {
-        await bookService.delete(req.params.id)
+        await bookService.delete(+req.params.id)
         req.session.messageBook = 'Книга удалена'     // отобразится на новой странице
         res.redirect('/view/book')
     } catch (error) {
@@ -142,7 +145,7 @@ router.get('/delete/:id', async (req, res) => {
 // скачивание файла книги
 router.get('/:id/download', async (req, res) => {
     try {
-        const book = await bookService.get(req.params.id)
+        const book = await bookService.get(+req.params.id)
         res.download(
             path.join(config.server.publicDir, book.fileNameBook),
             book.fileOriginalBook,

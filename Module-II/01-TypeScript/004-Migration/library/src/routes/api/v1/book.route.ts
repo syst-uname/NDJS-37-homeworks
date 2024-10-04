@@ -1,7 +1,9 @@
 import { Router } from 'express'
+import path from 'path'
 
 import config from '../../../config'
-import { BookService } from '../../../services'
+import { BookService } from '../../../book/book.service'
+import { CreateBookFilesDto } from '../../../book/book.dto'
 import { authenticateUser } from '../../../middleware'
 import { container, multer } from '../../../infrastructure'
 
@@ -24,7 +26,7 @@ router.get('/', async (req, res) => {
 // конкретная книга
 router.get('/:id', async (req, res) => {
     try {
-        const book = await bookService.get(req.params.id)
+        const book = await bookService.get(+req.params.id)
         res.status(200).json(book)
     } catch (error) {
         res.status(error.status).json({ error: error.message })
@@ -36,7 +38,7 @@ router.post('/',
     multer.fields([{ name: 'fileCover' }, { name: 'fileBook' }]),
     async (req, res) => {
         try {
-            const book = await bookService.add(req.body, req.file)
+            const book = await bookService.create(req.body, req.files as CreateBookFilesDto)
             res.status(201).json(book)
         } catch (error) {
             res.status(error.status).json({ error: error.message })
@@ -49,7 +51,7 @@ router.put('/:id',
     multer.fields([{ name: 'fileCover' }, { name: 'fileBook' }]),
     async (req, res) => {
         try {
-            const result = await bookService.update(req.params.id, req.body)
+            const result = await bookService.update(+req.params.id, req.body, req.files as CreateBookFilesDto)
             res.status(200).json(result)
         } catch (error) {
             res.status(error.status).json({ error: error.message })
@@ -60,7 +62,7 @@ router.put('/:id',
 // удаление книги
 router.delete('/:id', async (req, res) => {
     try {
-        await bookService.delete(req.params.id)
+        await bookService.delete(+req.params.id)
         res.status(200).json(`Книга ${req.params.id} удалена`)
     } catch (error) {
         res.status(error.status).json({ error: error.message })
@@ -70,13 +72,13 @@ router.delete('/:id', async (req, res) => {
 // скачивание файла книги
 router.get('/:id/download', async (req, res) => {
     try {
-        const book = await bookService.get(req.params.id)
+        const book = await bookService.get(+req.params.id)
         res.download(
             path.join(config.server.publicDir, book.fileNameBook),
             book.fileOriginalBook,
             (err) => {
                 if (err) {
-                    res.status(404).json({ error: `Файл ${book.fileName} не найден` })
+                    res.status(404).json({ error: `Файл ${book.fileNameBook} не найден` })
                 }
             })
     } catch (error) {

@@ -1,10 +1,10 @@
 import { Request, Response } from 'express'
-import { isReqView } from '../utils'
+import { isRequestView } from '../utils'
 
 export const error = async (err: Error, req: Request, res: Response) => {
-    const view = isReqView(req)
+    const view = isRequestView(req)
 
-    // ошибки аутентификации из пасорта 
+    // ошибки аутентификации из паспорта 
     if (err.name === 'AuthenticationError') {
         const message = req.session.messages.join('')
         req.session.messages = []

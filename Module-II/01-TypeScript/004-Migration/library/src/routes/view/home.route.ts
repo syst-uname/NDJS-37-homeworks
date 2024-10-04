@@ -1,7 +1,8 @@
 import { Router } from 'express'
 
 import { container } from '../../infrastructure'
-import { BookService, CommentService } from '../../services'
+import { BookService } from '../../book/book.service'
+import { CommentService } from '../../comment/comment.service'
 
 const bookService = container.get(BookService)
 const commentService = container.get(CommentService)

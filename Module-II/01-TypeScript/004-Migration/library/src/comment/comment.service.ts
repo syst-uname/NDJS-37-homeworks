@@ -1,11 +1,13 @@
-import CommentModel from './comment.model'
-import { HttpException } from '../exceptions'
 import { container } from '../infrastructure'
 import { UserService } from '../user/user.service'
+import { CommentModel } from './comment.model'
+import { IComment } from './comment.interface'
+import { CommentDto } from './comment.dto'
+import { HttpException } from '../exceptions'
 
 export class CommentService {
 
-    async get(parent) {
+    async get(parent: string): Promise<CommentDto[]> {
         try {
             const comments = await CommentModel.find({ parent }).lean()
             const commentsWithUser = await Promise.all(
@@ -17,7 +19,7 @@ export class CommentService {
         }
     }
 
-    async add(parent, username, text) {
+    async add(parent: string, username: string, text: string): Promise<CommentDto> {
         try {
             const comment = new CommentModel({
                 parent,
@@ -25,13 +27,13 @@ export class CommentService {
                 text
             })
             const newComment = await comment.save()
-            return this.addUser(newComment._doc)
+            return this.addUser(newComment.toObject())
         } catch (error) {
             throw new HttpException(`Ошибка при добавлении комментария для ${parent}: ${error.message}`, 500)
         }
     }
 
-    async addUser(comment) {
+    async addUser(comment: IComment): Promise<CommentDto> {
         try {
             const userService = container.get(UserService)
             return {

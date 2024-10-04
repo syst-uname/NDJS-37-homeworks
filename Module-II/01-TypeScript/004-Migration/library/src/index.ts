@@ -7,8 +7,6 @@ import router from './routes'
 import { error, logger, session } from './middleware'
 import { connectToDatabase, passport, socket } from './infrastructure'
 
-console.log(`Директория проекта: ${__dirname}`)   // TODO что с папкой проекта?
-
 const app = express()
 const server = new http.Server(app)
 socket(server)
@@ -24,7 +22,7 @@ app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 app.use(logger)
 app.use(router)
-app.use(error)
+app.use(error);
 
-await connectToDatabase()
+(async () => await connectToDatabase())()
 server.listen(config.server.port, () => console.log(`Приложение library запущено на порту ${config.server.port}`))

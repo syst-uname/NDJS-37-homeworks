@@ -2,7 +2,8 @@ import passport from 'passport'
 import { Strategy } from 'passport-local'
 
 import { container } from './container'
-import { UserService } from '../services'
+import { UserService } from '../user/user.service'
+import { UserDto } from '../user/user.dto'
 
 const userService = container.get(UserService)
 
@@ -14,7 +15,7 @@ passport.use('local', new Strategy(
                 return done(null, false, { message: 'Неверный пароль' })
             }
             return done(null, user)
-        } catch {           //  TODO проверить 
+        } catch {
             return done(null, false, { message: `Пользователь ${username} не зарегистрирован` })
         }
     }))
@@ -23,9 +24,9 @@ passport.serializeUser((user, done) => {
     done(null, user)
 })
 
-passport.deserializeUser(async (user, done) => {
+passport.deserializeUser(async (user: UserDto, done) => {
     try {
-        await userService.find(user.username)        //  TODO  конкретный тип 
+        await userService.find(user.username)
         return done(null, user)
     } catch {
         return done(new Error(`Пользователь ${user.username} не найден`))

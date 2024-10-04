@@ -2,7 +2,7 @@ import { Router } from 'express'
 
 import { container, passport } from '../../../infrastructure'
 import { authenticateUser } from '../../../middleware'
-import { UserService } from '../../../services'
+import { UserService } from '../../../user/user.service'
 
 const userService = container.get(UserService)
 

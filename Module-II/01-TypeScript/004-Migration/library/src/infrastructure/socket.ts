@@ -6,7 +6,7 @@ import { Server as HttpServer } from 'http'
 import config from '../config'
 import { container } from './container'
 import { session } from '../middleware'
-import { CommentService } from '../services'
+import { CommentService } from '../comment/comment.service'
 
 const commentService = container.get(CommentService)
 
@@ -14,17 +14,23 @@ export const socket = (httpServer: HttpServer) => {
     const io = new Server(httpServer)
 
     io.use((socket, next) => {
-        session(socket.request, {}, next)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (session as any)(socket.request, {}, next)
     })
 
     io.on('connection', (socket) => {
 
         const { parent } = socket.handshake.query   // комментарии для книги или главной страницы? 
+        if (!parent || Array.isArray(parent)) {
+            return
+        }
+
         socket.join(parent)
 
         socket.on('comment', async (data) => {
             try {
-                const user = socket.request.session.passport.user
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                const user = (socket as any).request.session.passport.user
                 const comment = await commentService.add(parent, user.username, data.text)
 
                 // приходится передавать готовый код html страницы чтобы не писать его на клиенте вручную

@@ -1,11 +1,13 @@
-import { HttpException } from '../exceptions'
-import { container } from '../infrastructure'
-import BookModel from './book.model'
+import { BookModel } from './book.model'
+import { IBook } from './book.interface'
+import { BookDto, CreateBookFilesDto, UpdateBookDto, LibraryContentDto } from './book.dto'
 import { CounterService } from '../counter/counter.service'
+import { container } from '../infrastructure'
+import { HttpException } from '../exceptions'
 
 export class BookService {
 
-    async add(data, files) {
+    async create(data: UpdateBookDto, files: CreateBookFilesDto): Promise<IBook> {
         try {
             const book = new BookModel({
                 id: await this.nextId(),
@@ -22,13 +24,16 @@ export class BookService {
         }
     }
 
-    async get(id) {
+    async get(id: number): Promise<BookDto> {
         try {
             const book = await BookModel.findOne({ id }).lean()
             if (book) {
                 const counterService = container.get(CounterService)
-                book.views = await counterService.get(+id)       // получение количества просмотров
-                return book
+                const views = await counterService.get(id)       // получение количества просмотров
+                return {
+                    ...book,
+                    views
+                }
             } else {
                 throw new Error(`Книга ${id} не найдена`)
             }
@@ -37,7 +42,7 @@ export class BookService {
         }
     }
 
-    async getAll() {
+    async getAll(): Promise<IBook[]> {
         try {
             const books = await BookModel.find()
             return books
@@ -46,9 +51,9 @@ export class BookService {
         }
     }
 
-    async update(id, data, files) {
+    async update(id: number, data: UpdateBookDto, files: CreateBookFilesDto): Promise<boolean> {
         try {
-            const fileData = {}
+            const fileData: Partial<IBook> = {}
             if (files.fileCover) {
                 fileData.fileOriginalCover = files.fileCover[0].originalname
                 fileData.fileNameCover = files.fileCover[0].filename
@@ -71,7 +76,7 @@ export class BookService {
         }
     }
 
-    async delete(id) {
+    async delete(id: number): Promise<boolean> {
         try {
             const result = await BookModel.deleteOne({ id })
             return result.deletedCount === 1
@@ -81,22 +86,22 @@ export class BookService {
     }
 
     // следующий id книги
-    async nextId() {
+    async nextId(): Promise<number> {
         const lastBook = await BookModel.findOne().sort({ id: -1 }).limit(1)
         return lastBook ? lastBook.id + 1 : 1
     }
 
     // всего книг 
-    async count() {
+    async count(): Promise<number> {
         try {
             return await BookModel.countDocuments()
-        } catch (error) {
+        } catch {
             return 0
         }
     }
 
     // контент для главной страницы
-    async titleContent() {
+    async titleContent(): Promise<LibraryContentDto> {
         return {
             new: await this.randomBooks(2),
             popular: await this.randomBooks(2),
@@ -105,7 +110,7 @@ export class BookService {
     }
 
     // произвольный набор книг для главного экрана 
-    async randomBooks(count) {
+    async randomBooks(count: number): Promise<IBook[]> {
         const books = await this.getAll()
         if (books.length < count)
             return books

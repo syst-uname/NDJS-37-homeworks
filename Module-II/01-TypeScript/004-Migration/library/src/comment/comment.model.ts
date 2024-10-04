@@ -1,12 +1,11 @@
-import { model, Schema } from 'mongoose'
+import { Document, model, Schema } from 'mongoose'
+import { IComment } from './comment.interface'
 
-const commentSchema = new Schema({
+const schema = new Schema({
     parent: { type: String, required: true },   // на чем висит коммент
     username: { type: String, required: true },
     text: { type: String },
     created: { type: Date, default: Date.now },
 })
 
-const CommentModel = model('Comment', commentSchema)
-
-export default CommentModel
+export const CommentModel = model<IComment & Document>('Comment', schema)

@@ -1,6 +1,7 @@
-import { model, Schema } from 'mongoose'
+import { Document, model, Schema } from 'mongoose'
+import { IBook } from './book.interface'
 
-const bookSchema = new Schema({
+const schema = new Schema({
     id: { type: Number, required: true, unique: true },
     title: { type: String, required: true },
     authors: { type: String, required: true },
@@ -12,6 +13,4 @@ const bookSchema = new Schema({
     fileOriginalBook: { type: String, required: true },
 })
 
-const BookModel = model('Book', bookSchema)
-
-export default BookModel
+export const BookModel = model<IBook & Document>('Book', schema)

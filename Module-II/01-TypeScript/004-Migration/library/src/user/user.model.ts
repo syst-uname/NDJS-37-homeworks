@@ -1,6 +1,7 @@
-import { model, Schema } from 'mongoose'
+import { Document, model, Schema } from 'mongoose'
+import { IUser } from './user.interface'
 
-const userSchema = new Schema({
+const schema = new Schema({
     username: { type: String, required: true, unique: true },
     email: { type: String, required: true },
     fullname: { type: String, required: true },
@@ -8,6 +9,4 @@ const userSchema = new Schema({
     created: { type: Date, default: Date.now },
 })
 
-const UserModel = model('User', userSchema)
-
-export default UserModel
+export const UserModel = model<IUser & Document>('User', schema)

@@ -1,7 +1,10 @@
 import 'reflect-metadata'
 import { Container, decorate, injectable } from 'inversify'
+import { BookService } from '../book/book.service'
+import { CommentService } from '../comment/comment.service'
+import { CounterService } from '../counter/counter.service'
+import { UserService } from '../user/user.service'
 
-import { BookService, CommentService, CounterService, UserService } from '../services'
 
 export const container = new Container()
 

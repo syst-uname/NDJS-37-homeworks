@@ -1,9 +1,10 @@
-import UserModel from './user.model'
-import { HttpException } from '../exceptions'
+import { UserModel } from './user.model'
 import { hashPassword, verifyPassword } from '../utils'
+import { HttpException } from '../exceptions'
+import { CreateUserDto, RegistrationUserDto, UserDto } from './user.dto'
 
 export class UserService {
-    async find(username) {
+    async find(username: string): Promise<UserDto> {
         try {
             const user = await UserModel.findOne({ username }, { _id: 0, username: 1, email: 1, fullname: 1, created: 1 }).lean()
             if (!user) {
@@ -15,12 +16,12 @@ export class UserService {
         }
     }
 
-    async verifyPassword(username, password) {
+    async verifyPassword(username: string, password: string): Promise<boolean> {
         const user = await UserModel.findOne({ username }).lean()
-        return await verifyPassword(password, user.password)
+        return !!user && await verifyPassword(password, user.password)
     }
 
-    async registration(body) {
+    async registration(body: CreateUserDto): Promise<RegistrationUserDto> {
         if (!body.username || !body.email || !body.fullname || !body.password || !body.password_confirm) {
             throw new HttpException('Необходимо заполнить все обязательные поля', 400)
         }
@@ -28,7 +29,9 @@ export class UserService {
         let existUser
         try {
             existUser = await this.find(body.username)
-        } catch (error) { }
+        } catch {
+            // пользователя еще нет, подходящий вариант
+        }
 
         if (existUser) {
             throw new HttpException('Пользователь с таким именем уже зарегистрирован', 400)
@@ -48,7 +51,7 @@ export class UserService {
                 fullname: body.fullname,
                 password: await hashPassword(body.password)
             })
-            const newUser = user.save()
+            user.save()
             return {
                 message: `Пользователь ${body.username} успешно зарегистрирован`
             }

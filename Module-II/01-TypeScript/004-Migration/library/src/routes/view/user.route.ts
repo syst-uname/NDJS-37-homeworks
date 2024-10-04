@@ -1,8 +1,9 @@
 import { Router } from 'express'
 
-import { BookService, UserService } from '../../services'
 import { authenticateUser } from '../../middleware'
 import { container, passport } from '../../infrastructure'
+import { BookService } from '../../book/book.service'
+import { UserService } from '../../user/user.service'
 
 const bookService = container.get(BookService)
 const userService = container.get(UserService)
