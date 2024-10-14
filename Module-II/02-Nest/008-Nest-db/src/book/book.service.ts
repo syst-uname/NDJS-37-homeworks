@@ -3,7 +3,7 @@ import { IBook } from './interfaces/book.interface'
 import { CreateBookDto, UpdateBookDto } from './dto/book.dto'
 
 @Injectable()
-export class BooksService {
+export class BookService {
 
   private readonly books: IBook[] = []
 
