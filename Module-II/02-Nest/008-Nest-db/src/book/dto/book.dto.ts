@@ -1,12 +1,11 @@
-import { IBook } from '../interfaces/book.interface'
+import { Book } from '../schemas/book.schema'
 
 export class CreateBookDto {
-  id: IBook['id']
-  title: IBook['title']
-  authors: IBook['authors']
-  description: IBook['description']
+  title: Book['title']
+  authors: Book['authors']
+  description: Book['description']
 }
 
 export class UpdateBookDto {
-  description: IBook['description']
+  description: Book['description']
 }
