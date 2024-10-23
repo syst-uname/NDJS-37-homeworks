@@ -17,7 +17,11 @@ export class BookService {
   }
 
   findOne(id: number) {
-    return this.books.find(book => book.id === id)
+    const book = this.books.find(book => book.id === id)
+    if (book) {
+      return book
+    }
+    throw new Error(`Книги с id ${id} не существует`)
   }
 
   update(id: number, updateBookDto: UpdateBookDto) {
@@ -26,7 +30,7 @@ export class BookService {
       this.books[index] = { ...this.books[index], ...updateBookDto }
       return this.books[index]
     } else {
-      return `Книги с id ${id} не существует`
+      throw new Error(`Книги с id ${id} не существует`)
     }
   }
 
@@ -34,9 +38,11 @@ export class BookService {
     const index = this.books.findIndex(book => book.id === id)
     if (index !== -1) {
       this.books.splice(index, 1)
-      return `Книга с id ${id} удалена`
+      return {
+        message: `Книга с id ${id} удалена`
+      }
     } else {
-      return `Книги с id ${id} не существует`
+      throw new Error(`Книги с id ${id} не существует`)
     }
   }
 }
