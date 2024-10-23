@@ -1,6 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common'
 import { BookService } from './book.service'
 import { CreateBookDto, UpdateBookDto } from './dto/book.dto'
+import { IdValidationPipe } from 'src/pipes/id.validation.pipe'
 
 @Controller('book')
 export class BookController {
@@ -17,7 +18,7 @@ export class BookController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id', IdValidationPipe) id: string) {
     return this.bookService.findOne(+id)
   }
 
