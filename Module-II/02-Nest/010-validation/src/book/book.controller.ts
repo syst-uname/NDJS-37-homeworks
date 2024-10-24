@@ -1,12 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common'
+import { Controller, Get, Post, Body, Patch, Param, Delete, UsePipes } from '@nestjs/common'
 import { BookService } from './book.service'
 import { CreateBookDto, UpdateBookDto } from './dto/book.dto'
 import { IdValidationPipe } from 'src/pipes/id.validation.pipe'
+import { BookValidationPipe } from 'src/pipes/book.validation.pipe'
 
 @Controller('book')
 export class BookController {
   constructor(private readonly bookService: BookService) {}
 
+  @UsePipes(new BookValidationPipe())
   @Post()
   create(@Body() createBookDto: CreateBookDto) {
     return this.bookService.create(createBookDto)

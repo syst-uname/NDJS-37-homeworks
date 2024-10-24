@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, PipeTransform } from '@nestjs/common'
 
 @Injectable()
-export class IdValidationPipe {
+export class IdValidationPipe implements PipeTransform {
 
   transform(value: string) {
     const id = Number(value)
