@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { HttpException, Injectable } from '@nestjs/common'
 import { IBook } from './interfaces/book.interface'
 import { CreateBookDto, UpdateBookDto } from './dto/book.dto'
 
@@ -30,7 +30,7 @@ export class BookService {
       this.books[index] = { ...this.books[index], ...updateBookDto }
       return this.books[index]
     } else {
-      throw new Error(`Книги с id ${id} не существует`)
+      throw new HttpException(`Книги с id ${id} не существует!`, 404)
     }
   }
 
