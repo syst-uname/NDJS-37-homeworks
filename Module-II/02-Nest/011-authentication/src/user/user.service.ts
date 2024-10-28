@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common'
 import { InjectConnection, InjectModel } from '@nestjs/mongoose'
 
 import { User, UserDocument } from './schemas/user.schema'
-import { CreateUserDto } from './dto/user.dto'
 import { Connection, Model } from 'mongoose'
+import { SignupDto } from 'src/auth/dto/auth.dto'
 
 @Injectable()
 export class UserService {
@@ -13,16 +13,17 @@ export class UserService {
     @InjectConnection() private connection: Connection,
   ) {}
 
-  create(data: CreateUserDto): Promise<UserDocument> {
+  async create(data: SignupDto): Promise<UserDocument> {
     const user = new this.UserModel(data)
     return user.save()
   }
 
-  findAll(): Promise<UserDocument[]> {
-    return this.UserModel.find()
+  async findByEmail(email: string): Promise<UserDocument> {
+    return await this.UserModel.findOne({ email })
   }
 
-  findOne(id: string): Promise<UserDocument> {
-    return this.UserModel.findById(id)
+  async verifyPassword(email: string, password: string): Promise<boolean> {
+    const user = await this.findByEmail(email)
+    return user && (user.password === password )      // todo bcrypt 
   }
 }
