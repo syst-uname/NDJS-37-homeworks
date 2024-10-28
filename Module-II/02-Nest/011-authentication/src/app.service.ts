@@ -2,7 +2,10 @@ import { Injectable } from '@nestjs/common'
 
 @Injectable()
 export class AppService {
-  getHello(): string {
-    return 'Аутентификация в NestJS, Passport.js, Guards'
+  getData() {
+    return {
+      title: 'Аутентификация в NestJS, Passport.js, Guards',
+      data: 'Закрытые данные'
+    }
   }
 }

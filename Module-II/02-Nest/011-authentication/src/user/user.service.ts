@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common'
-import { InjectConnection, InjectModel } from '@nestjs/mongoose'
+import { InjectModel } from '@nestjs/mongoose'
+import { Model } from 'mongoose'
 
 import { User, UserDocument } from './schemas/user.schema'
-import { Connection, Model } from 'mongoose'
 import { SignupDto } from 'src/auth/dto/auth.dto'
 
 @Injectable()
@@ -10,7 +10,6 @@ export class UserService {
 
   constructor(
     @InjectModel(User.name) private UserModel: Model<UserDocument>,
-    @InjectConnection() private connection: Connection,
   ) {}
 
   async create(data: SignupDto): Promise<UserDocument> {
@@ -24,6 +23,6 @@ export class UserService {
 
   async verifyPassword(email: string, password: string): Promise<boolean> {
     const user = await this.findByEmail(email)
-    return user && (user.password === password )      // todo bcrypt 
+    return user && (user.password === password )
   }
 }
