@@ -13,4 +13,4 @@ import { BookService } from './book.service'
   providers: [BookService],
   exports: [BookService],
 })
-export class BooksModule {}
+export class BookModule {}

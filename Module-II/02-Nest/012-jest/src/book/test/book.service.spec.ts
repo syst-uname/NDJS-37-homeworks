@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing'
-import { BookService } from './book.service'
-import { Book } from './schemas/book.schema'
+import { BookService } from '../book.service'
+import { Book } from '../schemas/book.schema'
 import { getModelToken } from '@nestjs/mongoose'
-import { CreateBookDto, UpdateBookDto } from './dto/book.dto'
+import { CreateBookDto, UpdateBookDto } from '../dto/book.dto'
 
 describe('BookService', () => {
   let bookService: BookService
