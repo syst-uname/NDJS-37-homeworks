@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WebSocket </title>
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+
+</head>
+
+<body>
+
+  <div>
+    <h3>Комментарии</h3>
+    <div>
+      <input id="bookId" placeholder="ID книги" />
+      <label for='bookId'>Книга</label>
+    </div>
+
+    <div>
+      <button id="getAllComments">Получить комментарии</button>
+    </div>
+    <br>
+
+    <ul id="comments"></ul>
+    <br>
+
+    <div>
+      <input id="comment" placeholder="Комментарий" />
+      <label for='comment'>Текст</label>
+    </div>
+    <button id="addComment">Добавить комментарий</button>
+  </div>
+
+
+  <script src="http://localhost:3000/socket.io/socket.io.js"></script>
+  <script src="ws.js"></script>
+</body>
+
+</html>

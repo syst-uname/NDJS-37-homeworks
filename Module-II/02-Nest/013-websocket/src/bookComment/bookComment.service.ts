@@ -16,12 +16,16 @@ export class BookCommentService {
     return this.BookCommentModel.create(data)
   }
 
+  findOne(id: string): Promise<BookCommentDocument> {
+    return this.BookCommentModel.findById(id)
+  }
+
   findAll(): Promise<BookCommentDocument[]> {
     return this.BookCommentModel.find()
   }
 
-  findOne(id: string): Promise<BookCommentDocument> {
-    return this.BookCommentModel.findById(id)
+  findAllBookComment(bookId: number): Promise<BookCommentDocument[]> {
+    return this.BookCommentModel.find({ bookId })
   }
 
   update(id: string, data: UpdateBookCommentDto): Promise<BookCommentDocument> {

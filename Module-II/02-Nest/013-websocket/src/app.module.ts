@@ -5,6 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
 import { BookCommentModule } from './bookComment/bookComment.module'
+import { BookCommentGateway } from './bookComment/bookComment.gateway'
 
 @Module({
   imports: [
@@ -13,6 +14,6 @@ import { BookCommentModule } from './bookComment/bookComment.module'
     BookCommentModule
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, BookCommentGateway],
 })
 export class AppModule {}

@@ -23,6 +23,11 @@ export class BookCommentController {
     return this.bookCommentService.findOne(id)
   }
 
+  @Get('book/:bookId')
+  findAllBookComment(@Param('bookId') bookId: number): Promise<BookCommentDocument[]> {
+    return this.bookCommentService.findAllBookComment(bookId)
+  }
+
   @Put(':id')
   update(
     @Param('id') id: string,
