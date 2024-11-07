@@ -1,0 +1,11 @@
+<a href="/">Главная</a>
+
+<h2>Данные профиля</h2>
+
+<ul>
+  <li><b>Имя:</b> <%= user.name.familyName %></li>
+  <li><b>Username:</b> <%= user.username %></li>
+  <li><b>Почта:</b> <%= user._json.default_email %></li>
+</ul>
+
+<a href="/logout">Выйти</a>
