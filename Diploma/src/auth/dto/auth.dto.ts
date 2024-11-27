@@ -1,13 +1,29 @@
+import { IsDefined, IsEmail, IsPhoneNumber, IsString, MinLength } from 'class-validator'
 import { User } from 'src/user/schemas/user.schema'
 
-export class SignupDto {
-  email: User['email']
-  password: User['password']
-  firstName: User['firstName']
-  lastName: User['lastName']
+// регистрация
+export class ClientRegisterDto {
+
+  @IsDefined()
+  @IsEmail()
+  public readonly email: User['email']
+
+  @IsDefined()
+  @IsString()
+  @MinLength(5)
+  public readonly password: string
+
+  @IsDefined()
+  @IsString()
+  @MinLength(4)
+  public readonly name: User['name']
+
+  @IsPhoneNumber()
+  public readonly contactPhone: User['contactPhone']
 }
 
+// Вход 
 export class SigninDto {
   email: User['email']
-  password: User['password']
+  password: string
 }

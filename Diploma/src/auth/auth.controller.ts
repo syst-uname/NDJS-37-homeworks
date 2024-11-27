@@ -1,20 +1,26 @@
 import { Controller, Post, Body } from '@nestjs/common'
-
-import { SigninDto, SignupDto } from './dto/auth.dto'
+import { SigninDto } from './dto/auth.dto'
 import { AuthService } from './auth.service'
-import { UserDocument } from 'src/user/schemas/user.schema'
 
-@Controller('user')
+@Controller()
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post('signup')
-  signup(@Body() data: SignupDto): Promise<UserDocument> {
-    return this.authService.signup(data)
+  // вход
+  @Post('auth/login')
+  login(@Body() data: SigninDto) {
+    return this.authService.login(data)
   }
 
-  @Post('signin')
-  signin(@Body() data: SigninDto) {
-    return this.authService.signin(data)
+  // выход
+  @Post('auth/logout')
+  logout() {
+    return this.authService.logout()
+  }
+
+  // регистрация
+  @Post('client/register')
+  register() {
+    // return this.authService.registerClient()
   }
 }
