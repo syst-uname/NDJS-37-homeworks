@@ -7,5 +7,5 @@ import { ROLE } from '../constants/user.constants'
 export class UserCreateDto extends ClientRegisterDto {
 
   @IsEnum(ROLE)
-  public readonly role: User['role']
+  public readonly role?: User['role']
 }

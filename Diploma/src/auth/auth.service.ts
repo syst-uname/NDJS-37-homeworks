@@ -1,9 +1,10 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 
-import { SigninDto } from './dto/auth.dto'
 import { UserService } from 'src/user/user.service'
 import { UserDocument } from 'src/user/schemas/user.schema'
+import { ClientRegisterDto, SigninDto } from './dto/auth.dto'
+import { IClientRegisterResponse } from './interface/auth.interface'
 
 @Injectable()
 export class AuthService {
@@ -14,11 +15,11 @@ export class AuthService {
   ) {}
 
   /** Вход */
-  async login(data: SigninDto) {
-    if (!await this.userService.verifyPassword(data.email, data.password)) {
+  async login(dto: SigninDto) {
+    if (!await this.userService.verifyPassword(dto.email, dto.password)) {
       throw new UnauthorizedException('Неверный логин или пароль')
     }
-    const user = await this.userService.findByEmail(data.email)
+    const user = await this.userService.findByEmail(dto.email)
     const payload = {
       id: user._id,
       email: user.email,
@@ -28,6 +29,7 @@ export class AuthService {
     return { token }
   }
 
+  /** Валидация пользователя */
   async validateUser(email: string): Promise<UserDocument> {
     const user = await this.userService.findByEmail(email)
     if (!user) {
@@ -36,6 +38,7 @@ export class AuthService {
     return user
   }
 
+  /** Создание токена */
   createToken(payload: any) {   // TODO объединить 
     return this.jwtService.sign(payload)
   }
@@ -46,9 +49,13 @@ export class AuthService {
   }
 
   /** Регистрация клиента */
-  // async registerClient(data: ClientRegisterDto): Promise<UserDocument> {
-  //   const user = await this.userService.create(data)
-  //   return user
-  // }
+  async register(dto: ClientRegisterDto): Promise<IClientRegisterResponse> {
+    const user = await this.userService.create(dto)
+    return {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+    }
+  }
 
 }

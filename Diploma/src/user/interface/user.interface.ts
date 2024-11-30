@@ -1,9 +1,7 @@
 import { UserDocument } from '../schemas/user.schema'
+import { IClientRegisterResponse } from 'src/auth/interface/auth.interface'
 
-export interface IUserCreateResponse {
-  id: UserDocument['_id'],
-  email: UserDocument['email'],
-  name: UserDocument['name'],
+export interface IUserCreateResponse extends IClientRegisterResponse {
   contactPhone: UserDocument['contactPhone'],
   role: UserDocument['role'],
 }
