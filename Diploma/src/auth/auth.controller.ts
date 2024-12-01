@@ -1,8 +1,8 @@
 import { Controller, Post, Body } from '@nestjs/common'
 
 import { AuthService } from './auth.service'
-import { ClientRegisterDto, SigninDto } from './dto/auth.dto'
-import { IClientRegisterResponse } from './interface/auth.interface'
+import { RegisterClientDto, SigninDto } from './dto/auth.dto'
+import { IRegisterClientResponse } from './interface/auth.interface'
 
 @Controller()
 export class AuthController {
@@ -22,7 +22,7 @@ export class AuthController {
 
   // Регистрация
   @Post('client/register')
-  register(@Body() dto: ClientRegisterDto): Promise<IClientRegisterResponse> {
+  register(@Body() dto: RegisterClientDto): Promise<IRegisterClientResponse> {
     return this.authService.register(dto)
   }
 }

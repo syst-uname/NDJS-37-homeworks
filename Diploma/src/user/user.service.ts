@@ -3,20 +3,21 @@ import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
 
 import { User, UserDocument } from './schemas/user.schema'
-import { UserCreateDto } from './dto/user.dto'
-import { IUserCreateResponse } from './interface/user.interface'
+import { CreateUserDto, FindUsersQueryDto } from './dto/user.dto'
+import { ICreateUserResponse, IFindUserResponse } from './interface/user.interface'
 import { hashPassword } from 'src/utils/password.utils'
 
 @Injectable()
 export class UserService {
 
   constructor(
-    @InjectModel(User.name) private UserModel: Model<UserDocument>,
+    @InjectModel(User.name) private userModel: Model<UserDocument>,
   ) {}
 
-  async create(dto: UserCreateDto): Promise<IUserCreateResponse> {
+  /** Создание пользователя */
+  async create(dto: CreateUserDto): Promise<ICreateUserResponse> {
     try {
-      const user = new this.UserModel({
+      const user = new this.userModel({
         email: dto.email,
         passwordHash: await hashPassword(dto.password),
         name: dto.name,
@@ -38,8 +39,35 @@ export class UserService {
     }
   }
 
+  /** Получение списка пользователей */
+  async findAll(dto: FindUsersQueryDto): Promise<IFindUserResponse[]> {
+    const query = this.userModel.find()
+
+    if (dto.name) {
+      query.where('name').regex(new RegExp(dto.name, 'i'))
+    }
+    if (dto.email) {
+      query.where('email').regex(new RegExp(dto.email, 'i'))
+    }
+    if (dto.contactPhone) {
+      query.where('contactPhone').regex(new RegExp(dto.contactPhone, 'i'))
+    }
+
+    const users = await query
+      .limit(dto.limit)
+      .skip(dto.offset)
+      .exec()
+
+    return users.map(user => ({
+      id: user._id,
+      email: user.email,
+      name: user.name,
+      contactPhone: user.contactPhone,
+    }))
+  }
+
   async findByEmail(email: string): Promise<UserDocument> {
-    return await this.UserModel.findOne({ email })
+    return await this.userModel.findOne({ email })
   }
 
   async verifyPassword(email: string, password: string): Promise<boolean> {

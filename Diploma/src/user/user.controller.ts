@@ -1,7 +1,7 @@
-import { Controller, Post, Body } from '@nestjs/common'
+import { Controller, Post, Body, Get, Query } from '@nestjs/common'
 import { UserService } from './user.service'
-import { UserCreateDto } from './dto/user.dto'
-import { IUserCreateResponse } from './interface/user.interface'
+import { CreateUserDto, FindUsersQueryDto } from './dto/user.dto'
+import { ICreateUserResponse, IFindUserResponse } from './interface/user.interface'
 
 @Controller()
 export class UserController {
@@ -9,7 +9,13 @@ export class UserController {
 
   // Создание пользователя  
   @Post('admin/users')
-  create(@Body() dto: UserCreateDto): Promise<IUserCreateResponse> {
+  create(@Body() dto: CreateUserDto): Promise<ICreateUserResponse> {
     return this.userService.create(dto)
+  }
+
+  // Получение списка пользователей  
+  @Get('admin/users')
+  findAll(@Query() query: FindUsersQueryDto): Promise<IFindUserResponse[]> {
+    return this.userService.findAll(query)
   }
 }

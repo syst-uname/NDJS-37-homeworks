@@ -3,8 +3,8 @@ import { JwtService } from '@nestjs/jwt'
 
 import { UserService } from 'src/user/user.service'
 import { UserDocument } from 'src/user/schemas/user.schema'
-import { ClientRegisterDto, SigninDto } from './dto/auth.dto'
-import { IClientRegisterResponse } from './interface/auth.interface'
+import { RegisterClientDto, SigninDto } from './dto/auth.dto'
+import { IRegisterClientResponse } from './interface/auth.interface'
 
 @Injectable()
 export class AuthService {
@@ -49,7 +49,7 @@ export class AuthService {
   }
 
   /** Регистрация клиента */
-  async register(dto: ClientRegisterDto): Promise<IClientRegisterResponse> {
+  async register(dto: RegisterClientDto): Promise<IRegisterClientResponse> {
     const user = await this.userService.create(dto)
     return {
       id: user.id,
