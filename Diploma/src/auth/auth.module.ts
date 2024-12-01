@@ -15,7 +15,7 @@ import config from 'src/config'
     UserModule,
     PassportModule,
     JwtModule.register({
-      secret: config.auth.jwt_secret,
+      secret: config.auth.jwtSecret,
       signOptions: { expiresIn: '60s' }
     })
   ],
