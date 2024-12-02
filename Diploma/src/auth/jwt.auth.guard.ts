@@ -1,21 +1,36 @@
-import { ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common'
+import { ExecutionContext, ForbiddenException, Injectable } from '@nestjs/common'
+import { Reflector } from '@nestjs/core'
 import { AuthGuard } from '@nestjs/passport'
 
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
 
-  public canActivate(context: ExecutionContext) {
-    return super.canActivate(context)
+  constructor(private reflector: Reflector) {
+    super()
   }
 
-  public handleRequest(err, user) {
-    if (err) {
-      throw err
+  public async canActivate(context: ExecutionContext)  {
+    // стандартный механизм аутентификации
+    if (!await super.canActivate(context)) {
+      return false
     }
-    if (!user) {
-      throw new UnauthorizedException('Необходима аутентификация')
+
+    // текущий пользователь из контекста
+    const request = context.switchToHttp().getRequest()
+    const user = request.user
+
+    // роли из метаданных
+    const requiredRoles = this.reflector.get<string[]>('roles', context.getHandler())
+    if (!requiredRoles) {
+      return true
     }
-    return user
+
+    // Проверяем наличие у пользователя необходимой роли
+    if (!user || !requiredRoles.includes(user.role)) {
+      throw new ForbiddenException(`Недостаточно прав для роли ${user.role}`)
+    }
+
+    return true
   }
 }

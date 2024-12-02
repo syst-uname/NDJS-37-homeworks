@@ -3,8 +3,8 @@ import { JwtService } from '@nestjs/jwt'
 
 import { UserService } from 'src/user/user.service'
 import { UserDocument } from 'src/user/schemas/user.schema'
-import { RegisterClientDto, SigninDto } from './dto/auth.dto'
-import { IRegisterClientResponse } from './interface/auth.interface'
+import { RegisterClientDto, LoginDto } from './dto/auth.dto'
+import { ILoginResponse, IRegisterClientResponse } from './interface/auth.interface'
 
 @Injectable()
 export class AuthService {
@@ -15,18 +15,26 @@ export class AuthService {
   ) {}
 
   /** Вход */
-  async login(dto: SigninDto) {
+  async login(dto: LoginDto): Promise<ILoginResponse> {
     if (!await this.userService.verifyPassword(dto.email, dto.password)) {
       throw new UnauthorizedException('Неверный логин или пароль')
     }
     const user = await this.userService.findByEmail(dto.email)
-    const payload = {
+
+    const token = this.jwtService.sign({
       id: user._id,
       email: user.email,
-      name: user.name,
+      role: user.role,
+    })
+
+    return {
+      token,
+      user: {
+        email: user.email,
+        name: user.name,
+        contactPhone: user.contactPhone
+      },
     }
-    const token = this.createToken(payload)
-    return { token }
   }
 
   /** Валидация пользователя */
@@ -38,16 +46,6 @@ export class AuthService {
     return user
   }
 
-  /** Создание токена */
-  createToken(payload: any) {   // TODO объединить 
-    return this.jwtService.sign(payload)
-  }
-
-  /** Выход */
-  logout() {
-    return { message: 'Вы вышли из системы' }
-  }
-
   /** Регистрация клиента */
   async register(dto: RegisterClientDto): Promise<IRegisterClientResponse> {
     const user = await this.userService.create(dto)
@@ -57,5 +55,4 @@ export class AuthService {
       name: user.name,
     }
   }
-
 }

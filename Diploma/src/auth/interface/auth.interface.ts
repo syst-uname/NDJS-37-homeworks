@@ -6,3 +6,14 @@ export interface IRegisterClientResponse {
   email: UserDocument['email'],
   name: UserDocument['name'],
 }
+
+/** Ответ при входе */
+// TODO: нужно ли избавиться от токена? 
+export interface ILoginResponse {
+  token: string
+  user: {
+    email: UserDocument['email'],
+    name: UserDocument['name'],
+    contactPhone: UserDocument['contactPhone'],
+  },
+}

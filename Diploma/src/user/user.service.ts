@@ -1,11 +1,12 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
+import * as bcrypt from 'bcrypt'
 
 import { User, UserDocument } from './schemas/user.schema'
 import { CreateUserDto, FindUsersQueryDto } from './dto/user.dto'
 import { ICreateUserResponse, IFindUserResponse } from './interface/user.interface'
-import { hashPassword } from 'src/utils/password.utils'
+import config from 'src/config'
 
 @Injectable()
 export class UserService {
@@ -19,7 +20,7 @@ export class UserService {
     try {
       const user = new this.userModel({
         email: dto.email,
-        passwordHash: await hashPassword(dto.password),
+        passwordHash: await this.hashPassword(dto.password),
         name: dto.name,
         contactPhone: dto.contactPhone,
         role: dto.role
@@ -66,12 +67,19 @@ export class UserService {
     }))
   }
 
+  /** Получение пользователя по email */
   async findByEmail(email: string): Promise<UserDocument> {
     return await this.userModel.findOne({ email })
   }
 
+  /** Хеширование пароля */
+  async hashPassword(password: string) {
+    return await bcrypt.hash(password, config.auth.saltRounds)
+  }
+
+  /** Проверка пароля */
   async verifyPassword(email: string, password: string): Promise<boolean> {
     const user = await this.findByEmail(email)
-    return user && (user.passwordHash === password )
+    return user && (await bcrypt.compare(password, user.passwordHash))
   }
 }

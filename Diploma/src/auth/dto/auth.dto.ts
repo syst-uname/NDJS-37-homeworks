@@ -23,7 +23,7 @@ export class RegisterClientDto {
 }
 
 /** Параметры входа */
-export class SigninDto {
+export class LoginDto {
   email: User['email']
   password: string
 }
