@@ -76,10 +76,4 @@ export class UserService {
   async hashPassword(password: string) {
     return await bcrypt.hash(password, config.auth.saltRounds)
   }
-
-  /** Проверка пароля */
-  async verifyPassword(email: string, password: string): Promise<boolean> {
-    const user = await this.findByEmail(email)
-    return user && (await bcrypt.compare(password, user.passwordHash))
-  }
 }

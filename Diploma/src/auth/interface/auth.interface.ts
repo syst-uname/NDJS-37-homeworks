@@ -8,7 +8,6 @@ export interface IRegisterClientResponse {
 }
 
 /** Ответ при входе */
-// TODO: нужно ли избавиться от токена? 
 export interface ILoginResponse {
   token: string
   user: {

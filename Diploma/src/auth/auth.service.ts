@@ -1,8 +1,8 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
+import * as bcrypt from 'bcrypt'
 
 import { UserService } from 'src/user/user.service'
-import { UserDocument } from 'src/user/schemas/user.schema'
 import { RegisterClientDto, LoginDto } from './dto/auth.dto'
 import { ILoginResponse, IRegisterClientResponse } from './interface/auth.interface'
 
@@ -16,10 +16,11 @@ export class AuthService {
 
   /** Вход */
   async login(dto: LoginDto): Promise<ILoginResponse> {
-    if (!await this.userService.verifyPassword(dto.email, dto.password)) {
+    const user = await this.userService.findByEmail(dto.email)
+
+    if (!user || !await this.verifyPassword(dto.password, user.passwordHash)) {
       throw new UnauthorizedException('Неверный логин или пароль')
     }
-    const user = await this.userService.findByEmail(dto.email)
 
     const token = this.jwtService.sign({
       id: user._id,
@@ -37,15 +38,6 @@ export class AuthService {
     }
   }
 
-  /** Валидация пользователя */
-  async validateUser(email: string): Promise<UserDocument> {
-    const user = await this.userService.findByEmail(email)
-    if (!user) {
-      return null
-    }
-    return user
-  }
-
   /** Регистрация клиента */
   async register(dto: RegisterClientDto): Promise<IRegisterClientResponse> {
     const user = await this.userService.create(dto)
@@ -54,5 +46,10 @@ export class AuthService {
       email: user.email,
       name: user.name,
     }
+  }
+
+  /** Проверка пароля */
+  async verifyPassword(password: string, hash: string): Promise<boolean> {
+    return await bcrypt.compare(password, hash)
   }
 }

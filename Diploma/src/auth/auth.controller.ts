@@ -3,8 +3,9 @@ import { Response } from 'express'
 
 import { AuthService } from './auth.service'
 import { RegisterClientDto, LoginDto } from './dto/auth.dto'
-import { ILoginResponse, IRegisterClientResponse } from './interface/auth.interface'
+import { IRegisterClientResponse } from './interface/auth.interface'
 import { JwtAuthGuard } from './jwt.auth.guard'
+import { COOKIE_TOKEN } from './constants/constants'
 
 @Controller()
 export class AuthController {
@@ -15,9 +16,9 @@ export class AuthController {
   async login(
     @Body() dto: LoginDto,
     @Res() res: Response
-  ) {     // TODO: подумать над возвращаемым типом
+  ) {
     const { user, token } = await this.authService.login(dto)
-    res.cookie('token', token, { httpOnly: true })       // Установка JWT в куки
+    res.cookie(COOKIE_TOKEN, token, { httpOnly: true })       // Установка JWT в куки
     return res.status(HttpStatus.OK).json(user)
   }
 
@@ -25,7 +26,7 @@ export class AuthController {
   @Post('auth/logout')
   @UseGuards(JwtAuthGuard)
   async logout(@Res() res: Response) {
-    res.clearCookie('token')
+    res.clearCookie(COOKIE_TOKEN)
     return res.sendStatus(HttpStatus.OK)
   }
 
