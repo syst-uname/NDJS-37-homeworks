@@ -4,7 +4,8 @@ import { Response } from 'express'
 import { AuthService } from './auth.service'
 import { RegisterClientDto, LoginDto } from './dto/auth.dto'
 import { IRegisterClientResponse } from './interface/auth.interface'
-import { JwtAuthGuard } from './jwt.auth.guard'
+import { JwtUnauthGuard } from './guards/jwt.unauth.guard'
+import { JwtAuthGuard } from './guards/jwt.auth.guard'
 import { COOKIE_TOKEN } from './constants/constants'
 
 @Controller()
@@ -13,6 +14,7 @@ export class AuthController {
 
   // Вход
   @Post('auth/login')
+  @UseGuards(JwtUnauthGuard)
   async login(
     @Body() dto: LoginDto,
     @Res() res: Response
@@ -32,6 +34,7 @@ export class AuthController {
 
   // Регистрация
   @Post('client/register')
+  @UseGuards(JwtUnauthGuard)
   async register(@Body() dto: RegisterClientDto): Promise<IRegisterClientResponse> {
     return this.authService.register(dto)
   }

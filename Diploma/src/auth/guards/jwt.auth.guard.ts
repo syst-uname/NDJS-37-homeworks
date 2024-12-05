@@ -1,8 +1,7 @@
 import { ExecutionContext, ForbiddenException, Injectable } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
 import { AuthGuard } from '@nestjs/passport'
-import { METADATA_ROLES } from './constants/constants'
-
+import { METADATA_ROLES } from '../constants/constants'
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
