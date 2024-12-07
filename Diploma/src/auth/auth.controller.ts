@@ -7,10 +7,14 @@ import { ILoginResponse, IRegisterClientResponse } from './interface/auth.interf
 import { JwtUnauthGuard } from './guards/jwt.unauth.guard'
 import { JwtAuthGuard } from './guards/jwt.auth.guard'
 import { COOKIE_TOKEN } from '../common/constants/constants'
+import { UserService } from 'src/user/user.service'
 
 @Controller()
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly userService: UserService
+  ) {}
 
   // Вход
   @Post('auth/login')
@@ -21,6 +25,7 @@ export class AuthController {
   ) {
     const user = await this.authService.validateUser(dto.email, dto.password)
     const { token } = await this.authService.login(user)
+
     res.cookie(COOKIE_TOKEN, token, { httpOnly: true })       // Установка JWT в куки
     const response: ILoginResponse = {
       email: user.email,
@@ -42,6 +47,11 @@ export class AuthController {
   @Post('client/register')
   @UseGuards(JwtUnauthGuard)
   async register(@Body() dto: RegisterClientDto): Promise<IRegisterClientResponse> {
-    return this.authService.register(dto)
+    const user = await this.userService.create(dto)
+    return {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+    }
   }
 }

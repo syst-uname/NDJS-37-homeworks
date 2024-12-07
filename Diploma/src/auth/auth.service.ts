@@ -3,8 +3,6 @@ import { JwtService } from '@nestjs/jwt'
 import * as bcrypt from 'bcrypt'
 
 import { UserService } from 'src/user/user.service'
-import { RegisterClientDto } from './dto/auth.dto'
-import { IRegisterClientResponse } from './interface/auth.interface'
 import { UserDocument } from 'src/user/schemas/user.schema'
 
 @Injectable()
@@ -33,15 +31,5 @@ export class AuthService {
     }
     const token = this.jwtService.sign(payload)
     return { token }
-  }
-
-  /** Регистрация клиента */
-  async register(dto: RegisterClientDto): Promise<IRegisterClientResponse> {
-    const user = await this.userService.create(dto)
-    return {
-      id: user.id,
-      email: user.email,
-      name: user.name,
-    }
   }
 }
