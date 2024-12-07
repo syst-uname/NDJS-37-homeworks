@@ -3,10 +3,10 @@ import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
 import * as bcrypt from 'bcrypt'
 
-import { User, UserDocument } from './schemas/user.schema'
-import { CreateUserDto, FindUsersQueryDto } from './dto/user.dto'
-import { IFindUserResponse } from './interface/user.interface'
 import config from 'src/config'
+import { User, UserDocument } from './schemas/user.schema'
+import { CreateUserDto } from './dto/user.dto'
+import { IFindUsersParams } from './interface/user-find.interface'
 import { ID } from 'src/common/types/types'
 
 @Injectable()
@@ -34,30 +34,23 @@ export class UserService {
   }
 
   /** Получение списка пользователей */
-  async findAll(dto: FindUsersQueryDto): Promise<IFindUserResponse[]> {
+  async findAll(params: IFindUsersParams): Promise<UserDocument[]> {
     const query = this.userModel.find()
 
-    if (dto.name) {
-      query.where('name').regex(new RegExp(dto.name, 'i'))
+    if (params.name) {
+      query.where('name').regex(new RegExp(params.name, 'i'))
     }
-    if (dto.email) {
-      query.where('email').regex(new RegExp(dto.email, 'i'))
+    if (params.email) {
+      query.where('email').regex(new RegExp(params.email, 'i'))
     }
-    if (dto.contactPhone) {
-      query.where('contactPhone').regex(new RegExp(dto.contactPhone, 'i'))
+    if (params.contactPhone) {
+      query.where('contactPhone').regex(new RegExp(params.contactPhone, 'i'))
     }
 
-    const users = await query
-      .limit(dto.limit)
-      .skip(dto.offset)
+    return await query
+      .limit(params.limit)
+      .skip(params.offset)
       .exec()
-
-    return users.map(user => ({
-      id: user._id.toString(),
-      email: user.email,
-      name: user.name,
-      contactPhone: user.contactPhone,
-    }))
   }
 
   /** Получение пользователя по id */

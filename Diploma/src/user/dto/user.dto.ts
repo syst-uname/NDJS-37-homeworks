@@ -8,12 +8,3 @@ export class CreateUserDto extends RegisterClientDto {
   @IsEnum(ROLE)
   public readonly role?: ROLE
 }
-
-/** Параметры получения списка пользователей */
-export class FindUsersQueryDto {
-  limit?: number
-  offset?: number
-  name?: string
-  email?: string
-  contactPhone?: string
-}

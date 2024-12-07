@@ -1,8 +1,9 @@
 import { Controller, Post, Body, Get, Query, UseGuards } from '@nestjs/common'
 
 import { UserService } from './user.service'
-import { CreateUserDto, FindUsersQueryDto } from './dto/user.dto'
-import { ICreateUserResponse, IFindUserResponse } from './interface/user.interface'
+import { CreateUserDto } from './dto/user.dto'
+import { ICreateUserResponse } from './interface/user-create.interface'
+import { IFindUsersParams, IFindUserResponse } from './interface/user-find.interface'
 import { JwtAuthGuard } from 'src/auth/guards/jwt.auth.guard'
 import { Roles } from 'src/auth/decorators/roles.decorator'
 import { ROLE } from './constants/user.constants'
@@ -29,14 +30,25 @@ export class UserController {
   // Получение списка пользователей (admin)
   @Get('admin/users')
   @Roles(ROLE.ADMIN)
-  findAllForAdmin(@Query() query: FindUsersQueryDto): Promise<IFindUserResponse[]> {
-    return this.userService.findAll(query)
+  findAllForAdmin(@Query() params: IFindUsersParams): Promise<IFindUserResponse[]> {
+    return this.findAll(params)
   }
 
   // Получение списка пользователей (manager)  
   @Get('manager/users')
   @Roles(ROLE.MANAGER)
-  findAllForManager(@Query() query: FindUsersQueryDto): Promise<IFindUserResponse[]> {
-    return this.userService.findAll(query)
+  findAllForManager(@Query() params: IFindUsersParams): Promise<IFindUserResponse[]> {
+    return this.findAll(params)
+  }
+
+  /** Получение списка пользователей */
+  private async findAll(params: IFindUsersParams): Promise<IFindUserResponse[]> {
+    const users = await this.userService.findAll(params)
+    return users.map(user => ({
+      id: user._id.toString(),
+      email: user.email,
+      name: user.name,
+      contactPhone: user.contactPhone,
+    }))
   }
 }
