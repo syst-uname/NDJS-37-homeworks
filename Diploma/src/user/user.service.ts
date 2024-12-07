@@ -7,6 +7,7 @@ import { User, UserDocument } from './schemas/user.schema'
 import { CreateUserDto, FindUsersQueryDto } from './dto/user.dto'
 import { ICreateUserResponse, IFindUserResponse } from './interface/user.interface'
 import config from 'src/config'
+import { ID } from 'src/common/types/types'
 
 @Injectable()
 export class UserService {
@@ -28,7 +29,7 @@ export class UserService {
       await user.save()
 
       return {
-        id: user._id,
+        id: user._id.toString(),
         email: user.email,
         name: user.name,
         contactPhone: user.contactPhone,
@@ -60,11 +61,16 @@ export class UserService {
       .exec()
 
     return users.map(user => ({
-      id: user._id,
+      id: user._id.toString(),
       email: user.email,
       name: user.name,
       contactPhone: user.contactPhone,
     }))
+  }
+
+  /** Получение пользователя по id */
+  async findById(id: ID): Promise<UserDocument> {
+    return await this.userModel.findById(id)
   }
 
   /** Получение пользователя по email */
