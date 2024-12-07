@@ -15,8 +15,15 @@ export class UserController {
   // Создание пользователя  
   @Post('admin/users')
   @Roles(ROLE.ADMIN)
-  create(@Body() dto: CreateUserDto): Promise<ICreateUserResponse> {
-    return this.userService.create(dto)
+  async create(@Body() dto: CreateUserDto): Promise<ICreateUserResponse> {
+    const user = await this.userService.create(dto)
+    return {
+      id: user._id.toString(),
+      email: user.email,
+      name: user.name,
+      contactPhone: user.contactPhone,
+      role: user.role
+    }
   }
 
   // Получение списка пользователей (admin)

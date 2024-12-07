@@ -25,7 +25,6 @@ export class AuthController {
   ) {
     const user = await this.authService.validateUser(dto.email, dto.password)
     const { token } = await this.authService.login(user)
-
     res.cookie(COOKIE_TOKEN, token, { httpOnly: true })       // Установка JWT в куки
     const response: ILoginResponse = {
       email: user.email,

@@ -5,7 +5,7 @@ import * as bcrypt from 'bcrypt'
 
 import { User, UserDocument } from './schemas/user.schema'
 import { CreateUserDto, FindUsersQueryDto } from './dto/user.dto'
-import { ICreateUserResponse, IFindUserResponse } from './interface/user.interface'
+import { IFindUserResponse } from './interface/user.interface'
 import config from 'src/config'
 import { ID } from 'src/common/types/types'
 
@@ -17,7 +17,7 @@ export class UserService {
   ) {}
 
   /** Создание пользователя */
-  async create(dto: CreateUserDto): Promise<ICreateUserResponse> {
+  async create(dto: CreateUserDto): Promise<UserDocument> {
     try {
       const user = new this.userModel({
         email: dto.email,
@@ -26,15 +26,7 @@ export class UserService {
         contactPhone: dto.contactPhone,
         role: dto.role
       })
-      await user.save()
-
-      return {
-        id: user._id.toString(),
-        email: user.email,
-        name: user.name,
-        contactPhone: user.contactPhone,
-        role: user.role
-      }
+      return await user.save()
     } catch (e) {
       console.error(e.message, e.stack)
       throw new HttpException(`Ошибка при создании пользователя: ${e.message}`, HttpStatus.INTERNAL_SERVER_ERROR)
