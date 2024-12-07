@@ -6,7 +6,7 @@ import { RegisterClientDto, LoginDto } from './dto/auth.dto'
 import { IRegisterClientResponse } from './interface/auth.interface'
 import { JwtUnauthGuard } from './guards/jwt.unauth.guard'
 import { JwtAuthGuard } from './guards/jwt.auth.guard'
-import { COOKIE_TOKEN } from './constants/constants'
+import { COOKIE_TOKEN } from '../common/constants/constants'
 
 @Controller()
 export class AuthController {
@@ -19,9 +19,14 @@ export class AuthController {
     @Body() dto: LoginDto,
     @Res() res: Response
   ) {
-    const { user, token } = await this.authService.login(dto)
+    const user = await this.authService.validateUser(dto.email, dto.password)
+    const { token } = await this.authService.login(user)
     res.cookie(COOKIE_TOKEN, token, { httpOnly: true })       // Установка JWT в куки
-    return res.status(HttpStatus.OK).json(user)
+    return res.status(HttpStatus.OK).json({
+      email: user.email,
+      name: user.name,
+      contactPhone: user.contactPhone
+    })
   }
 
   // Выход
