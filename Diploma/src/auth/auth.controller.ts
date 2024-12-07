@@ -3,7 +3,7 @@ import { Response } from 'express'
 
 import { AuthService } from './auth.service'
 import { RegisterClientDto, LoginDto } from './dto/auth.dto'
-import { IRegisterClientResponse } from './interface/auth.interface'
+import { ILoginResponse, IRegisterClientResponse } from './interface/auth.interface'
 import { JwtUnauthGuard } from './guards/jwt.unauth.guard'
 import { JwtAuthGuard } from './guards/jwt.auth.guard'
 import { COOKIE_TOKEN } from '../common/constants/constants'
@@ -14,7 +14,7 @@ export class AuthController {
 
   // Вход
   @Post('auth/login')
-  @UseGuards(JwtUnauthGuard)
+  // @UseGuards(JwtUnauthGuard)   // TODO вернуть после тестов 
   async login(
     @Body() dto: LoginDto,
     @Res() res: Response
@@ -22,11 +22,12 @@ export class AuthController {
     const user = await this.authService.validateUser(dto.email, dto.password)
     const { token } = await this.authService.login(user)
     res.cookie(COOKIE_TOKEN, token, { httpOnly: true })       // Установка JWT в куки
-    return res.status(HttpStatus.OK).json({
+    const response: ILoginResponse = {
       email: user.email,
       name: user.name,
       contactPhone: user.contactPhone
-    })
+    }
+    return res.status(HttpStatus.OK).json(response)
   }
 
   // Выход
