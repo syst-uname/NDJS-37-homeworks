@@ -3,7 +3,7 @@ import { Response } from 'express'
 
 import { AuthService } from './auth.service'
 import { RegisterClientDto, LoginDto } from './dto/auth.dto'
-import { ILoginResponse, IRegisterClientResponse } from './interface/auth.interface'
+import { ILoginResponse, IRegisterClientResponse } from './types/auth.interface'
 import { JwtUnauthGuard } from './guards/jwt.unauth.guard'
 import { JwtAuthGuard } from './guards/jwt.auth.guard'
 import { COOKIE_TOKEN } from '../common/constants/constants'

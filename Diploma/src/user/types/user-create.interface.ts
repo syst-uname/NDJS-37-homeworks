@@ -1,4 +1,4 @@
-import { IRegisterClientResponse } from 'src/auth/interface/auth.interface'
+import { IRegisterClientResponse } from 'src/auth/types/auth.interface'
 import { ROLE } from '../constants/user.constants'
 
 /** Ответ при создании пользователя */

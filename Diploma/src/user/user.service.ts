@@ -6,7 +6,7 @@ import * as bcrypt from 'bcrypt'
 import config from 'src/config'
 import { User, UserDocument } from './schemas/user.schema'
 import { CreateUserDto } from './dto/user.dto'
-import { IFindUsersParams } from './interface/user-find.interface'
+import { IFindUsersParams } from './types/user-find.interface'
 import { ID } from 'src/common/types/types'
 
 @Injectable()
