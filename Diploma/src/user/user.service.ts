@@ -4,7 +4,7 @@ import { Model } from 'mongoose'
 import * as bcrypt from 'bcrypt'
 
 import config from 'src/config'
-import { User, UserDocument } from './schemas/user.schema'
+import { User, UserDocument } from './schemas'
 import { CreateUserDto } from './dto'
 import { IFindUsersParams } from './types'
 import { ID } from 'src/common/types'
