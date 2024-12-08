@@ -5,28 +5,18 @@ export class RegisterClientDto {
 
   @IsDefined()
   @IsEmail()
-  public readonly email: string
+    email: string
 
   @IsDefined()
   @IsString()
   @MinLength(5)
-  public readonly password: string
+    password: string
 
   @IsDefined()
   @IsString()
   @MinLength(4)
-  public readonly name: string
+    name: string
 
   @IsPhoneNumber()
-  public readonly contactPhone: string
-}
-
-/** Параметры входа */
-export class LoginDto {
-
-  @IsEmail()
-    email: string
-
-  @IsDefined()
-    password: string
+    contactPhone: string
 }

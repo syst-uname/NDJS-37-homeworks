@@ -2,12 +2,11 @@ import { Controller, Post, Body, Res, HttpStatus, UseGuards } from '@nestjs/comm
 import { Response } from 'express'
 
 import { AuthService } from './auth.service'
-import { RegisterClientDto, LoginDto } from './dto/auth.dto'
-import { ILoginResponse, IRegisterClientResponse } from './types/auth.interface'
-import { JwtUnauthGuard } from './guards/jwt.unauth.guard'
-import { JwtAuthGuard } from './guards/jwt.auth.guard'
-import { COOKIE_TOKEN } from '../common/constants/constants'
 import { UserService } from 'src/user/user.service'
+import { JwtAuthGuard, JwtUnauthGuard } from './guards'
+import { LoginDto, RegisterClientDto } from './dto'
+import { ILoginResponse, IRegisterClientResponse } from './types'
+import { COOKIE_TOKEN } from '../common/constants'
 
 @Controller()
 export class AuthController {

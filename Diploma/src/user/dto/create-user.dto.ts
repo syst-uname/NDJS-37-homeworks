@@ -1,6 +1,6 @@
 import { IsEnum } from 'class-validator'
-import { RegisterClientDto } from 'src/auth/dto/auth.dto'
-import { ROLE } from '../constants/user.constants'
+import { RegisterClientDto } from 'src/auth/dto'
+import { ROLE } from '../constants'
 
 /** Параметры создания пользователя */
 export class CreateUserDto extends RegisterClientDto {

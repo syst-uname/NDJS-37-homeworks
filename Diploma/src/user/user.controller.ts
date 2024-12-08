@@ -1,12 +1,11 @@
 import { Controller, Post, Body, Get, Query, UseGuards } from '@nestjs/common'
 
 import { UserService } from './user.service'
-import { CreateUserDto } from './dto/user.dto'
-import { ICreateUserResponse } from './types/user-create.interface'
-import { IFindUsersParams, IFindUserResponse } from './types/user-find.interface'
-import { JwtAuthGuard } from 'src/auth/guards/jwt.auth.guard'
-import { Roles } from 'src/auth/decorators/roles.decorator'
-import { ROLE } from './constants/user.constants'
+import { CreateUserDto } from './dto'
+import { ICreateUserResponse, IFindUserResponse, IFindUsersParams } from './types'
+import { JwtAuthGuard } from 'src/auth/guards'
+import { Roles } from 'src/auth/decorators'
+import { ROLE } from './constants'
 
 @Controller()
 @UseGuards(JwtAuthGuard)
