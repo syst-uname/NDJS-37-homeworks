@@ -1,7 +1,27 @@
-import { Controller } from '@nestjs/common'
-import { HotelService } from './hotel.service'
+import { Body, Controller, Post, UseGuards } from '@nestjs/common'
 
-@Controller('hotel')
+import { HotelService } from './hotel.service'
+import { CreateHotelDto } from './dto'
+import { ICreateHotelResponse } from './types'
+import { JwtAuthGuard } from 'src/auth/guards'
+import { Roles } from 'src/auth/decorators'
+import { ROLE } from 'src/user/constants'
+
+@Controller()
+@UseGuards(JwtAuthGuard)
 export class HotelController {
   constructor(private readonly hotelService: HotelService) {}
+
+  // Добавление гостиницы   
+  @Post('admin/hotels')
+  @Roles(ROLE.ADMIN)
+  async create(@Body() dto: CreateHotelDto): Promise<ICreateHotelResponse> {
+    const hotel = await this.hotelService.create(dto)
+    return {
+      id: hotel._id.toString(),
+      title: hotel.title,
+      description: hotel.description
+    }
+  }
+
 }

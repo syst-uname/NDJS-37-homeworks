@@ -9,19 +9,19 @@ export class HotelRoom {
   @Prop({ type: Types.ObjectId, ref: 'Hotel', required: true,  })
     hotel: Hotel
 
-  @Prop()
+  @Prop({ type: String })
     description: string
 
-  @Prop({ default: [] })
+  @Prop({ type: [String], default: [] })
     images: string[]
 
-  @Prop({ required: true })
+  @Prop({ type: Date, required: true })
     createdAt: Date
 
-  @Prop({ required: true })
+  @Prop({ type: Date, required: true })
     updatedAt: Date
 
-  @Prop({ required: true, default: true })
+  @Prop({ type: Boolean, required: true, default: true })
     isEnabled: boolean
 }
 

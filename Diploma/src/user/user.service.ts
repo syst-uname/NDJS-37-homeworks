@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
+import { Injectable, InternalServerErrorException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
 import * as bcrypt from 'bcrypt'
@@ -29,7 +29,7 @@ export class UserService {
       return await user.save()
     } catch (e) {
       console.error(e.message, e.stack)
-      throw new HttpException(`Ошибка при создании пользователя: ${e.message}`, HttpStatus.INTERNAL_SERVER_ERROR)
+      throw new InternalServerErrorException(`Ошибка при создании пользователя: ${e.message}`)
     }
   }
 
