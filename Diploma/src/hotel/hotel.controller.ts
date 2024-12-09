@@ -1,8 +1,8 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common'
+import { Body, Controller, Param, Post, UseGuards } from '@nestjs/common'
 
 import { HotelService } from './hotel.service'
-import { CreateHotelDto } from './dto'
-import { ICreateHotelResponse } from './types'
+import { CreateHotelDto, UpdateHotelDto } from './dto'
+import { ICreateHotelResponse, IUpdateHotelResponse } from './types'
 import { JwtAuthGuard } from 'src/auth/guards'
 import { Roles } from 'src/auth/decorators'
 import { ROLE } from 'src/user/constants'
@@ -17,6 +17,21 @@ export class HotelController {
   @Roles(ROLE.ADMIN)
   async create(@Body() dto: CreateHotelDto): Promise<ICreateHotelResponse> {
     const hotel = await this.hotelService.create(dto)
+    return {
+      id: hotel._id.toString(),
+      title: hotel.title,
+      description: hotel.description
+    }
+  }
+
+  // Изменение гостиницы   
+  @Post('admin/hotels/:id')
+  @Roles(ROLE.ADMIN)
+  async update(
+    @Param('id') id: string,
+    @Body() dto: UpdateHotelDto
+  ): Promise<IUpdateHotelResponse> {
+    const hotel = await this.hotelService.update(id, dto)
     return {
       id: hotel._id.toString(),
       title: hotel.title,

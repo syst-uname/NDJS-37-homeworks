@@ -1,9 +1,9 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common'
+import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
 
 import { Hotel, HotelDocument } from './schemas'
-import { CreateHotelDto } from './dto'
+import { CreateHotelDto, UpdateHotelDto } from './dto'
 
 @Injectable()
 export class HotelService {
@@ -19,7 +19,24 @@ export class HotelService {
       return await hotel.save()
     } catch (e) {
       console.error(e.message, e.stack)
-      throw new InternalServerErrorException(`Ошибка при добавлении отеля: ${e.message}`)
+      throw new InternalServerErrorException(`Ошибка при добавлении гостиницы: ${e.message}`)
+    }
+  }
+
+  /** Обновление отеля */
+  async update(id: string, dto: UpdateHotelDto): Promise<HotelDocument> {
+    try {
+      const hotel = await this.hotelModel.findOneAndUpdate({ _id: id }, dto, { new: true })
+      if (!hotel) {
+        throw new NotFoundException(`Гостиница с id "${id}" не найдена`)
+      }
+      return hotel
+    } catch (e) {
+      console.error(e.message, e.stack)
+      if (e instanceof NotFoundException) {
+        throw e
+      }
+      throw new InternalServerErrorException(`Ошибка при обновлении гостиницы: ${e.message}`)
     }
   }
 }
