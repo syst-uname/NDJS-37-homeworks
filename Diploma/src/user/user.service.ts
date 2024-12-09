@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common'
+import { ConflictException, Injectable, InternalServerErrorException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
 import * as bcrypt from 'bcrypt'
@@ -19,6 +19,9 @@ export class UserService {
   /** Создание пользователя */
   async create(dto: CreateUserDto): Promise<UserDocument> {
     try {
+      if (await this.userModel.findOne({ email: dto.email })) {
+        throw new ConflictException('Email уже занят')
+      }
       const user = new this.userModel({
         email: dto.email,
         passwordHash: await this.hashPassword(dto.password),
@@ -28,6 +31,9 @@ export class UserService {
       })
       return await user.save()
     } catch (e) {
+      if (e instanceof ConflictException) {
+        throw e
+      }
       console.error(e.message, e.stack)
       throw new InternalServerErrorException(`Ошибка при создании пользователя: ${e.message}`)
     }
