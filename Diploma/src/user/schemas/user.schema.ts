@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { Document } from 'mongoose'
-import { ROLE } from '../constants'
+import { USER_ROLE } from 'src/auth/constants'
 
 export type UserDocument = User & Document
 
@@ -18,8 +18,8 @@ export class User {
   @Prop({type: String})
     contactPhone: string
 
-  @Prop({ type: String, required: true, default: ROLE.CLIENT })
-    role: ROLE
+  @Prop({ type: String, enum: USER_ROLE, required: true, default: USER_ROLE.CLIENT })
+    role: USER_ROLE
 }
 
 export const UserSchema = SchemaFactory.createForClass(User)

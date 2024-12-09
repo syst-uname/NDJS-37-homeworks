@@ -1,7 +1,7 @@
 import { ExecutionContext, ForbiddenException, Injectable } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
 import { AuthGuard } from '@nestjs/passport'
-import { METADATA_ROLES } from '../../common/constants'
+import { METADATA_ROLES, USER_ROLE } from '../constants'
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
@@ -21,7 +21,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     const user = request.user
 
     // роли из метаданных
-    const requiredRoles = this.reflector.get<string[]>(METADATA_ROLES, context.getHandler())
+    const requiredRoles = this.reflector.get<USER_ROLE[]>(METADATA_ROLES, context.getHandler())
     if (!requiredRoles) {
       return true
     }

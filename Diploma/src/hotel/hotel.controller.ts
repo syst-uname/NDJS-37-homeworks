@@ -5,7 +5,7 @@ import { CreateHotelDto, UpdateHotelDto } from './dto'
 import { ICreateHotelResponse, IUpdateHotelResponse } from './types'
 import { JwtAuthGuard } from 'src/auth/guards'
 import { Roles } from 'src/auth/decorators'
-import { ROLE } from 'src/user/constants'
+import { USER_ROLE } from 'src/auth/constants'
 
 @Controller()
 @UseGuards(JwtAuthGuard)
@@ -14,7 +14,7 @@ export class HotelController {
 
   // Добавление гостиницы   
   @Post('admin/hotels')
-  @Roles(ROLE.ADMIN)
+  @Roles(USER_ROLE.ADMIN)
   async create(@Body() dto: CreateHotelDto): Promise<ICreateHotelResponse> {
     const hotel = await this.hotelService.create(dto)
     return {
@@ -26,7 +26,7 @@ export class HotelController {
 
   // Изменение гостиницы   
   @Post('admin/hotels/:id')
-  @Roles(ROLE.ADMIN)
+  @Roles(USER_ROLE.ADMIN)
   async update(
     @Param('id') id: string,
     @Body() dto: UpdateHotelDto

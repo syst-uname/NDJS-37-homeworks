@@ -5,7 +5,7 @@ import { CreateUserDto } from './dto'
 import { ICreateUserResponse, IFindUserResponse, IFindUsersParams } from './types'
 import { JwtAuthGuard } from 'src/auth/guards'
 import { Roles } from 'src/auth/decorators'
-import { ROLE } from './constants'
+import { USER_ROLE } from 'src/auth/constants'
 
 @Controller()
 @UseGuards(JwtAuthGuard)
@@ -14,7 +14,7 @@ export class UserController {
 
   // Создание пользователя  
   @Post('admin/users')
-  @Roles(ROLE.ADMIN)
+  @Roles(USER_ROLE.ADMIN)
   async create(@Body() dto: CreateUserDto): Promise<ICreateUserResponse> {
     const user = await this.userService.create(dto)
     return {
@@ -28,14 +28,14 @@ export class UserController {
 
   // Получение списка пользователей (admin)
   @Get('admin/users')
-  @Roles(ROLE.ADMIN)
+  @Roles(USER_ROLE.ADMIN)
   findAllForAdmin(@Query() params: IFindUsersParams): Promise<IFindUserResponse[]> {
     return this.findAll(params)
   }
 
   // Получение списка пользователей (manager)  
   @Get('manager/users')
-  @Roles(ROLE.MANAGER)
+  @Roles(USER_ROLE.MANAGER)
   findAllForManager(@Query() params: IFindUsersParams): Promise<IFindUserResponse[]> {
     return this.findAll(params)
   }
