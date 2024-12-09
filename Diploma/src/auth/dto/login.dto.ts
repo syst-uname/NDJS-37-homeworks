@@ -1,11 +1,13 @@
-import { IsDefined, IsEmail } from 'class-validator'
+import { IsEmail, IsNotEmpty, IsString } from 'class-validator'
 
 /** Параметры входа */
 export class LoginDto {
 
-  @IsEmail()
+  @IsEmail({}, { message: 'Некорректная почта' })
+  @IsNotEmpty({ message: 'Поле email обязательна для заполнения' })
     email: string
 
-  @IsDefined()
+  @IsString({ message: 'Пароль должно быть строкой' })
+  @IsNotEmpty({ message: 'Поле password обязательно для заполнения' })
     password: string
 }

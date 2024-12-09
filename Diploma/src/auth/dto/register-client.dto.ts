@@ -1,22 +1,24 @@
-import { IsDefined, IsEmail, IsPhoneNumber, IsString, MinLength } from 'class-validator'
+import {  IsEmail, IsNotEmpty, IsOptional, IsPhoneNumber, IsString, MaxLength, MinLength } from 'class-validator'
 
 /** Параметры регистрации */
 export class RegisterClientDto {
 
-  @IsDefined()
-  @IsEmail()
+  @IsEmail({}, { message: 'Некорректная почта' })
+  @IsNotEmpty({ message: 'Поле email обязательно для заполнения' })
     email: string
 
-  @IsDefined()
-  @IsString()
-  @MinLength(5)
+  @IsString({ message: 'Пароль должно быть строкой' })
+  @MinLength(4, { message: 'Пароль должен быть не менее 4 символов' })
+  @MaxLength(20, { message: 'Пароль должен быть не более 20 символов' })
+  @IsNotEmpty({ message: 'Поле password обязательно для заполнения' })
     password: string
 
-  @IsDefined()
-  @IsString()
-  @MinLength(4)
+  @IsString({ message: 'Имя пользователя должно быть строкой' })
+  @MinLength(4, { message: 'Имя пользователя должно быть не менее 4 символов' })
+  @IsNotEmpty({ message: 'Поле name обязательно для заполнения' })
     name: string
 
-  @IsPhoneNumber()
-    contactPhone: string
+  @IsPhoneNumber('RU', { message: 'Некорректный номер телефона' })
+  @IsOptional()
+    contactPhone?: string
 }
