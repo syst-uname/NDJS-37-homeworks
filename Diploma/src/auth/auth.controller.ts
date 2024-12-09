@@ -7,6 +7,7 @@ import { JwtAuthGuard, JwtUnauthGuard } from './guards'
 import { LoginDto, RegisterClientDto } from './dto'
 import { ILoginResponse, IRegisterClientResponse } from './types'
 import { COOKIE_TOKEN } from '../common/constants'
+import { ROLE } from 'src/user/constants'
 
 @Controller()
 export class AuthController {
@@ -45,7 +46,7 @@ export class AuthController {
   @Post('client/register')
   @UseGuards(JwtUnauthGuard)
   async register(@Body() dto: RegisterClientDto): Promise<IRegisterClientResponse> {
-    const user = await this.userService.create(dto)
+    const user = await this.userService.create({ ...dto, role: ROLE.CLIENT })
     return {
       id: user.id,
       email: user.email,
