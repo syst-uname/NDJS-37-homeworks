@@ -2,7 +2,7 @@ import { Controller, Post, Body, Res, HttpStatus, UseGuards } from '@nestjs/comm
 import { Response } from 'express'
 
 import { AuthService } from './auth.service'
-import { UserService } from 'src/user/user.service'
+import { UserService } from '@src/user/user.service'
 import { JwtAuthGuard, JwtUnauthGuard } from './guards'
 import { LoginDto, RegisterClientDto } from './dto'
 import { ILoginResponse, IRegisterClientResponse } from './types'

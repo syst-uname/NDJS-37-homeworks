@@ -3,9 +3,9 @@ import { Body, Controller, Param, Post, UseGuards } from '@nestjs/common'
 import { HotelService } from './hotel.service'
 import { CreateHotelDto, UpdateHotelDto } from './dto'
 import { ICreateHotelResponse, IUpdateHotelResponse } from './types'
-import { JwtAuthGuard } from 'src/auth/guards'
-import { Roles } from 'src/auth/decorators'
-import { USER_ROLE } from 'src/auth/constants'
+import { JwtAuthGuard } from '@src/auth/guards'
+import { Roles } from '@src/auth/decorators'
+import { USER_ROLE } from '@src/auth/constants'
 
 @Controller()
 @UseGuards(JwtAuthGuard)
