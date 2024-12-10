@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
 
 import { HotelController } from './hotel.controller'
-import { HotelService } from './hotel.service'
+import { HotelRoomService, HotelService } from './services'
 import { Hotel, HotelRoom, HotelRoomSchema, HotelSchema } from './schemas'
 
 @Module({
@@ -13,7 +13,7 @@ import { Hotel, HotelRoom, HotelRoomSchema, HotelSchema } from './schemas'
     ]),
   ],
   controllers: [HotelController],
-  providers: [HotelService],
+  providers: [HotelService, HotelRoomService],
   exports: [HotelService],
 })
 export class HotelModule {}

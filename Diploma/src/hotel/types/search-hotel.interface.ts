@@ -6,7 +6,7 @@ export class ISearchHotelParams {
 }
 
 /** Результат поиска отеля*/
-export interface ISearchHotelParamsResponse {
+export interface ISearchHotelResponse {
   id: string,
   title: string,
   description?: string,

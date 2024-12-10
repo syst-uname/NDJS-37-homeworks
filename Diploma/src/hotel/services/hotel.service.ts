@@ -2,9 +2,10 @@ import { Injectable, InternalServerErrorException, NotFoundException } from '@ne
 import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
 
-import { Hotel, HotelDocument } from './schemas'
-import { CreateHotelDto, UpdateHotelDto } from './dto'
-import { ISearchHotelParams } from './types'
+import { Hotel, HotelDocument } from '../schemas'
+import { CreateHotelDto, UpdateHotelDto } from '../dto'
+import { ISearchHotelParams } from '../types'
+import { ID } from '@src/common/types'
 
 @Injectable()
 export class HotelService {
@@ -56,5 +57,10 @@ export class HotelService {
       console.error(e.message, e.stack)
       throw new InternalServerErrorException(`Ошибка при поиске гостиниц: ${e.message}`)
     }
+  }
+
+  /** Получение отеля по id */
+  async findById(id: ID): Promise<HotelDocument> {
+    return await this.hotelModel.findById(id)
   }
 }
