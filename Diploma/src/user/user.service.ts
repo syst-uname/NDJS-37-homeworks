@@ -41,22 +41,25 @@ export class UserService {
 
   /** Получение списка пользователей */
   async findAll(params: IFindUsersParams): Promise<UserDocument[]> {
-    const query = this.userModel.find()
-
-    if (params.name) {
-      query.where('name').regex(new RegExp(params.name, 'i'))
+    try {
+      const query = this.userModel.find()
+      if (params.name) {
+        query.where('name').regex(new RegExp(params.name, 'i'))
+      }
+      if (params.email) {
+        query.where('email').regex(new RegExp(params.email, 'i'))
+      }
+      if (params.contactPhone) {
+        query.where('contactPhone').regex(new RegExp(params.contactPhone, 'i'))
+      }
+      return await query
+        .limit(params.limit)
+        .skip(params.offset)
+        .exec()
+    } catch (e) {
+      console.error(e.message, e.stack)
+      throw new InternalServerErrorException(`Ошибка при поиске пользователей: ${e.message}`)
     }
-    if (params.email) {
-      query.where('email').regex(new RegExp(params.email, 'i'))
-    }
-    if (params.contactPhone) {
-      query.where('contactPhone').regex(new RegExp(params.contactPhone, 'i'))
-    }
-
-    return await query
-      .limit(params.limit)
-      .skip(params.offset)
-      .exec()
   }
 
   /** Получение пользователя по id */

@@ -4,6 +4,7 @@ import { Model } from 'mongoose'
 
 import { Hotel, HotelDocument } from './schemas'
 import { CreateHotelDto, UpdateHotelDto } from './dto'
+import { ISearchHotelParams } from './types'
 
 @Injectable()
 export class HotelService {
@@ -37,6 +38,23 @@ export class HotelService {
         throw e
       }
       throw new InternalServerErrorException(`Ошибка при обновлении гостиницы: ${e.message}`)
+    }
+  }
+
+  /** Получение списка отелей */
+  async search(params: ISearchHotelParams): Promise<HotelDocument[]> {
+    try {
+      const query = this.hotelModel.find()
+      if (params.title) {
+        query.where('title').regex(new RegExp(params.title, 'i'))
+      }
+      return await query
+        .limit(params.limit)
+        .skip(params.offset)
+        .exec()
+    } catch (e) {
+      console.error(e.message, e.stack)
+      throw new InternalServerErrorException(`Ошибка при поиске гостиниц: ${e.message}`)
     }
   }
 }
