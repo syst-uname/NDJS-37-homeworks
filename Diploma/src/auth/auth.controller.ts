@@ -17,7 +17,7 @@ export class AuthController {
 
   // Вход
   @Post('auth/login')
-  // @UseGuards(JwtUnauthGuard)   // TODO вернуть после тестов 
+  @UseGuards(JwtUnauthGuard)
   async login(
     @Body() dto: LoginDto,
     @Res() res: Response

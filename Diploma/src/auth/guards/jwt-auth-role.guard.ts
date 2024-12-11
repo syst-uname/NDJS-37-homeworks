@@ -3,14 +3,21 @@ import { Reflector } from '@nestjs/core'
 import { AuthGuard } from '@nestjs/passport'
 import { METADATA_ROLES, USER_ROLE } from '../constants'
 
+/** Проверка авторизации и ролей*/
 @Injectable()
-export class JwtAuthGuard extends AuthGuard('jwt') {
+export class JwtAuthRoleGuard extends AuthGuard('jwt') {
 
   constructor(private reflector: Reflector) {
     super()
   }
 
   public async canActivate(context: ExecutionContext)  {
+    // роли из метаданных
+    const requiredRoles = this.reflector.get<USER_ROLE[]>(METADATA_ROLES, context.getHandler())
+    if (!requiredRoles) {
+      return true   // и если роли не требуются - пропускаем
+    }
+
     // стандартный механизм аутентификации
     if (!await super.canActivate(context)) {
       return false
@@ -19,12 +26,6 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     // текущий пользователь из контекста
     const request = context.switchToHttp().getRequest()
     const user = request.user
-
-    // роли из метаданных
-    const requiredRoles = this.reflector.get<USER_ROLE[]>(METADATA_ROLES, context.getHandler())
-    if (!requiredRoles) {
-      return true
-    }
 
     // Проверяем наличие у пользователя необходимой роли
     if (!user || !requiredRoles.includes(user.role)) {

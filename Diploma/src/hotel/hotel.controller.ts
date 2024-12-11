@@ -5,12 +5,12 @@ import { HotelRoomService, HotelService } from './services'
 import { CreateHotelDto, CreateHotelRoomDto, UpdateHotelDto } from './dto'
 import { ICreateHotelResponse, ICreateHotelRoomResponse, ISearchHotelParams, ISearchHotelResponse, IUpdateHotelResponse } from './types'
 import { HotelDocument, HotelRoomDocument } from './schemas'
-import { JwtAuthGuard } from '@src/auth/guards'
+import { JwtAuthRoleGuard } from '@src/auth/guards'
 import { Roles } from '@src/auth/decorators'
 import { USER_ROLE } from '@src/auth/constants'
 
 @Controller()
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthRoleGuard)
 export class HotelController {
   constructor(
     private readonly hotelService: HotelService,

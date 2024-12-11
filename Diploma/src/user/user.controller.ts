@@ -3,12 +3,12 @@ import { Controller, Post, Body, Get, Query, UseGuards } from '@nestjs/common'
 import { UserService } from './user.service'
 import { CreateUserDto } from './dto'
 import { ICreateUserResponse, IFindUserResponse, IFindUsersParams } from './types'
-import { JwtAuthGuard } from '@src/auth/guards'
+import { JwtAuthRoleGuard } from '@src/auth/guards'
 import { Roles } from '@src/auth/decorators'
 import { USER_ROLE } from '@src/auth/constants'
 
 @Controller()
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthRoleGuard)
 export class UserController {
   constructor(private readonly userService: UserService) {}
 

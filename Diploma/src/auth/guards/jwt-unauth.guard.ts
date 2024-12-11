@@ -1,6 +1,7 @@
 import { ExecutionContext, ForbiddenException, Injectable } from '@nestjs/common'
 import { AuthGuard } from '@nestjs/passport'
 
+/** Проверка что пользователь НЕ авторизован*/
 @Injectable()
 export class JwtUnauthGuard extends AuthGuard('jwt') {
   async canActivate(context: ExecutionContext) {
