@@ -1,8 +1,9 @@
-import { Controller, Post, Body, Get, Query, UseGuards } from '@nestjs/common'
+import { Controller, Post, Body, Get, Query, UseGuards, UseInterceptors } from '@nestjs/common'
 
 import { UserService } from './user.service'
 import { CreateUserDto } from './dto'
-import { ICreateUserResponse, IFindUserResponse, IFindUsersParams } from './types'
+import { ICreateUserResponse, IFindUsersParams } from './types'
+import { UserResponseInterceptor } from './interceptors'
 import { JwtAuthRoleGuard } from '@src/auth/guards'
 import { Roles } from '@src/auth/decorators'
 import { USER_ROLE } from '@src/auth/constants'
@@ -17,37 +18,23 @@ export class UserController {
   @Roles(USER_ROLE.ADMIN)
   async create(@Body() dto: CreateUserDto): Promise<ICreateUserResponse> {
     const user = await this.userService.create(dto)
-    return {
-      id: user.id,
-      email: user.email,
-      name: user.name,
-      contactPhone: user.contactPhone,
-      role: user.role
-    }
+    const { id, email, name, contactPhone, role } = user
+    return { id, email, name, contactPhone, role }
   }
 
   // Получение списка пользователей (admin)
   @Get('admin/users')
   @Roles(USER_ROLE.ADMIN)
-  findAllForAdmin(@Query() params: IFindUsersParams): Promise<IFindUserResponse[]> {
-    return this.findAll(params)
+  @UseInterceptors(UserResponseInterceptor)
+  async findAllForAdmin(@Query() params: IFindUsersParams) {
+    return await this.userService.findAll(params)
   }
 
   // Получение списка пользователей (manager)  
   @Get('manager/users')
   @Roles(USER_ROLE.MANAGER)
-  findAllForManager(@Query() params: IFindUsersParams): Promise<IFindUserResponse[]> {
-    return this.findAll(params)
-  }
-
-  /** Получение списка пользователей */
-  private async findAll(params: IFindUsersParams): Promise<IFindUserResponse[]> {
-    const users = await this.userService.findAll(params)
-    return users.map(user => ({
-      id: user.id,
-      email: user.email,
-      name: user.name,
-      contactPhone: user.contactPhone,
-    }))
+  @UseInterceptors(UserResponseInterceptor)
+  async findAllForManager(@Query() params: IFindUsersParams) {
+    return await this.userService.findAll(params)
   }
 }
