@@ -25,12 +25,8 @@ export class AuthController {
     const user = await this.authService.validateUser(dto.email, dto.password)
     const { token } = await this.authService.login(user)
     res.cookie(COOKIE_TOKEN, token, { httpOnly: true })       // Установка JWT в куки
-    const response: ILoginResponse = {
-      email: user.email,
-      name: user.name,
-      contactPhone: user.contactPhone
-    }
-    return res.status(HttpStatus.OK).json(response)
+    const { email, name, contactPhone }: ILoginResponse = user
+    return res.status(HttpStatus.OK).json({ email, name, contactPhone })
   }
 
   // Выход
@@ -46,10 +42,7 @@ export class AuthController {
   @UseGuards(JwtUnauthGuard)
   async register(@Body() dto: RegisterClientDto): Promise<IRegisterClientResponse> {
     const user = await this.userService.create({ ...dto, role: USER_ROLE.CLIENT })
-    return {
-      id: user.id,
-      email: user.email,
-      name: user.name,
-    }
+    const { id, email, name } = user
+    return { id, email, name }
   }
 }
