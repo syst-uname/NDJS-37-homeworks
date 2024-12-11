@@ -61,6 +61,10 @@ export class HotelService {
 
   /** Получение отеля по id */
   async findById(id: ID): Promise<HotelDocument> {
-    return await this.hotelModel.findById(id)
+    const hotel = await this.hotelModel.findById(id)
+    if (!hotel) {
+      throw new NotFoundException(`Гостиница с id "${id}" не найдена`)
+    }
+    return hotel
   }
 }

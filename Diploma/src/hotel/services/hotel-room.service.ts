@@ -8,6 +8,7 @@ import config from '@src/config'
 import { HotelService } from './hotel.service'
 import { HotelRoom, HotelRoomDocument } from '../schemas'
 import { CreateHotelRoomDto } from '../dto'
+import { ID } from '@src/common/types'
 
 @Injectable()
 export class HotelRoomService {
@@ -20,10 +21,6 @@ export class HotelRoomService {
   /** Добавление номера */
   async create(dto: CreateHotelRoomDto, files: Express.Multer.File[]): Promise<HotelRoomDocument> {
     try {
-      const hotel = await this.hotelService.findById(dto.hotelId)
-      if (!hotel) {
-        throw new NotFoundException(`Гостиница с id "${dto.hotelId}" не найдена`)
-      }
       const room = new this.roomModel({
         hotel: dto.hotelId,
         description: dto.description,
@@ -51,5 +48,14 @@ export class HotelRoomService {
       })
     )
     return savedImagePaths
+  }
+
+  /** Получение номера по id */
+  async findById(id: ID): Promise<HotelRoomDocument> {
+    const room = await this.roomModel.findById(id)
+    if (!room) {
+      throw new NotFoundException(`Номер с id "${id}" не найден`)
+    }
+    return room
   }
 }

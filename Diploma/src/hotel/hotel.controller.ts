@@ -4,6 +4,7 @@ import { FilesInterceptor } from '@nestjs/platform-express'
 import { HotelRoomService, HotelService } from './services'
 import { CreateHotelDto, CreateHotelRoomDto, UpdateHotelDto } from './dto'
 import { ICreateHotelResponse, ICreateHotelRoomResponse, ISearchHotelParams, ISearchHotelResponse, IUpdateHotelResponse } from './types'
+import { HotelDocument, HotelRoomDocument } from './schemas'
 import { JwtAuthGuard } from '@src/auth/guards'
 import { Roles } from '@src/auth/decorators'
 import { USER_ROLE } from '@src/auth/constants'
@@ -65,6 +66,18 @@ export class HotelController {
   ): Promise<ICreateHotelRoomResponse> {
     const hotel = await this.hotelService.findById(dto.hotelId)
     const room = await this.roomService.create(dto, files)
+    return this.formatRoomResponse(room, hotel)
+  }
+
+  // Информация о номере
+  @Get('/common/hotel-rooms/:id')
+  async getRoom(@Param('id') id: string): Promise<ICreateHotelRoomResponse> {
+    const room = await this.roomService.findById(id)
+    const hotel = await this.hotelService.findById(room.hotel)
+    return this.formatRoomResponse(room, hotel)
+  }
+
+  private formatRoomResponse(room: HotelRoomDocument, hotel: HotelDocument): ICreateHotelRoomResponse {
     return {
       id: room._id.toString(),
       description: room.description,
