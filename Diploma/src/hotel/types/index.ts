@@ -1,4 +1,3 @@
-export * from './create-hotel.interface'
-export * from './create-hotel-room.interface'
+export * from './hotel.interface'
 export * from './search-hotel.interface'
-export * from './update-hotel.interface'
+export * from './hotel-room.interface'

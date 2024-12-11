@@ -21,6 +21,7 @@ export class HotelRoomService {
   /** Добавление номера */
   async create(dto: CreateHotelRoomDto, files: Express.Multer.File[]): Promise<HotelRoomDocument> {
     try {
+      await this.hotelService.findById(dto.hotelId)   // гостиница должна существовать
       const room = new this.roomModel({
         hotel: dto.hotelId,
         description: dto.description,

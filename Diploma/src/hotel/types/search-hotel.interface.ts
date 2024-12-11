@@ -4,10 +4,3 @@ export class ISearchHotelParams {
   offset?: number
   title?: string
 }
-
-/** Результат поиска отеля*/
-export interface ISearchHotelResponse {
-  id: string,
-  title: string,
-  description?: string,
-}
