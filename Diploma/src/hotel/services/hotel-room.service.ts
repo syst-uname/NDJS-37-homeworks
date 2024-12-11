@@ -37,6 +37,9 @@ export class HotelRoomService {
 
   /** Сохранение изображений на сервере */
   private async uploadImages(room: HotelRoomDocument, files: Express.Multer.File[]): Promise<string[]> {
+    if (!files.length) {
+      return []
+    }
     // папка: id_гостиницы/id_номера/[изображения]
     const roomDir = path.join(config.server.uploadsDirHotels, room.hotel, room.id)
     fs.mkdirSync(roomDir, { recursive: true })
@@ -45,7 +48,7 @@ export class HotelRoomService {
       files.map(async (file) => {
         const imagePath = path.join(roomDir, file.originalname)
         fs.writeFileSync(imagePath, file.buffer)
-        return imagePath
+        return path.relative(config.server.uploadsDirHotels, imagePath)   // относительный путь без 'uploads/hotels'
       })
     )
     return savedImagePaths

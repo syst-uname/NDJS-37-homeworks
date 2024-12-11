@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { MongooseModule } from '@nestjs/mongoose'
+import { ServeStaticModule } from '@nestjs/serve-static'
 
 import config from './config'
 import { AppController } from './app.controller'
@@ -13,6 +14,7 @@ import { HotelModule } from './hotel/hotel.module'
   imports: [
     ConfigModule.forRoot(),
     MongooseModule.forRoot(config.mongo.connection),
+    ServeStaticModule.forRoot({ rootPath: config.server.uploadsDirHotels }),
     AuthModule,
     UserModule,
     HotelModule
