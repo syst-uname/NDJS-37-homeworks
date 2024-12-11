@@ -4,7 +4,7 @@ import { FilesInterceptor } from '@nestjs/platform-express'
 import { HotelRoomService, HotelService } from './services'
 import { CreateHotelDto, CreateHotelRoomDto, UpdateHotelDto } from './dto'
 import { HotelResponseInterceptor, HotelRoomResponseInterceptor } from './interceptors'
-import { ISearchHotelParams } from './types'
+import { ISearchHotelParams, ISearchHotelRoomParams } from './types'
 import { JwtAuthRoleGuard } from '@src/auth/guards'
 import { Roles } from '@src/auth/decorators'
 import { USER_ROLE } from '@src/auth/constants'
@@ -44,6 +44,7 @@ export class HotelController {
     return await this.hotelService.search(params)
   }
 
+
   // Добавление номера 
   @Post('admin/hotel-rooms')
   @Roles(USER_ROLE.ADMIN)
@@ -61,5 +62,12 @@ export class HotelController {
   @UseInterceptors(HotelRoomResponseInterceptor)
   async getRoom(@Param('id') id: string) {
     return await this.roomService.findById(id)
+  }
+
+  //	Поиск номеров 
+  @Get('/common/hotel-rooms')
+  @UseInterceptors(HotelRoomResponseInterceptor)
+  async searchRoom(@Query() params: ISearchHotelRoomParams) {
+    return await this.roomService.search(params)
   }
 }
