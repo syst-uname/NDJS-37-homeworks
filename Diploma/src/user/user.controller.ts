@@ -18,7 +18,7 @@ export class UserController {
   async create(@Body() dto: CreateUserDto): Promise<ICreateUserResponse> {
     const user = await this.userService.create(dto)
     return {
-      id: user._id.toString(),
+      id: user.id,
       email: user.email,
       name: user.name,
       contactPhone: user.contactPhone,
@@ -44,7 +44,7 @@ export class UserController {
   private async findAll(params: IFindUsersParams): Promise<IFindUserResponse[]> {
     const users = await this.userService.findAll(params)
     return users.map(user => ({
-      id: user._id.toString(),
+      id: user.id,
       email: user.email,
       name: user.name,
       contactPhone: user.contactPhone,

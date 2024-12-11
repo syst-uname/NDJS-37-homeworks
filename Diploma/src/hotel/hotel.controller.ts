@@ -23,7 +23,7 @@ export class HotelController {
   async createHotel(@Body() dto: CreateHotelDto): Promise<ICreateHotelResponse> {
     const hotel = await this.hotelService.create(dto)
     return {
-      id: hotel._id.toString(),
+      id: hotel.id,
       title: hotel.title,
       description: hotel.description
     }
@@ -38,7 +38,7 @@ export class HotelController {
   ): Promise<IUpdateHotelResponse> {
     const hotel = await this.hotelService.update(id, dto)
     return {
-      id: hotel._id.toString(),
+      id: hotel.id,
       title: hotel.title,
       description: hotel.description
     }
@@ -50,7 +50,7 @@ export class HotelController {
   async searchHotel(@Query() params: ISearchHotelParams): Promise<ISearchHotelResponse[]> {
     const hotels = await this.hotelService.search(params)
     return hotels.map(hotel => ({
-      id: hotel._id.toString(),
+      id: hotel.id,
       title: hotel.title,
       description: hotel.description
     }))
@@ -79,12 +79,12 @@ export class HotelController {
 
   private formatRoomResponse(room: HotelRoomDocument, hotel: HotelDocument): ICreateHotelRoomResponse {
     return {
-      id: room._id.toString(),
+      id: room.id,
       description: room.description,
       images: room.images,
       isEnabled: room.isEnabled,
       hotel: {
-        id: hotel._id.toString(),
+        id: hotel.id,
         title: hotel.title,
         description: hotel.description
       }
