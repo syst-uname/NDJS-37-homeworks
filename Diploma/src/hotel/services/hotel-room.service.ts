@@ -60,7 +60,10 @@ export class HotelRoomService {
     try {
       const query = this.roomModel.find()
       if (params.hotel) {
-        query.where('hotel').regex(new RegExp(params.hotel, 'i'))
+        query.where('hotel').equals(params.hotel)
+      }
+      if (params.isEnabled) {
+        query.where('isEnabled').equals(params.isEnabled)
       }
       return await query
         .limit(params.limit)

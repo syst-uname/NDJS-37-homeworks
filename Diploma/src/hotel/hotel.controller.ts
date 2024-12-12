@@ -6,6 +6,7 @@ import { CreateHotelDto, CreateHotelRoomDto, UpdateHotelDto } from './dto'
 import { HotelResponseInterceptor, HotelRoomResponseInterceptor } from './interceptors'
 import { ISearchHotelParams, ISearchHotelRoomParams } from './types'
 import { JwtAuthRoleGuard } from '@src/auth/guards'
+import { RoomEnabledGuard } from './guards'
 import { Roles } from '@src/auth/decorators'
 import { USER_ROLE } from '@src/auth/constants'
 
@@ -66,6 +67,7 @@ export class HotelController {
 
   //	Поиск номеров 
   @Get('/common/hotel-rooms')
+  @UseGuards(RoomEnabledGuard)
   @UseInterceptors(HotelRoomResponseInterceptor)
   async searchRoom(@Query() params: ISearchHotelRoomParams) {
     return await this.roomService.search(params)
