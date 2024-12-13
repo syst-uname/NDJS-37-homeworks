@@ -1,8 +1,8 @@
-import { Body, Controller, Get, Param, Post, Query, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common'
+import { Body, Controller, Get, Param, Post, Put, Query, UploadedFiles, UseGuards, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common'
 import { FilesInterceptor } from '@nestjs/platform-express'
 
 import { HotelRoomService, HotelService } from './services'
-import { CreateHotelDto, CreateHotelRoomDto, UpdateHotelDto } from './dto'
+import { CreateHotelDto, CreateHotelRoomDto, UpdateHotelDto, UpdateHotelRoomDto } from './dto'
 import { HotelResponseInterceptor, HotelRoomResponseInterceptor } from './interceptors'
 import { ISearchHotelParams, ISearchHotelRoomParams } from './types'
 import { JwtAuthRoleGuard } from '@src/auth/guards'
@@ -71,5 +71,18 @@ export class HotelController {
   @UseInterceptors(HotelRoomResponseInterceptor)
   async searchRoom(@Query() params: ISearchHotelRoomParams) {
     return await this.roomService.search(params)
+  }
+
+  // Изменение номера 
+  @Put('admin/hotel-rooms/:id')
+  @Roles(USER_ROLE.ADMIN)
+  @UseInterceptors(FilesInterceptor('images'))
+  @UseInterceptors(HotelRoomResponseInterceptor)
+  async updateRoom(
+    @Param('id') id: string,
+    @Body() dto: UpdateHotelRoomDto,
+    @UploadedFiles() files: Express.Multer.File[]
+  ) {
+    return await this.roomService.update(id, dto, files)
   }
 }

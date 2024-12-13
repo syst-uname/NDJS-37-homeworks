@@ -8,7 +8,7 @@ import config from '@src/config'
 import { HotelService } from './hotel.service'
 import { HotelRoom, HotelRoomDocument } from '../schemas'
 import { ISearchHotelRoomParams } from '../types'
-import { CreateHotelRoomDto } from '../dto'
+import { CreateHotelRoomDto, UpdateHotelRoomDto } from '../dto'
 import { ID } from '@src/common/types'
 
 @Injectable()
@@ -22,13 +22,36 @@ export class HotelRoomService {
   /** Добавление номера */
   async create(dto: CreateHotelRoomDto, files: Express.Multer.File[]): Promise<HotelRoomDocument> {
     try {
-      await this.hotelService.findById(dto.hotelId)   // гостиница должна существовать
       const room = await new this.roomModel({
         hotel: dto.hotelId,
         description: dto.description,
         isEnabled: true
       }).populate('hotel')
+
+      if (!room.hotel) {
+        throw new NotFoundException(`Гостиница с id "${dto.hotelId}" не найдена`)
+      }
+
       room.images = await this.uploadImages(room, files)
+      return await room.save()
+    } catch (e) {
+      console.error(e.message, e.stack)
+      throw new InternalServerErrorException(`Ошибка при добавлении номера: ${e.message}`)
+    }
+  }
+
+  /** Обновление номера */
+  async update(id: ID, dto: UpdateHotelRoomDto, files: Express.Multer.File[]): Promise<HotelRoomDocument> {
+    try {
+      const room = await this.findById(id)
+      if (room.hotel.id !== dto.hotelId) {
+        room.hotel = await this.hotelService.findById(dto.hotelId)
+      }
+      room.description = dto.description
+      room.isEnabled = dto.isEnabled
+
+      const images = await this.uploadImages(room, files)
+      room.images = Array.from(new Set([...room.images, ...images]))
       return await room.save()
     } catch (e) {
       console.error(e.message, e.stack)
