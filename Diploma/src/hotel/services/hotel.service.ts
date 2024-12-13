@@ -26,7 +26,7 @@ export class HotelService {
   }
 
   /** Обновление отеля */
-  async update(id: string, dto: UpdateHotelDto): Promise<HotelDocument> {
+  async update(id: ID, dto: UpdateHotelDto): Promise<HotelDocument> {
     try {
       const hotel = await this.hotelModel.findOneAndUpdate({ _id: id }, dto, { new: true })
       if (!hotel) {

@@ -1,11 +1,15 @@
-import { IsMongoId, IsNotEmpty, IsOptional, IsString } from 'class-validator'
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator'
+import { Transform } from 'class-transformer'
+import { ObjectId } from 'mongoose'
+
+import { ParseObjectIdPipe } from '@src/common/pipes'
 
 /** Параметры добавления номера */
 export class CreateHotelRoomDto {
 
-  @IsMongoId({ message: 'ID гостиницы некорректен' })
   @IsNotEmpty({ message: 'ID гостиницы не может быть пустым' })
-    hotelId: string
+  @Transform(({ value }) => new ParseObjectIdPipe().transform(value))
+    hotelId: ObjectId
 
   @IsString({ message: 'Описание должно быть строкой' })
   @IsOptional()

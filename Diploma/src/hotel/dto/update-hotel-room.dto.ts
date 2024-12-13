@@ -1,12 +1,15 @@
+import { IsBoolean, IsOptional, IsString } from 'class-validator'
 import { Transform } from 'class-transformer'
-import { IsBoolean, IsMongoId, IsOptional, IsString } from 'class-validator'
+import { ObjectId } from 'mongoose'
+
+import { ParseObjectIdPipe } from '@src/common/pipes'
 
 /** Параметры обновления номера */
 export class UpdateHotelRoomDto {
 
-  @IsMongoId({ message: 'ID гостиницы некорректен' })
+  @Transform(({ value }) => new ParseObjectIdPipe().transform(value))
   @IsOptional()
-    hotelId?: string
+    hotelId?: ObjectId
 
   @IsString({ message: 'Описание должно быть строкой' })
   @IsOptional()
