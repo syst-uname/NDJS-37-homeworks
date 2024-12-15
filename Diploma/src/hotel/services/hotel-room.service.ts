@@ -44,7 +44,7 @@ export class HotelRoomService {
   async update(id: ID, dto: UpdateHotelRoomDto, files: Express.Multer.File[]): Promise<HotelRoomDocument> {
     try {
       const room = await this.findById(id)
-      if (room.hotel.id !== dto.hotelId) {
+      if (dto.hotelId && room.hotel.id !== dto.hotelId) {
         room.hotel = await this.hotelService.findById(dto.hotelId)
       }
       room.description = dto.description

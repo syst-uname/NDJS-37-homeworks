@@ -9,7 +9,7 @@ export class Hotel {
     title: string
 
   @Prop({ type: String })
-    description: string
+    description?: string
 }
 
 export const HotelSchema = SchemaFactory.createForClass(Hotel)

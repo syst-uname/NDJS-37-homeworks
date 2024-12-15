@@ -9,6 +9,7 @@ import { AppService } from './app.service'
 import { AuthModule } from './auth/auth.module'
 import { UserModule } from './user/user.module'
 import { HotelModule } from './hotel/hotel.module'
+import { ReservationModule } from './reservation/reservation.module'
 
 @Module({
   imports: [
@@ -17,7 +18,8 @@ import { HotelModule } from './hotel/hotel.module'
     ServeStaticModule.forRoot({ rootPath: config.server.uploadsDirHotels }),
     AuthModule,
     UserModule,
-    HotelModule
+    HotelModule,
+    ReservationModule
   ],
   controllers: [AppController],
   providers: [AppService],
