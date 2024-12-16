@@ -10,13 +10,29 @@ import { UserDocument } from '@src/user/schemas'
 export class ReservationService {
 
   constructor(
-    @InjectModel(Reservation.name) private ReservationModel: Model<ReservationDocument>,
+    @InjectModel(Reservation.name) private reservationModel: Model<ReservationDocument>,
   ) {}
 
   /** Бронирование номера */
   async create(dto: CreateReservationDto, user: UserDocument): Promise<ReservationDocument> {
     try {
-      const reservation = new this.ReservationModel({
+      // даты валидны
+      if (dto.startDate > dto.endDate)
+        throw new BadRequestException('Дата начала бронирования не может быть больше даты окончания')
+
+      // номер не занят
+      const existingReservation = await this.reservationModel.findOne({
+        roomId: dto.hotelRoom,
+        $and: [{
+          dateStart: { $lte: dto.endDate },      // перекрытие дат
+          dateEnd: { $gte: dto.startDate }
+        }],
+      })
+      if (existingReservation)
+        throw new BadRequestException('Номер уже занят')
+
+      // создание бронирования
+      const reservation = new this.reservationModel({
         userId: user._id,
         roomId: dto.hotelRoom,
         dateStart: dto.startDate,
