@@ -56,4 +56,17 @@ export class ReservationService {
     }
   }
 
+  /** Список броней текущего пользователя */
+  async get(user: UserDocument): Promise<ReservationDocument[]> {
+    try {
+      return await this.reservationModel
+        .find({ userId: user._id })
+        .populate('roomId')
+        .populate('hotelId')
+        .exec()
+    } catch (e) {
+      console.error(e.message, e.stack)
+      throw new InternalServerErrorException(`Ошибка при добавлении гостиницы: ${e.message}`)
+    }
+  }
 }

@@ -6,7 +6,7 @@ import { IReservationResponse } from '../types'
 
 /** Интерсептор для форматирования данных номера отеля */
 @Injectable()
-export class ReservationResponseIInterceptor implements NestInterceptor {
+export class ReservationResponseInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<IReservationResponse | IReservationResponse[]> {
 
     const formatReservationResponse = (reservation: ReservationDocument): IReservationResponse => ({
