@@ -31,10 +31,10 @@ export class UserService {
       })
       return await user.save()
     } catch (e) {
+      console.error(e.message, e.stack)
       if (e instanceof ConflictException) {
         throw e
       }
-      console.error(e.message, e.stack)
       throw new InternalServerErrorException(`Ошибка при создании пользователя: ${e.message}`)
     }
   }

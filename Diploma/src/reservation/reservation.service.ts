@@ -1,10 +1,11 @@
-import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common'
+import { BadRequestException, ForbiddenException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
 
 import { Reservation, ReservationDocument } from './schemas'
 import { CreateReservationDto } from './dto'
 import { UserDocument } from '@src/user/schemas'
+import { ID } from '@src/common/types'
 
 @Injectable()
 export class ReservationService {
@@ -48,11 +49,11 @@ export class ReservationService {
       await reservation.populate('hotelId')
       return await reservation.save()
     } catch (e) {
+      console.error(e.message, e.stack)
       if (e instanceof BadRequestException) {
         throw e
       }
-      console.error(e.message, e.stack)
-      throw new InternalServerErrorException(`Ошибка при добавлении гостиницы: ${e.message}`)
+      throw new InternalServerErrorException(`Ошибка при бронировании номера: ${e.message}`)
     }
   }
 
@@ -61,12 +62,42 @@ export class ReservationService {
     try {
       return await this.reservationModel
         .find({ userId: user._id })
+        .populate('userId')
         .populate('roomId')
         .populate('hotelId')
         .exec()
     } catch (e) {
       console.error(e.message, e.stack)
-      throw new InternalServerErrorException(`Ошибка при добавлении гостиницы: ${e.message}`)
+      throw new InternalServerErrorException(`Ошибка при получении бронирований: ${e.message}`)
     }
+  }
+
+  /** Отмена бронирования клиента */
+  async delete(id: ID, userId: ID) {
+    try {
+      const reservation = await this.findById(id)
+      if (reservation.userId.id !== userId)
+        throw new ForbiddenException('Вы не можете отменить бронирование другого пользователя')
+      await this.reservationModel.deleteOne({ _id: id })
+    } catch (e) {
+      console.error(e.message, e.stack)
+      if (e instanceof ForbiddenException) {
+        throw e
+      }
+      throw new InternalServerErrorException(`Ошибка при отмене бронирования: ${e.message}`)
+    }
+  }
+
+  /** Получение бронирования по id */
+  async findById(id: ID): Promise<ReservationDocument> {
+    const reservation = await this.reservationModel
+      .findById(id)
+      .populate('userId')
+      .populate('roomId')
+      .populate('hotelId')
+    if (!reservation) {
+      throw new NotFoundException(`Бронирование с id "${id}" не найдено`)
+    }
+    return reservation
   }
 }

@@ -1,6 +1,5 @@
 import { Body, Controller, Get, Param, Post, Put, Query, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common'
 import { FilesInterceptor } from '@nestjs/platform-express'
-import { ObjectId } from 'mongoose'
 
 import { HotelRoomService, HotelService } from './services'
 import { CreateHotelDto, CreateHotelRoomDto, UpdateHotelDto, UpdateHotelRoomDto } from './dto'
@@ -11,6 +10,7 @@ import { JwtAuthRoleGuard } from '@src/auth/guards'
 import { RoomEnabledGuard } from './guards'
 import { Roles } from '@src/auth/decorators'
 import { USER_ROLE } from '@src/auth/constants'
+import { ID } from '@src/common/types'
 
 @Controller()
 @UseGuards(JwtAuthRoleGuard)
@@ -33,7 +33,7 @@ export class HotelController {
   @Roles(USER_ROLE.ADMIN)
   @UseInterceptors(HotelResponseInterceptor)
   async updateHotel(
-    @Param('id', ParseObjectIdPipe) id: ObjectId,
+    @Param('id', ParseObjectIdPipe) id: ID,
     @Body() dto: UpdateHotelDto
   ) {
     return await this.hotelService.update(id, dto)
@@ -63,7 +63,7 @@ export class HotelController {
   // Информация о номере
   @Get('/common/hotel-rooms/:id')
   @UseInterceptors(HotelRoomResponseInterceptor)
-  async getRoom(@Param('id', ParseObjectIdPipe) id: ObjectId) {
+  async getRoom(@Param('id', ParseObjectIdPipe) id: ID) {
     return await this.roomService.findById(id)
   }
 
@@ -81,7 +81,7 @@ export class HotelController {
   @UseInterceptors(FilesInterceptor('images'))
   @UseInterceptors(HotelRoomResponseInterceptor)
   async updateRoom(
-    @Param('id', ParseObjectIdPipe) id: ObjectId,
+    @Param('id', ParseObjectIdPipe) id: ID,
     @Body() dto: UpdateHotelRoomDto,
     @UploadedFiles() files: Express.Multer.File[]
   ) {
