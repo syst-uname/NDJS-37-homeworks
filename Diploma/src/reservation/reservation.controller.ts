@@ -41,7 +41,7 @@ export class ReservationController {
     @Param('id', ParseObjectIdPipe) id: ID,
     @AuthUser() user: UserDocument
   ) {
-    return await this.reservationService.delete(id, user.id)
+    return await this.reservationService.remove(id, user.id)
   }
 
   // Список броней конкретного пользователя
@@ -50,6 +50,13 @@ export class ReservationController {
   @UseInterceptors(ReservationResponseInterceptor)
   async getByUserId(@Param('userId', ParseObjectIdPipe) userId: ID) {
     return await this.reservationService.get(userId)
+  }
+
+  // Отмена бронирования менеджером
+  @Delete('manager/reservations/:id')
+  @Roles(USER_ROLE.MANAGER)
+  async deleteById(@Param('id', ParseObjectIdPipe) id: ID) {
+    return await this.reservationService.remove(id)
   }
 
 }

@@ -73,15 +73,16 @@ export class ReservationService {
   }
 
   /** Отмена бронирования клиента */
-  async delete(id: ID, userId: ID) {
+  async remove(id: ID, userId?: ID) {
     try {
       const reservation = await this.findById(id)
-      if (reservation.userId.id !== userId)
+      // проверяем на пользователя, если он передан (менеджер пользователя не передаст и не проверит)  
+      if (userId && reservation.userId.id !== userId)
         throw new ForbiddenException('Вы не можете отменить бронирование другого пользователя')
       await this.reservationModel.deleteOne({ _id: id })
     } catch (e) {
       console.error(e.message, e.stack)
-      if (e instanceof ForbiddenException) {
+      if (e instanceof ForbiddenException || e instanceof NotFoundException) {
         throw e
       }
       throw new InternalServerErrorException(`Ошибка при отмене бронирования: ${e.message}`)
