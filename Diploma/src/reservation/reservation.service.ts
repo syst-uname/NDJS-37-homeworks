@@ -57,11 +57,11 @@ export class ReservationService {
     }
   }
 
-  /** Список броней текущего пользователя */
-  async get(user: UserDocument): Promise<ReservationDocument[]> {
+  /** Список броней пользователя */
+  async get(userId: ID): Promise<ReservationDocument[]> {
     try {
       return await this.reservationModel
-        .find({ userId: user._id })
+        .find({ userId })
         .populate('userId')
         .populate('roomId')
         .populate('hotelId')

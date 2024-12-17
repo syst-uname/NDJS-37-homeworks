@@ -31,7 +31,7 @@ export class ReservationController {
   @Roles(USER_ROLE.CLIENT)
   @UseInterceptors(ReservationResponseInterceptor)
   async get(@AuthUser() user: UserDocument) {
-    return await this.reservationService.get(user)
+    return await this.reservationService.get(user._id as ID)
   }
 
   // Отмена бронирования клиентом
@@ -42,6 +42,14 @@ export class ReservationController {
     @AuthUser() user: UserDocument
   ) {
     return await this.reservationService.delete(id, user.id)
+  }
+
+  // Список броней конкретного пользователя
+  @Get('manager/reservations/:userId')
+  @Roles(USER_ROLE.MANAGER)
+  @UseInterceptors(ReservationResponseInterceptor)
+  async getByUserId(@Param('userId', ParseObjectIdPipe) userId: ID) {
+    return await this.reservationService.get(userId)
   }
 
 }
