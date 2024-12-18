@@ -1,21 +1,21 @@
 import { Body, Controller, Get, Post, Query, UseGuards, UseInterceptors } from '@nestjs/common'
 
-import { SupportRequestClientService } from './services'
-import { CreateSupportRequestDto, GetChatListParams } from './dto'
-import { SupportRequestResponseInterceptor } from './interceptors'
+import { SupportRequestClientService } from '../services'
+import { CreateSupportRequestDto, GetChatListParams } from '../dto'
+import { SupportRequestResponseInterceptor } from '../interceptors'
 import { JwtAuthRoleGuard } from '@src/auth/guards'
 import { AuthUser, Roles } from '@src/auth/decorators'
 import { UserDocument } from '@src/user/schemas'
 import { USER_ROLE } from '@src/auth/constants'
 import { ID } from '@src/common/types'
 
-@Controller()
+@Controller('client')
 @UseGuards(JwtAuthRoleGuard)
-export class SupportRequestController {
+export class SupportRequestClientController {
   constructor(private readonly supportRequestClientService: SupportRequestClientService) {}
 
   // Создание обращения в поддержку
-  @Post('client/support-requests')
+  @Post('support-requests')
   @Roles(USER_ROLE.CLIENT)
   @UseInterceptors(SupportRequestResponseInterceptor)
   async create(
@@ -26,7 +26,7 @@ export class SupportRequestController {
   }
 
   // Получение списка обращений в поддержку для клиента
-  @Get('client/support-requests')
+  @Get('support-requests')
   @Roles(USER_ROLE.CLIENT)
   @UseInterceptors(SupportRequestResponseInterceptor)
   async get(

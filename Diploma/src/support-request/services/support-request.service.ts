@@ -24,6 +24,7 @@ export class SupportRequestService implements ISupportRequestService {
       return await query
         .limit(data.limit)
         .skip(data.offset)
+        .populate('user')
         .exec()
     } catch (e) {
       console.error(e.message, e.stack)

@@ -1,18 +1,22 @@
 import { Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
 
-import { SupportRequestClientService, SupportRequestService } from './services'
-import { SupportRequestController } from './support-request.controller'
+import { SupportRequestClientController, SupportRequestManagerController } from './controllers'
+import { SupportRequestClientService, SupportRequestEmployeeService, SupportRequestService } from './services'
 import { SupportRequest, SupportRequestSchema } from './schemas'
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: SupportRequest.name, schema: SupportRequestSchema }]),
   ],
-  controllers: [SupportRequestController],
+  controllers: [
+    SupportRequestClientController,
+    SupportRequestManagerController,
+  ],
   providers: [
     SupportRequestService,
-    SupportRequestClientService
+    SupportRequestClientService,
+    SupportRequestEmployeeService,
   ],
 })
 export class SupportRequestModule {}
