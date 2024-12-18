@@ -6,7 +6,7 @@ import { ISupportRequestResponse } from '../dto'
 
 /** Интерсептор для форматирования данных обращения */
 @Injectable()
-export class CreateSupportResponseInterceptor implements NestInterceptor {
+export class SupportRequestResponseInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<ISupportRequestResponse | ISupportRequestResponse[]> {
 
     const formatRequestResponse = (request: SupportRequestDocument): ISupportRequestResponse => ({
