@@ -61,14 +61,14 @@ export class HotelController {
   }
 
   // Информация о номере
-  @Get('/common/hotel-rooms/:id')
+  @Get('common/hotel-rooms/:id')
   @UseInterceptors(HotelRoomResponseInterceptor)
   async getRoom(@Param('id', ParseObjectIdPipe) id: ID) {
     return await this.roomService.findById(id)
   }
 
   //	Поиск номеров 
-  @Get('/common/hotel-rooms')
+  @Get('common/hotel-rooms')
   @UseGuards(RoomEnabledGuard)
   @UseInterceptors(HotelRoomResponseInterceptor)
   async searchRoom(@Query() params: ISearchHotelRoomParams) {

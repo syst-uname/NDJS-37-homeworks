@@ -7,6 +7,7 @@ export type MessageDocument = Message & Document
 
 @Schema()
 export class Message {
+
   @Prop({ type: Types.ObjectId, ref: User.name, required: true,  })
     author: UserDocument
 
