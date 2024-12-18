@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
 
-import { SupportRequestService } from './support-request.service'
+import { SupportRequestClientService, SupportRequestService } from './services'
 import { SupportRequestController } from './support-request.controller'
 import { SupportRequest, SupportRequestSchema } from './schemas'
 
@@ -10,6 +10,9 @@ import { SupportRequest, SupportRequestSchema } from './schemas'
     MongooseModule.forFeature([{ name: SupportRequest.name, schema: SupportRequestSchema }]),
   ],
   controllers: [SupportRequestController],
-  providers: [SupportRequestService],
+  providers: [
+    SupportRequestService,
+    SupportRequestClientService
+  ],
 })
 export class SupportRequestModule {}
