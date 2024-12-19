@@ -1,7 +1,7 @@
 import { ExecutionContext, ForbiddenException, Injectable } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
 import { AuthGuard } from '@nestjs/passport'
-import { METADATA_ROLES, USER_ROLE } from '../constants'
+import { METADATA_ROLES, ROLE } from '../constants'
 
 /** Проверка авторизации и ролей*/
 @Injectable()
@@ -13,7 +13,7 @@ export class JwtAuthRoleGuard extends AuthGuard('jwt') {
 
   public async canActivate(context: ExecutionContext)  {
     // роли из метаданных
-    const requiredRoles = this.reflector.get<USER_ROLE[]>(METADATA_ROLES, context.getHandler())
+    const requiredRoles = this.reflector.get<ROLE[]>(METADATA_ROLES, context.getHandler())
     if (!requiredRoles) {
       return true   // и если роли не требуются - пропускаем
     }

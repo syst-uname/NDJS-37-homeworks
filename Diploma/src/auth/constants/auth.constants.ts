@@ -1,5 +1,5 @@
 /** Роли пользователя */
-export enum USER_ROLE {
+export enum ROLE {
   CLIENT = 'client',
   ADMIN = 'admin',
   MANAGER = 'manager',

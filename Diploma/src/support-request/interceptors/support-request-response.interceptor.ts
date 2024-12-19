@@ -3,7 +3,7 @@ import { map, Observable } from 'rxjs'
 
 import { SupportRequestDocument } from '../schemas'
 import { ISupportRequestResponse } from '../dto'
-import { USER_ROLE } from '@src/auth/constants'
+import { ROLE } from '@src/auth/constants'
 
 /** Интерсептор для форматирования данных обращения */
 @Injectable()
@@ -19,7 +19,7 @@ export class SupportRequestResponseInterceptor implements NestInterceptor {
       createdAt: request.createdAt.toString(),
       isActive: request.isActive,
       hasNewMessages: request.messages.some(message => !message.readAt),
-      client: user.role === USER_ROLE.MANAGER ? {
+      client: user.role === ROLE.MANAGER ? {
         id: request.user.id.toString(),
         name: request.user.name,
         email: request.user.email,

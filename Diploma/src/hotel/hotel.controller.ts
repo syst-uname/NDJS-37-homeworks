@@ -9,7 +9,7 @@ import { ParseObjectIdPipe } from '@src/common/pipes'
 import { JwtAuthRoleGuard } from '@src/auth/guards'
 import { RoomEnabledGuard } from './guards'
 import { Roles } from '@src/auth/decorators'
-import { USER_ROLE } from '@src/auth/constants'
+import { ROLE } from '@src/auth/constants'
 import { ID } from '@src/common/types'
 
 @Controller()
@@ -22,7 +22,7 @@ export class HotelController {
 
   // Добавление гостиницы   
   @Post('admin/hotels')
-  @Roles(USER_ROLE.ADMIN)
+  @Roles(ROLE.ADMIN)
   @UseInterceptors(HotelResponseInterceptor)
   async createHotel(@Body() dto: CreateHotelDto) {
     return await this.hotelService.create(dto)
@@ -30,7 +30,7 @@ export class HotelController {
 
   // Изменение гостиницы   
   @Post('admin/hotels/:id')
-  @Roles(USER_ROLE.ADMIN)
+  @Roles(ROLE.ADMIN)
   @UseInterceptors(HotelResponseInterceptor)
   async updateHotel(
     @Param('id', ParseObjectIdPipe) id: ID,
@@ -41,7 +41,7 @@ export class HotelController {
 
   // Получение списка гостиниц   
   @Get('admin/hotels')
-  @Roles(USER_ROLE.ADMIN)
+  @Roles(ROLE.ADMIN)
   @UseInterceptors(HotelResponseInterceptor)
   async searchHotel(@Query() params: ISearchHotelParams) {
     return await this.hotelService.search(params)
@@ -50,7 +50,7 @@ export class HotelController {
 
   // Добавление номера 
   @Post('admin/hotel-rooms')
-  @Roles(USER_ROLE.ADMIN)
+  @Roles(ROLE.ADMIN)
   @UseInterceptors(FilesInterceptor('images'))
   @UseInterceptors(HotelRoomResponseInterceptor)
   async createRoom(
@@ -77,7 +77,7 @@ export class HotelController {
 
   // Изменение номера 
   @Put('admin/hotel-rooms/:id')
-  @Roles(USER_ROLE.ADMIN)
+  @Roles(ROLE.ADMIN)
   @UseInterceptors(FilesInterceptor('images'))
   @UseInterceptors(HotelRoomResponseInterceptor)
   async updateRoom(

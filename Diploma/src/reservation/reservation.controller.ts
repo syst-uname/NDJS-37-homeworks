@@ -5,9 +5,9 @@ import { CreateReservationDto } from './dto'
 import { ReservationResponseInterceptor } from './interceptors'
 import { JwtAuthRoleGuard } from '@src/auth/guards'
 import { ParseObjectIdPipe } from '@src/common/pipes'
-import { AuthUser, Roles } from '@src/auth/decorators'
+import { User, Roles } from '@src/auth/decorators'
 import { UserDocument } from '@src/user/schemas'
-import { USER_ROLE } from '@src/auth/constants'
+import { ROLE } from '@src/auth/constants'
 import { ID } from '@src/common/types'
 
 @Controller()
@@ -17,36 +17,36 @@ export class ReservationController {
 
   // Бронирование номера 
   @Post('client/reservations')
-  @Roles(USER_ROLE.CLIENT)
+  @Roles(ROLE.CLIENT)
   @UseInterceptors(ReservationResponseInterceptor)
   async create(
     @Body() dto: CreateReservationDto,
-    @AuthUser() user: UserDocument
+    @User() user: UserDocument
   ) {
     return await this.reservationService.create(dto, user)
   }
 
   // Список броней текущего пользователя
   @Get('client/reservations')
-  @Roles(USER_ROLE.CLIENT)
+  @Roles(ROLE.CLIENT)
   @UseInterceptors(ReservationResponseInterceptor)
-  async get(@AuthUser() user: UserDocument) {
+  async get(@User() user: UserDocument) {
     return await this.reservationService.get(user._id as ID)
   }
 
   // Отмена бронирования клиентом
   @Delete('client/reservations/:id')
-  @Roles(USER_ROLE.CLIENT)
+  @Roles(ROLE.CLIENT)
   async delete(
     @Param('id', ParseObjectIdPipe) id: ID,
-    @AuthUser() user: UserDocument
+    @User() user: UserDocument
   ) {
     return await this.reservationService.remove(id, user.id)
   }
 
   // Список броней конкретного пользователя
   @Get('manager/reservations/:userId')
-  @Roles(USER_ROLE.MANAGER)
+  @Roles(ROLE.MANAGER)
   @UseInterceptors(ReservationResponseInterceptor)
   async getByUserId(@Param('userId', ParseObjectIdPipe) userId: ID) {
     return await this.reservationService.get(userId)
@@ -54,7 +54,7 @@ export class ReservationController {
 
   // Отмена бронирования менеджером
   @Delete('manager/reservations/:id')
-  @Roles(USER_ROLE.MANAGER)
+  @Roles(ROLE.MANAGER)
   async deleteById(@Param('id', ParseObjectIdPipe) id: ID) {
     return await this.reservationService.remove(id)
   }
