@@ -78,7 +78,7 @@ export class SupportRequestService implements ISupportRequestService {
 
       request.messages.forEach(message => {
         if (!message.readAt && message.sentAt < params.createdBefore) {        // еще не прочитано и подходит по времени
-          const isQuestion = (message.author as UserDocument).id === request.user.id            // сообщение/вопрос от автора обращения
+          const isQuestion = (message.author as UserDocument).id === request.user.id            // сообщение/вопрос от автора обращения/пользователя
           if ((isAuthor && !isQuestion) || (!isAuthor && isQuestion)) {
             message.readAt = new Date()
           }
@@ -88,6 +88,26 @@ export class SupportRequestService implements ISupportRequestService {
     } catch (e) {
       console.error(e.message, e.stack)
       throw new InternalServerErrorException(`Ошибка при проставлении отметки о прочтении: ${e.message}`)
+    }
+  }
+
+  /** 
+   * Количество непрочитанных сообщении 
+   * question - сообщение/вопрос от автора обращения
+   * answer - ответ от сотрудника
+   */
+  async getUnreadCount(supportRequest: ID , type: 'question' | 'answer'): Promise<number> {
+    try {
+      const request = await this.findById(supportRequest)
+
+      const unreadMessages = request.messages.filter(message => {
+        const isQuestion = (message.author as UserDocument).id === request.user.id            // сообщение/вопрос от автора обращения/пользователя
+        return !message.readAt && ((type === 'question' && isQuestion) || (type === 'answer' && !isQuestion))
+      })
+      return unreadMessages.length
+    } catch (e) {
+      console.error(e.message, e.stack)
+      throw new InternalServerErrorException(`Ошибка при подсчете непрочитанных сообщений: ${e.message}`)
     }
   }
 

@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, Post, Query, UseGuards, UseInterceptors } from '@nestjs/common'
 
-import { SupportRequestClientService, SupportRequestService } from './services'
+import { SupportRequestClientService, SupportRequestEmployeeService, SupportRequestService } from './services'
 import { CreateSupportRequestBodyDto, GetChatListParams, MarkMessagesAsReadBodyDto, SendMessageBodyDto } from './dto'
 import { MessageResponseInterceptor, SupportRequestResponseInterceptor } from './interceptors'
 import { ParseObjectIdPipe } from '@src/common/pipes'
@@ -16,6 +16,7 @@ export class SupportRequestController {
   constructor(
     private readonly supportRequestService: SupportRequestService,
     private readonly supportRequestClientService: SupportRequestClientService,
+    private readonly supportRequestEmployeeService: SupportRequestEmployeeService
   ) {}
 
   // Создание обращения в поддержку
@@ -100,6 +101,21 @@ export class SupportRequestController {
       createdBefore: body.createdBefore
     })
     return { 'success': true }
+  }
+
+  // Количество непрочитанных сообщений 
+  @Get('common/support-requests/:id/messages/unread')
+  @Roles(ROLE.CLIENT, ROLE.MANAGER)
+  async getUnreadCount(
+    @Param('id', ParseObjectIdPipe) id: ID,
+    @User() user: UserDocument
+  ) {
+    if (user.role === ROLE.CLIENT) {
+      await this.supportRequestService.checkClientAccess(id, user)
+      return this.supportRequestClientService.getUnreadCount(id)
+    } else if (user.role === ROLE.MANAGER) {
+      return this.supportRequestEmployeeService.getUnreadCount(id)
+    }
   }
 
 }

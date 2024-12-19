@@ -4,6 +4,7 @@ import { SupportRequestService } from './support-request.service'
 import { ISupportRequestClientService } from '../interfaces'
 import { CreateSupportRequestDto, MarkMessagesAsReadDto } from '../dto'
 import { SupportRequestDocument } from '../schemas'
+import { ID } from '@src/common/types'
 
 @Injectable()
 export class SupportRequestClientService extends SupportRequestService implements ISupportRequestClientService {
@@ -31,6 +32,11 @@ export class SupportRequestClientService extends SupportRequestService implement
   /** Отправка события, что сообщения прочитаны */
   async markMessagesAsRead(params: MarkMessagesAsReadDto) {
     return super.markMessagesAsRead(params)
+  }
+
+  /** Количество непрочитанных сообщении от поддержки */
+  async getUnreadCount(supportRequest: ID): Promise<number> {
+    return super.getUnreadCount(supportRequest, 'answer')
   }
 
 }
