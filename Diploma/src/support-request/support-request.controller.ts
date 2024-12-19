@@ -1,7 +1,7 @@
-import { Body, Controller, ForbiddenException, Get, Param, Post, Query, UseGuards, UseInterceptors } from '@nestjs/common'
+import { Body, Controller, Get, Param, Post, Query, UseGuards, UseInterceptors } from '@nestjs/common'
 
 import { SupportRequestClientService, SupportRequestService } from './services'
-import { CreateSupportRequestBodyDto, GetChatListParams, SendMessageBodyDto } from './dto'
+import { CreateSupportRequestBodyDto, GetChatListParams, MarkMessagesAsReadBodyDto, SendMessageBodyDto } from './dto'
 import { MessageResponseInterceptor, SupportRequestResponseInterceptor } from './interceptors'
 import { ParseObjectIdPipe } from '@src/common/pipes'
 import { JwtAuthRoleGuard } from '@src/auth/guards'
@@ -40,7 +40,10 @@ export class SupportRequestController {
     @Query() params: GetChatListParams,
     @User() user: UserDocument
   ) {
-    return await this.supportRequestService.findSupportRequests({ ...params, user: user._id as ID })
+    return await this.supportRequestService.findSupportRequests({
+      ...params,
+      user: user._id as ID
+    })
   }
 
   // Получение списка обращений в поддержку для менеджера
@@ -80,6 +83,23 @@ export class SupportRequestController {
       supportRequest: id,
       text: body.text
     })
+  }
+
+  // Отправка события, что сообщения прочитаны
+  @Post('common/support-requests/:id/messages/read')
+  @Roles(ROLE.CLIENT, ROLE.MANAGER)
+  async markMessagesAsRead(
+    @Param('id', ParseObjectIdPipe) id: ID,
+    @Body() body: MarkMessagesAsReadBodyDto,
+    @User() user: UserDocument
+  ) {
+    await this.supportRequestService.checkClientAccess(id, user)
+    await this.supportRequestService.markMessagesAsRead({
+      user: user._id as ID,
+      supportRequest: id,
+      createdBefore: body.createdBefore
+    })
+    return { 'success': true }
   }
 
 }

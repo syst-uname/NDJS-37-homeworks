@@ -3,9 +3,9 @@ import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
 
 import { ISupportRequestService } from '../interfaces'
-import { MessageDocument, SupportRequest, SupportRequestDocument } from '../schemas'
 import { UserDocument } from '@src/user/schemas'
-import { GetChatListParams, SendMessageDto } from '../dto'
+import { MessageDocument, SupportRequest, SupportRequestDocument } from '../schemas'
+import { GetChatListParams, MarkMessagesAsReadDto, SendMessageDto } from '../dto'
 import { ROLE } from '@src/auth/constants'
 import { ID } from '@src/common/types'
 
@@ -64,6 +64,30 @@ export class SupportRequestService implements ISupportRequestService {
     } catch (e) {
       console.error(e.message, e.stack)
       throw new InternalServerErrorException(`Ошибка при создании обращения: ${e.message}`)
+    }
+  }
+
+  /** Отправка события, что сообщения прочитаны */
+  async markMessagesAsRead(params: MarkMessagesAsReadDto): Promise<void> {
+    try {
+      const request = await this.findById(params.supportRequest)
+
+      // если вызывает сам автор обращения, то обновляем НЕ его сообщения
+      // если вызывает НЕ автор, то обновляем сообщения именно автора
+      const isAuthor = request.user.id.toString() === params.user.toString()   // текущий пользователь является автором обращения
+
+      request.messages.forEach(message => {
+        if (!message.readAt && message.sentAt < params.createdBefore) {        // еще не прочитано и подходит по времени
+          const isQuestion = (message.author as UserDocument).id === request.user.id            // сообщение/вопрос от автора обращения
+          if ((isAuthor && !isQuestion) || (!isAuthor && isQuestion)) {
+            message.readAt = new Date()
+          }
+        }
+      })
+      await request.save()
+    } catch (e) {
+      console.error(e.message, e.stack)
+      throw new InternalServerErrorException(`Ошибка при проставлении отметки о прочтении: ${e.message}`)
     }
   }
 

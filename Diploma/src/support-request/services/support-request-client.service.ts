@@ -2,8 +2,8 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common'
 
 import { SupportRequestService } from './support-request.service'
 import { ISupportRequestClientService } from '../interfaces'
+import { CreateSupportRequestDto, MarkMessagesAsReadDto } from '../dto'
 import { SupportRequestDocument } from '../schemas'
-import { CreateSupportRequestDto } from '../dto'
 
 @Injectable()
 export class SupportRequestClientService extends SupportRequestService implements ISupportRequestClientService {
@@ -26,6 +26,11 @@ export class SupportRequestClientService extends SupportRequestService implement
       console.error(e.message, e.stack)
       throw new InternalServerErrorException(`Ошибка при создании обращения: ${e.message}`)
     }
+  }
+
+  /** Отправка события, что сообщения прочитаны */
+  async markMessagesAsRead(params: MarkMessagesAsReadDto) {
+    return super.markMessagesAsRead(params)
   }
 
 }
