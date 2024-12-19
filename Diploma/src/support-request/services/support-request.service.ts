@@ -1,10 +1,12 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common'
+import { ForbiddenException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
 
 import { ISupportRequestService } from '../interfaces'
 import { MessageDocument, SupportRequest, SupportRequestDocument } from '../schemas'
+import { UserDocument } from '@src/user/schemas'
 import { GetChatListParams, SendMessageDto } from '../dto'
+import { ROLE } from '@src/auth/constants'
 import { ID } from '@src/common/types'
 
 @Injectable()
@@ -75,6 +77,17 @@ export class SupportRequestService implements ISupportRequestService {
       throw new NotFoundException(`Обращение с id "${id}" не найдено`)
     }
     return request
+  }
+
+  /** Проверка доступа к обращению */
+  async checkClientAccess(supportRequestId: ID, user: UserDocument): Promise<boolean> {
+    if (user.role === ROLE.CLIENT) {
+      const request = await this.findById(supportRequestId)
+      if (user.id !== request.user.id) {
+        throw new ForbiddenException('Нет доступа к данному обращению')
+      }
+    }
+    return true
   }
 
 }

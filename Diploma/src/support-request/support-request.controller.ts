@@ -60,10 +60,8 @@ export class SupportRequestController {
     @Param('id', ParseObjectIdPipe) id: ID,
     @User() user: UserDocument
   ) {
+    await this.supportRequestService.checkClientAccess(id, user)
     const request = await this.supportRequestService.getMessages(id)
-    if (user.role === ROLE.CLIENT && user.id !== request.user.id) {
-      throw new ForbiddenException('Вы не можете получить историю сообщений другого клиента')
-    }
     return request.messages
   }
 
@@ -76,12 +74,7 @@ export class SupportRequestController {
     @Body() body: SendMessageBodyDto,
     @User() user: UserDocument
   ) {
-    if (user.role === ROLE.CLIENT) {
-      const request = await this.supportRequestService.findById(id)
-      if (user.id !== request.user.id) {
-        throw new ForbiddenException('Вы не можете отправить сообщение другому клиенту')
-      }
-    }
+    await this.supportRequestService.checkClientAccess(id, user)
     return await this.supportRequestService.sendMessage({
       author: user._id as ID,
       supportRequest: id,
