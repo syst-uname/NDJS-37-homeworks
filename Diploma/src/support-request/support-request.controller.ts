@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Query, UseGuards, UseInterceptors } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Param, Post, Query, UseGuards, UseInterceptors } from '@nestjs/common'
 
 import { SupportRequestClientService, SupportRequestEmployeeService, SupportRequestService } from './services'
 import { CreateSupportRequestBodyDto, GetChatListParams, MarkMessagesAsReadBodyDto, SendMessageBodyDto } from './dto'
@@ -110,12 +110,18 @@ export class SupportRequestController {
     @Param('id', ParseObjectIdPipe) id: ID,
     @User() user: UserDocument
   ) {
-    if (user.role === ROLE.CLIENT) {
-      await this.supportRequestService.checkClientAccess(id, user)
-      return this.supportRequestClientService.getUnreadCount(id)
-    } else if (user.role === ROLE.MANAGER) {
-      return this.supportRequestEmployeeService.getUnreadCount(id)
-    }
+    await this.supportRequestService.checkClientAccess(id, user)
+    const count = user.role === ROLE.CLIENT
+      ? await this.supportRequestClientService.getUnreadCount(id)
+      : await this.supportRequestEmployeeService.getUnreadCount(id)
+    return { count }
+  }
+
+  // Закрытие обращения 
+  @Delete('manager/support-requests/:id')
+  @Roles(ROLE.MANAGER)
+  async closeRequest(@Param('id', ParseObjectIdPipe) id: ID) {
+    return this.supportRequestEmployeeService.closeRequest(id)
   }
 
 }
