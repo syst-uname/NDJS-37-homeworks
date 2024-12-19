@@ -3,6 +3,7 @@ import { map, Observable } from 'rxjs'
 
 import { MessageDocument } from '../schemas'
 import { IMessageResponse } from '../dto'
+import { UserDocument } from '@src/user/schemas'
 
 /** Интерсептор для форматирования данных сообщения */
 @Injectable()
@@ -15,8 +16,8 @@ export class MessageResponseInterceptor implements NestInterceptor {
       text: message.text,
       readAt: message.readAt?.toString(),
       author: {
-        id: message.author.id.toString(),
-        name: message.author.name,
+        id: (message.author as UserDocument).id.toString(),
+        name: (message.author as UserDocument).name
       }
     })
 

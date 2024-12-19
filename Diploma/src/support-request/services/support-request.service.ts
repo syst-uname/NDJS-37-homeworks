@@ -3,8 +3,8 @@ import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
 
 import { ISupportRequestService } from '../interfaces'
-import { SupportRequest, SupportRequestDocument } from '../schemas'
-import { GetChatListParams } from '../dto'
+import { MessageDocument, SupportRequest, SupportRequestDocument } from '../schemas'
+import { GetChatListParams, SendMessageDto } from '../dto'
 import { ID } from '@src/common/types'
 
 @Injectable()
@@ -36,14 +36,7 @@ export class SupportRequestService implements ISupportRequestService {
   /** Получение истории сообщений из обращения в техподдержку */
   async getMessages(supportRequest: ID): Promise<SupportRequestDocument> {
     try {
-      const request = await this.supportRequestModel
-        .findById(supportRequest)
-        .populate('user')
-        .populate({ path: 'messages.author' })
-      if (!request) {
-        throw new NotFoundException(`Обращение с id "${supportRequest}" не найдено`)
-      }
-      return request
+      return this.findById(supportRequest)
     } catch (e) {
       console.error(e.message, e.stack)
       if (e instanceof NotFoundException) {
@@ -51,6 +44,37 @@ export class SupportRequestService implements ISupportRequestService {
       }
       throw new InternalServerErrorException(`Ошибка при получение истории сообщений: ${e.message}`)
     }
+  }
+
+  /** Отправка сообщения */
+  async sendMessage(data: SendMessageDto): Promise<MessageDocument> {
+    try {
+      const request = await this.findById(data.supportRequest)
+      request.messages.push({
+        author: data.author,
+        sentAt: new Date(),
+        text: data.text,
+      } as MessageDocument)
+
+      await request.save()
+      await request.populate('messages.author')
+      return request.messages.at(-1)
+    } catch (e) {
+      console.error(e.message, e.stack)
+      throw new InternalServerErrorException(`Ошибка при создании обращения: ${e.message}`)
+    }
+  }
+
+  /** Получение обращения по id */
+  async findById(id: ID): Promise<SupportRequestDocument> {
+    const request = await this.supportRequestModel
+      .findById(id)
+      .populate('user')
+      .populate({ path: 'messages.author' })
+    if (!request) {
+      throw new NotFoundException(`Обращение с id "${id}" не найдено`)
+    }
+    return request
   }
 
 }

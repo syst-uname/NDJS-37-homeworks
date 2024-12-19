@@ -11,7 +11,7 @@ export class SupportRequestClientService extends SupportRequestService implement
   /** Создание обращения в поддержку */
   async createSupportRequest(data: CreateSupportRequestDto): Promise<SupportRequestDocument> {
     try {
-      const hotel = new this.supportRequestModel({
+      const request = new this.supportRequestModel({
         user: data.user,
         createdAt: new Date(),
         messages: [{
@@ -21,7 +21,7 @@ export class SupportRequestClientService extends SupportRequestService implement
         }],
         isActive: true
       })
-      return await hotel.save()
+      return await request.save()
     } catch (e) {
       console.error(e.message, e.stack)
       throw new InternalServerErrorException(`Ошибка при создании обращения: ${e.message}`)
