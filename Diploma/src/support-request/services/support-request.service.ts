@@ -1,10 +1,11 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common'
+import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
 
 import { ISupportRequestService } from '../interfaces'
 import { SupportRequest, SupportRequestDocument } from '../schemas'
 import { GetChatListParams } from '../dto'
+import { ID } from '@src/common/types'
 
 @Injectable()
 export class SupportRequestService implements ISupportRequestService {
@@ -29,6 +30,26 @@ export class SupportRequestService implements ISupportRequestService {
     } catch (e) {
       console.error(e.message, e.stack)
       throw new InternalServerErrorException(`Ошибка при получение списка обращений: ${e.message}`)
+    }
+  }
+
+  /** Получение истории сообщений из обращения в техподдержку */
+  async getMessages(supportRequest: ID): Promise<SupportRequestDocument> {
+    try {
+      const request = await this.supportRequestModel
+        .findById(supportRequest)
+        .populate('user')
+        .populate({ path: 'messages.author' })
+      if (!request) {
+        throw new NotFoundException(`Обращение с id "${supportRequest}" не найдено`)
+      }
+      return request
+    } catch (e) {
+      console.error(e.message, e.stack)
+      if (e instanceof NotFoundException) {
+        throw e
+      }
+      throw new InternalServerErrorException(`Ошибка при получение истории сообщений: ${e.message}`)
     }
   }
 
