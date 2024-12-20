@@ -1,8 +1,7 @@
 import { Controller, Post, Body, Get, Query, UseGuards, UseInterceptors } from '@nestjs/common'
 
 import { UserService } from './user.service'
-import { CreateUserDto } from './dto'
-import { ICreateUserResponse, IFindUsersParams } from './types'
+import { CreateUserDto, ICreateUserResponse, SearchUserParams } from './dto'
 import { UserResponseInterceptor } from './interceptors'
 import { JwtAuthRoleGuard } from '@src/auth/guards'
 import { Roles } from '@src/auth/decorators'
@@ -16,8 +15,8 @@ export class UserController {
   // Создание пользователя  
   @Post('admin/users')
   @Roles(ROLE.ADMIN)
-  async create(@Body() dto: CreateUserDto): Promise<ICreateUserResponse> {
-    const user = await this.userService.create(dto)
+  async create(@Body() body: CreateUserDto): Promise<ICreateUserResponse> {
+    const user = await this.userService.create(body)
     const { id, email, name, contactPhone, role } = user
     return { id, email, name, contactPhone, role }
   }
@@ -26,7 +25,7 @@ export class UserController {
   @Get('admin/users')
   @Roles(ROLE.ADMIN)
   @UseInterceptors(UserResponseInterceptor)
-  async findAllForAdmin(@Query() params: IFindUsersParams) {
+  async findAllForAdmin(@Query() params: SearchUserParams) {
     return await this.userService.findAll(params)
   }
 
@@ -34,7 +33,7 @@ export class UserController {
   @Get('manager/users')
   @Roles(ROLE.MANAGER)
   @UseInterceptors(UserResponseInterceptor)
-  async findAllForManager(@Query() params: IFindUsersParams) {
+  async findAllForManager(@Query() params: SearchUserParams) {
     return await this.userService.findAll(params)
   }
 }

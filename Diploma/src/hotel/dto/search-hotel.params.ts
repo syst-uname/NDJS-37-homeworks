@@ -1,5 +1,5 @@
 /** Параметры поиска отелей */
-export class ISearchHotelParams {
+export class SearchHotelParams {
   limit?: number
   offset?: number
   title?: string

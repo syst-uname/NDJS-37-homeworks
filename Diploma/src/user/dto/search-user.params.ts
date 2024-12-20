@@ -1,5 +1,5 @@
 /** Параметры поиска пользователей */
-export class IFindUsersParams {
+export class SearchUserParams {
   limit?: number
   offset?: number
   name?: string

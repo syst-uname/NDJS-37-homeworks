@@ -3,9 +3,8 @@ import { Response } from 'express'
 
 import { AuthService } from './auth.service'
 import { UserService } from '@src/user/user.service'
+import { ILoginResponse, IRegisterClientResponse, LoginDto, RegisterClientDto } from './dto'
 import { JwtAuthGuard, JwtUnauthGuard } from './guards'
-import { LoginDto, RegisterClientDto } from './dto'
-import { ILoginResponse, IRegisterClientResponse } from './types'
 import { COOKIE_TOKEN, ROLE } from './constants'
 
 @Controller()

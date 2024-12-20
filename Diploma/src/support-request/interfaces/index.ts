@@ -1,3 +1,3 @@
-export * from './support-request.interface'
-export * from './support-request-client.interface'
-export * from './support-request-employee.interface'
+export * from './support-request-service.interface'
+export * from './support-request-client-service.interface'
+export * from './support-request-employee-service.interface'

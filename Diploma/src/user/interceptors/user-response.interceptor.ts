@@ -2,7 +2,7 @@ import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nes
 import { map, Observable } from 'rxjs'
 
 import { UserDocument } from '../schemas'
-import { IUserResponse } from '../types'
+import { IUserResponse } from '../dto'
 
 /** Интерсептор для форматирования данных отеля */
 @Injectable()

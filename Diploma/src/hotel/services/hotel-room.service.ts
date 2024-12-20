@@ -5,14 +5,14 @@ import * as fs from 'fs'
 import * as path from 'path'
 
 import config from '@src/config'
+import { IHotelRoomService } from '../interfaces'
 import { HotelService } from './hotel.service'
 import { HotelRoom, HotelRoomDocument } from '../schemas'
-import { ISearchHotelRoomParams } from '../types'
-import { CreateHotelRoomDto, UpdateHotelRoomDto } from '../dto'
+import { CreateHotelRoomDto, SearchRoomsParams, UpdateHotelRoomDto } from '../dto'
 import { ID } from '@src/common/types'
 
 @Injectable()
-export class HotelRoomService {
+export class HotelRoomService implements IHotelRoomService {
 
   constructor(
     @InjectModel(HotelRoom.name) private roomModel: Model<HotelRoomDocument>,
@@ -20,19 +20,19 @@ export class HotelRoomService {
   ) {}
 
   /** Добавление номера */
-  async create(dto: CreateHotelRoomDto, files: Express.Multer.File[]): Promise<HotelRoomDocument> {
+  async create(data: CreateHotelRoomDto): Promise<HotelRoomDocument> {
     try {
       const room = await new this.roomModel({
-        hotel: dto.hotelId,
-        description: dto.description,
+        hotel: data.hotelId,
+        description: data.description,
         isEnabled: true
       }).populate('hotel')
 
       if (!room.hotel) {
-        throw new NotFoundException(`Гостиница с id "${dto.hotelId}" не найдена`)
+        throw new NotFoundException(`Гостиница с id "${data.hotelId}" не найдена`)
       }
 
-      room.images = await this.uploadImages(room, files)
+      room.images = await this.uploadImages(room, data.images)
       return await room.save()
     } catch (e) {
       console.error(e.message, e.stack)
@@ -41,16 +41,16 @@ export class HotelRoomService {
   }
 
   /** Обновление номера */
-  async update(id: ID, dto: UpdateHotelRoomDto, files: Express.Multer.File[]): Promise<HotelRoomDocument> {
+  async update(id: ID, data: UpdateHotelRoomDto): Promise<HotelRoomDocument> {
     try {
       const room = await this.findById(id)
-      if (dto.hotelId && room.hotel.id !== dto.hotelId) {
-        room.hotel = await this.hotelService.findById(dto.hotelId)
+      if (data.hotelId && room.hotel.id !== data.hotelId) {
+        room.hotel = await this.hotelService.findById(data.hotelId)
       }
-      room.description = dto.description
-      room.isEnabled = dto.isEnabled
+      room.description = data.description
+      room.isEnabled = data.isEnabled
 
-      const images = await this.uploadImages(room, files)
+      const images = await this.uploadImages(room, data.images)
       room.images = Array.from(new Set([...room.images, ...images]))
       return await room.save()
     } catch (e) {
@@ -79,7 +79,7 @@ export class HotelRoomService {
   }
 
   /** Поиск номеров */
-  async search(params: ISearchHotelRoomParams): Promise<HotelRoomDocument[]> {
+  async search(params: SearchRoomsParams): Promise<HotelRoomDocument[]> {
     try {
       const query = this.roomModel.find()
       if (params.hotel) {

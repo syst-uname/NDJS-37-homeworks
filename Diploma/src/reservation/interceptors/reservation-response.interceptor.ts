@@ -2,7 +2,7 @@ import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nes
 import { map, Observable } from 'rxjs'
 
 import { ReservationDocument } from '../schemas'
-import { IReservationResponse } from '../types'
+import { IReservationResponse } from '../dto'
 
 /** Интерсептор для форматирования данных номера отеля */
 @Injectable()

@@ -2,9 +2,8 @@ import { Body, Controller, Get, Param, Post, Put, Query, UploadedFiles, UseGuard
 import { FilesInterceptor } from '@nestjs/platform-express'
 
 import { HotelRoomService, HotelService } from './services'
-import { CreateHotelDto, CreateHotelRoomDto, UpdateHotelDto, UpdateHotelRoomDto } from './dto'
+import { CreateHotelDto, CreateHotelRoomBodyDto, SearchHotelParams, SearchRoomsParams, UpdateHotelDto, UpdateHotelRoomBodyDto } from './dto'
 import { HotelResponseInterceptor, HotelRoomResponseInterceptor } from './interceptors'
-import { ISearchHotelParams, ISearchHotelRoomParams } from './types'
 import { ParseObjectIdPipe } from '@src/common/pipes'
 import { JwtAuthRoleGuard } from '@src/auth/guards'
 import { RoomEnabledGuard } from './guards'
@@ -24,8 +23,8 @@ export class HotelController {
   @Post('admin/hotels')
   @Roles(ROLE.ADMIN)
   @UseInterceptors(HotelResponseInterceptor)
-  async createHotel(@Body() dto: CreateHotelDto) {
-    return await this.hotelService.create(dto)
+  async createHotel(@Body() body: CreateHotelDto) {
+    return await this.hotelService.create(body)
   }
 
   // Изменение гостиницы   
@@ -34,16 +33,16 @@ export class HotelController {
   @UseInterceptors(HotelResponseInterceptor)
   async updateHotel(
     @Param('id', ParseObjectIdPipe) id: ID,
-    @Body() dto: UpdateHotelDto
+    @Body() body: UpdateHotelDto
   ) {
-    return await this.hotelService.update(id, dto)
+    return await this.hotelService.update(id, body)
   }
 
   // Получение списка гостиниц   
   @Get('admin/hotels')
   @Roles(ROLE.ADMIN)
   @UseInterceptors(HotelResponseInterceptor)
-  async searchHotel(@Query() params: ISearchHotelParams) {
+  async searchHotel(@Query() params: SearchHotelParams) {
     return await this.hotelService.search(params)
   }
 
@@ -54,10 +53,10 @@ export class HotelController {
   @UseInterceptors(FilesInterceptor('images'))
   @UseInterceptors(HotelRoomResponseInterceptor)
   async createRoom(
-    @Body() dto: CreateHotelRoomDto,
-    @UploadedFiles() files: Express.Multer.File[]
+    @Body() body: CreateHotelRoomBodyDto,
+    @UploadedFiles() images: Express.Multer.File[]
   ) {
-    return await this.roomService.create(dto, files)
+    return await this.roomService.create({ ...body, images })
   }
 
   // Информация о номере
@@ -71,7 +70,7 @@ export class HotelController {
   @Get('common/hotel-rooms')
   @UseGuards(RoomEnabledGuard)
   @UseInterceptors(HotelRoomResponseInterceptor)
-  async searchRoom(@Query() params: ISearchHotelRoomParams) {
+  async searchRoom(@Query() params: SearchRoomsParams) {
     return await this.roomService.search(params)
   }
 
@@ -82,9 +81,9 @@ export class HotelController {
   @UseInterceptors(HotelRoomResponseInterceptor)
   async updateRoom(
     @Param('id', ParseObjectIdPipe) id: ID,
-    @Body() dto: UpdateHotelRoomDto,
-    @UploadedFiles() files: Express.Multer.File[]
+    @Body() body: UpdateHotelRoomBodyDto,
+    @UploadedFiles() images: Express.Multer.File[]
   ) {
-    return await this.roomService.update(id, dto, files)
+    return await this.roomService.update(id, { ...body, images })
   }
 }

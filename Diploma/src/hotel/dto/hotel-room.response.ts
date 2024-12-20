@@ -1,4 +1,4 @@
-import { IHotelResponse } from './hotel.interface'
+import { IHotelResponse } from './hotel.response'
 
 /** Интерфейс вывода данных номера */
 export interface IHotelRoomResponse {

@@ -1,5 +1,5 @@
 /** Параметры поиска номеров */
-export class ISearchHotelRoomParams {
+export class SearchRoomsParams {
   limit?: number
   offset?: number
   hotel?: string

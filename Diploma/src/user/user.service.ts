@@ -4,30 +4,28 @@ import { Model } from 'mongoose'
 import * as bcrypt from 'bcrypt'
 
 import config from '@src/config'
+import { IUserService } from './interfaces'
 import { User, UserDocument } from './schemas'
-import { CreateUserDto } from './dto'
-import { IFindUsersParams } from './types'
+import { CreateUserDto, SearchUserParams } from './dto'
 import { ID } from '@src/common/types'
 
 @Injectable()
-export class UserService {
+export class UserService implements IUserService {
 
-  constructor(
-    @InjectModel(User.name) private userModel: Model<UserDocument>,
-  ) {}
+  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
   /** Создание пользователя */
-  async create(dto: CreateUserDto): Promise<UserDocument> {
+  async create(data: CreateUserDto): Promise<UserDocument> {
     try {
-      if (await this.userModel.findOne({ email: dto.email })) {
+      if (await this.userModel.findOne({ email: data.email })) {
         throw new ConflictException('Email уже занят')
       }
       const user = new this.userModel({
-        email: dto.email,
-        passwordHash: await this.hashPassword(dto.password),
-        name: dto.name,
-        contactPhone: dto.contactPhone,
-        role: dto.role
+        email: data.email,
+        passwordHash: await this.hashPassword(data.password),
+        name: data.name,
+        contactPhone: data.contactPhone,
+        role: data.role
       })
       return await user.save()
     } catch (e) {
@@ -40,7 +38,7 @@ export class UserService {
   }
 
   /** Получение списка пользователей */
-  async findAll(params: IFindUsersParams): Promise<UserDocument[]> {
+  async findAll(params: SearchUserParams): Promise<UserDocument[]> {
     try {
       const query = this.userModel.find()
       if (params.name) {

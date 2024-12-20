@@ -2,22 +2,20 @@ import { Injectable, InternalServerErrorException, NotFoundException } from '@ne
 import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
 
+import { IHotelService } from '../interfaces'
 import { Hotel, HotelDocument } from '../schemas'
-import { CreateHotelDto, UpdateHotelDto } from '../dto'
-import { ISearchHotelParams } from '../types'
+import { CreateHotelDto, SearchHotelParams, UpdateHotelDto } from '../dto'
 import { ID } from '@src/common/types'
 
 @Injectable()
-export class HotelService {
+export class HotelService implements IHotelService {
 
-  constructor(
-    @InjectModel(Hotel.name) private hotelModel: Model<HotelDocument>,
-  ) {}
+  constructor(@InjectModel(Hotel.name) private hotelModel: Model<HotelDocument>) {}
 
   /** Добавление отеля */
-  async create(dto: CreateHotelDto): Promise<HotelDocument> {
+  async create(data: CreateHotelDto): Promise<HotelDocument> {
     try {
-      const hotel = new this.hotelModel(dto)
+      const hotel = new this.hotelModel(data)
       return await hotel.save()
     } catch (e) {
       console.error(e.message, e.stack)
@@ -26,9 +24,9 @@ export class HotelService {
   }
 
   /** Обновление отеля */
-  async update(id: ID, dto: UpdateHotelDto): Promise<HotelDocument> {
+  async update(id: ID, data: UpdateHotelDto): Promise<HotelDocument> {
     try {
-      const hotel = await this.hotelModel.findOneAndUpdate({ _id: id }, dto, { new: true })
+      const hotel = await this.hotelModel.findOneAndUpdate({ _id: id }, data, { new: true })
       if (!hotel) {
         throw new NotFoundException(`Гостиница с id "${id}" не найдена`)
       }
@@ -43,7 +41,7 @@ export class HotelService {
   }
 
   /** Получение списка отелей */
-  async search(params: ISearchHotelParams): Promise<HotelDocument[]> {
+  async search(params: SearchHotelParams): Promise<HotelDocument[]> {
     try {
       const query = this.hotelModel.find()
       if (params.title) {

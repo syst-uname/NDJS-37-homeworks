@@ -11,3 +11,10 @@ export class LoginDto {
   @IsNotEmpty({ message: 'Поле password обязательно для заполнения' })
     password: string
 }
+
+/** Ответ при входе */
+export interface ILoginResponse {
+  email: string,
+  name: string,
+  contactPhone: string,
+}
