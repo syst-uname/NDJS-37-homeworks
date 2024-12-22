@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Support Request</title>
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+
+</head>
+
+<body>
+
+  <div>
+    <b>Вход</b>
+    <form method="POST" action="/api/auth/login">
+      <div>
+        <input type="text" name='email' id='email' />
+        <label for='email'>Почта</label>
+      </div>
+      <div>
+        <input type='password' name='password' id='password' />
+        <label for='password'>Пароль</label>
+      </div>
+      <button type="submit">Войти</button>
+    </form>
+  </div>
+  <br>
+
+
+  <br>
+  <div>
+    <b>Чат</b>
+    <div>
+      <input id="supportRequest" placeholder="Обращение" size="50" />
+      <label for='supportRequest'>ID обращения</label>
+    </div>
+    <button id="subscribeButton">Подписаться</button>
+  </div>
+  <br>
+
+  <br>
+  <div>
+    <b>Сообщение</b>
+    <div>
+      <input id="text" placeholder="Текст" size="50" />
+      <label for='text'>Текст</label>
+    </div>
+    <button id="sendButton">Отправить</button>
+  </div>
+  <br>
+
+  <br>
+  <div>
+    <b>История чата</b>
+    <ul id="messages"></ul>
+  </div>
+
+  <script>
+    const socket = io('/')
+
+    // кнопка "Подписаться"
+    document.getElementById('subscribeButton').onclick = () => {
+      const supportRequest = document.getElementById('supportRequest').value
+      socket.emit('subscribeToSupportRequest', {
+        supportRequest
+      })
+    }
+
+    // кнопка "Отправить"
+    document.getElementById('sendButton').onclick = () => {
+      const supportRequest = document.getElementById('supportRequest').value
+      const text = document.getElementById('text').value
+      socket.emit('message', {
+        supportRequest,
+        text
+      })
+    }
+
+    // новое сообщения от сервера
+    socket.on('message', (payload) => {
+      const messagesList = document.getElementById('messages')
+      const newMessageItem = document.createElement('li')
+      newMessageItem.textContent = `автор: ${payload.message.author.name}, время: ${payload.message.sentAt}, текст: ${payload.message.text}`
+      messagesList.appendChild(newMessageItem)
+    });
+  </script>
+</body>
+
+</html>

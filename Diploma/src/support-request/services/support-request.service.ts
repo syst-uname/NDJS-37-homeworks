@@ -1,6 +1,7 @@
 import { ForbiddenException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
+import { EventEmitter } from 'events'
 
 import { ISupportRequestService } from '../interfaces'
 import { UserDocument } from '@src/user/schemas'
@@ -12,7 +13,13 @@ import { ID } from '@src/common/types'
 @Injectable()
 export class SupportRequestService implements ISupportRequestService {
 
-  constructor(@InjectModel(SupportRequest.name) protected supportRequestModel: Model<SupportRequestDocument>) {}
+  private eventEmitter: EventEmitter
+
+  constructor(
+    @InjectModel(SupportRequest.name) protected supportRequestModel: Model<SupportRequestDocument>
+  ) {
+    this.eventEmitter = new EventEmitter()
+  }
 
   /** Получение списка обращений в поддержку  */
   async findSupportRequests(data: GetChatListParams): Promise<SupportRequestDocument[]> {
@@ -60,7 +67,10 @@ export class SupportRequestService implements ISupportRequestService {
 
       await request.save()
       await request.populate('messages.author')
-      return request.messages.at(-1)
+      const message = request.messages.at(-1)
+      // Генерируем событие о новом сообщении в обращении
+      this.eventEmitter.emit(`message:${data.supportRequest}`, request, message)
+      return message
     } catch (e) {
       console.error(e.message, e.stack)
       throw new InternalServerErrorException(`Ошибка при создании обращения: ${e.message}`)
@@ -91,8 +101,7 @@ export class SupportRequestService implements ISupportRequestService {
     }
   }
 
-  /** 
-   * Количество непрочитанных сообщении 
+  /** Количество непрочитанных сообщении 
    * question - сообщение/вопрос от автора обращения
    * answer - ответ от сотрудника
    */
@@ -132,6 +141,17 @@ export class SupportRequestService implements ISupportRequestService {
       }
     }
     return true
+  }
+
+  subscribe(
+    supportRequestId: string,
+    handler: (supportRequest: SupportRequestDocument, message: MessageDocument) => void
+  ): () => void {
+    // Подписываемся на событие с идентификатором обращения
+    this.eventEmitter.on(`message:${supportRequestId}`, handler)
+    return () => {
+      this.eventEmitter.removeListener(`message:${supportRequestId}`, handler)   // метод отписки
+    }
   }
 
 }

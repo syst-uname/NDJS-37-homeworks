@@ -65,14 +65,14 @@ export class HotelRoomService implements IHotelRoomService {
       return []
     }
     // папка: id_гостиницы/id_номера/[изображения]
-    const roomDir = path.join(config.server.uploadsDirHotels, room.hotel.id, room.id)
+    const roomDir = path.join(config.server.uploadsHotelsDir, room.hotel.id, room.id)
     fs.mkdirSync(roomDir, { recursive: true })
 
     const savedImagePaths = await Promise.all(
       files.map(async (file) => {
         const imagePath = path.join(roomDir, file.originalname)
         fs.writeFileSync(imagePath, file.buffer)
-        return path.relative(config.server.uploadsDirHotels, imagePath)   // относительный путь без 'uploads/hotels'
+        return path.relative(config.server.uploadsHotelsDir, imagePath)   // относительный путь без 'uploads/hotels'
       })
     )
     return savedImagePaths

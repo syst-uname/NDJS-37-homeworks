@@ -4,13 +4,20 @@ import { ExtractJwt, Strategy } from 'passport-jwt'
 
 import config from '@src/config'
 import { UserService } from '@src/user/user.service'
+import { COOKIE_TOKEN } from './constants'
 
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(private userService: UserService) {
     super({
-      jwtFromRequest: ExtractJwt.fromExtractors([(req) => req?.cookies?.token]),
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        (req) => req?.cookies?.token,              // http
+        (req) => req?.handshake?.headers?.cookie   // ws
+          .split('; ')
+          .find((cookie: string) => cookie.startsWith(COOKIE_TOKEN))
+          .split('=')[1]
+      ]),
       secretOrKey: config.auth.jwtSecret
     })
   }

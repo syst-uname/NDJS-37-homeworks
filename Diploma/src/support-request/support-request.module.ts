@@ -2,8 +2,9 @@ import { Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
 
 import { SupportRequestController } from './support-request.controller'
-import { SupportRequestClientService, SupportRequestEmployeeService, SupportRequestService } from './services'
 import { SupportRequest, SupportRequestSchema } from './schemas'
+import { SupportRequestClientService, SupportRequestEmployeeService, SupportRequestService } from './services'
+import { SupportRequestGateway } from './support-request.gateway'
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { SupportRequest, SupportRequestSchema } from './schemas'
     SupportRequestService,
     SupportRequestClientService,
     SupportRequestEmployeeService,
+    SupportRequestGateway
   ],
 })
 export class SupportRequestModule {}

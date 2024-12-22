@@ -16,7 +16,7 @@ import { SupportRequestModule } from './support-request/support-request.module'
   imports: [
     ConfigModule.forRoot(),
     MongooseModule.forRoot(config.mongo.connection),
-    ServeStaticModule.forRoot({ rootPath: config.server.uploadsDirHotels }),
+    ServeStaticModule.forRoot({ rootPath: config.server.publicDir }),
     AuthModule,
     UserModule,
     HotelModule,
