@@ -3,7 +3,7 @@ import {  IsEmail, IsNotEmpty, IsOptional, IsPhoneNumber, IsString, MaxLength, M
 /** Параметры регистрации */
 export class RegisterClientDto {
 
-  @IsEmail({}, { message: 'Некорректная почта' })
+  @IsEmail({}, { message: 'Некорректный формат почты' })
   @IsNotEmpty({ message: 'Поле email обязательно для заполнения' })
     email: string
 

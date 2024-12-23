@@ -1,6 +1,6 @@
 import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
-import { Model } from 'mongoose'
+import { Model, Types } from 'mongoose'
 import * as fs from 'fs'
 import * as path from 'path'
 
@@ -36,6 +36,9 @@ export class HotelRoomService implements IHotelRoomService {
       return await room.save()
     } catch (e) {
       console.error(e.message, e.stack)
+      if (e instanceof NotFoundException) {
+        throw e
+      }
       throw new InternalServerErrorException(`Ошибка при добавлении номера: ${e.message}`)
     }
   }
@@ -55,7 +58,10 @@ export class HotelRoomService implements IHotelRoomService {
       return await room.save()
     } catch (e) {
       console.error(e.message, e.stack)
-      throw new InternalServerErrorException(`Ошибка при добавлении номера: ${e.message}`)
+      if (e instanceof NotFoundException) {
+        throw e
+      }
+      throw new InternalServerErrorException(`Ошибка при обновлении номера: ${e.message}`)
     }
   }
 
@@ -72,7 +78,7 @@ export class HotelRoomService implements IHotelRoomService {
       files.map(async (file) => {
         const imagePath = path.join(roomDir, file.originalname)
         fs.writeFileSync(imagePath, file.buffer)
-        return path.relative(config.server.uploadsHotelsDir, imagePath)   // относительный путь без 'uploads/hotels'
+        return path.relative(config.server.publicDir, imagePath)   // относительный путь без 'public'
       })
     )
     return savedImagePaths
@@ -83,7 +89,7 @@ export class HotelRoomService implements IHotelRoomService {
     try {
       const query = this.roomModel.find()
       if (params.hotel) {
-        query.where('hotel').equals(params.hotel)
+        query.where('hotel').equals(new Types.ObjectId(params.hotel))
       }
       if (params.isEnabled) {
         query.where('isEnabled').equals(params.isEnabled)

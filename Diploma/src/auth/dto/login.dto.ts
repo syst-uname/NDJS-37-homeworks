@@ -3,7 +3,7 @@ import { IsEmail, IsNotEmpty, IsString } from 'class-validator'
 /** Параметры входа */
 export class LoginDto {
 
-  @IsEmail({}, { message: 'Некорректная почта' })
+  @IsEmail({}, { message: 'Некорректный формат почты' })
   @IsNotEmpty({ message: 'Поле email обязательна для заполнения' })
     email: string
 
