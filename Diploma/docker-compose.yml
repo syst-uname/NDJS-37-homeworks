@@ -1,0 +1,21 @@
+services:
+
+  storage_mongo:
+    image: mongo 
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_DATABASE: ostrovok
+    volumes:
+      - ./src/config/mongo-initdb.js:/docker-entrypoint-initdb.d/mongo-initdb.js:ro 
+
+  ostrovok:
+    build: .
+    ports: 
+      - 80:${PORT}
+    environment: 
+      - MONGO_URL=mongodb://storage_mongo:27017/ostrovok
+    env_file:
+      - .env
+    depends_on: 
+      - storage_mongo 
